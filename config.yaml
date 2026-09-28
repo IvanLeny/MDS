@@ -52,7 +52,8 @@ consultation:
   top_n: 5
   expansion_lexique: true
   max_synonymes_par_terme: 4
-  signal_abstention: bm25_max     # score comparé au seuil
+  poids_expansion: 0.3            # poids des termes ajoutés par le lexique (fixé a priori)
+  signal_abstention: bm25_max     # bm25_max | dense_max (choix documenté dans les résultats H1)
   seuil_abstention: 7.0           # remplacé par la valeur calibrée (evaluation)
   reponse_redigee: false          # réponse rédigée courte facultative
 
