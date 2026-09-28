@@ -1,0 +1,2122 @@
+{
+ "_description": "Jeu de questions de consultation (H1). Rédigé par l'auteur à partir des publications (source « auteur ») ; pages pertinentes calculées automatiquement (toutes les valeurs attendues et tous les termes clés présents sur la page). Les questions des cadres s'ajoutent avec source « cellule ». annotateur_1/annotateur_2 : jugement de pertinence (1/0) des passages restitués, pour le kappa de Cohen.",
+ "questions": [
+  {
+   "id": "Q01",
+   "question": "À combien est estimé le nombre d'entreprises en activité au Cameroun en 2021, et combien sont des PME ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2021",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2021",
+     "page": 19
+    },
+    {
+     "doc_id": "annuaire_2021",
+     "page": 20
+    },
+    {
+     "doc_id": "annuaire_2022",
+     "page": 19
+    },
+    {
+     "doc_id": "annuaire_2023",
+     "page": 15
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 17
+    },
+    {
+     "doc_id": "rapport_analyse_2021",
+     "page": 10
+    }
+   ],
+   "valeurs_attendues": [
+    "324 899",
+    "324 250"
+   ],
+   "termes_cles": [
+    "PME"
+   ],
+   "reponse_attendue": "324 899 entreprises en activité, dont 324 250 PME.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q02",
+   "question": "Combien d'entreprises étaient en activité en 2022 et combien de PME ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2022",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2022",
+     "page": 18
+    },
+    {
+     "doc_id": "annuaire_2022",
+     "page": 19
+    },
+    {
+     "doc_id": "annuaire_2023",
+     "page": 15
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 17
+    }
+   ],
+   "valeurs_attendues": [
+    "350 422",
+    "349 722"
+   ],
+   "termes_cles": [
+    "PME"
+   ],
+   "reponse_attendue": "350 422 entreprises, dont 349 722 PME.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q03",
+   "question": "Combien d'organisations de l'économie sociale ont été enregistrées auprès du MINADER en 2022 et quelle hausse cela représente-t-il ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2022",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2022",
+     "page": 13
+    },
+    {
+     "doc_id": "annuaire_2022",
+     "page": 30
+    },
+    {
+     "doc_id": "rapport_analyse_2022",
+     "page": 22
+    }
+   ],
+   "valeurs_attendues": [
+    "3 405",
+    "57,21"
+   ],
+   "termes_cles": [
+    "OES"
+   ],
+   "reponse_attendue": "3 405 OES, soit +57,21 % par rapport à 2021.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q04",
+   "question": "Combien d'unités de production artisanale ont été enregistrées dans les bureaux communaux d'artisanat en 2022 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2022",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2022",
+     "page": 13
+    },
+    {
+     "doc_id": "annuaire_2022",
+     "page": 34
+    },
+    {
+     "doc_id": "rapport_analyse_2022",
+     "page": 12
+    },
+    {
+     "doc_id": "rapport_analyse_2022",
+     "page": 22
+    }
+   ],
+   "valeurs_attendues": [
+    "5 912",
+    "3,59"
+   ],
+   "termes_cles": [
+    "UPA"
+   ],
+   "reponse_attendue": "5 912 UPA, en baisse de 3,59 % par rapport à 2021.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q05",
+   "question": "Combien de PME ont été créées dans les CFCE en 2022 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2022",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2022",
+     "page": 12
+    },
+    {
+     "doc_id": "annuaire_2022",
+     "page": 21
+    },
+    {
+     "doc_id": "annuaire_2022",
+     "page": 22
+    },
+    {
+     "doc_id": "annuaire_2022",
+     "page": 23
+    },
+    {
+     "doc_id": "annuaire_2022",
+     "page": 24
+    },
+    {
+     "doc_id": "annuaire_2022",
+     "page": 25
+    },
+    {
+     "doc_id": "annuaire_2022",
+     "page": 26
+    },
+    {
+     "doc_id": "annuaire_2022",
+     "page": 40
+    },
+    {
+     "doc_id": "annuaire_2023",
+     "page": 17
+    },
+    {
+     "doc_id": "annuaire_2023",
+     "page": 18
+    },
+    {
+     "doc_id": "annuaire_2023",
+     "page": 20
+    },
+    {
+     "doc_id": "annuaire_2023",
+     "page": 21
+    },
+    {
+     "doc_id": "annuaire_2023",
+     "page": 22
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 19
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 20
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 22
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 24
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 25
+    },
+    {
+     "doc_id": "rapport_analyse_2022",
+     "page": 10
+    },
+    {
+     "doc_id": "rapport_analyse_2022",
+     "page": 22
+    },
+    {
+     "doc_id": "rapport_analyse_2023",
+     "page": 11
+    },
+    {
+     "doc_id": "rapport_analyse_2024",
+     "page": 9
+    }
+   ],
+   "valeurs_attendues": [
+    "15 601"
+   ],
+   "termes_cles": [
+    "CFCE"
+   ],
+   "reponse_attendue": "15 601 PME créées dans les CFCE.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q06",
+   "question": "Quelle est la part des promoteurs de sexe masculin parmi les entreprises créées en 2023 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2023",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2023",
+     "page": 8
+    },
+    {
+     "doc_id": "annuaire_2023",
+     "page": 22
+    },
+    {
+     "doc_id": "rapport_analyse_2024",
+     "page": 11
+    }
+   ],
+   "valeurs_attendues": [
+    "73,43"
+   ],
+   "termes_cles": [
+    "masculin"
+   ],
+   "reponse_attendue": "73,43 % des promoteurs sont des hommes.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q07",
+   "question": "Quelle proportion d'entreprises a été créée par des femmes en 2023, comparée à 2022 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2023",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2023",
+     "page": 9
+    },
+    {
+     "doc_id": "rapport_analyse_2024",
+     "page": 11
+    }
+   ],
+   "valeurs_attendues": [
+    "26,57",
+    "25,87"
+   ],
+   "termes_cles": [
+    "féminin"
+   ],
+   "reponse_attendue": "26,57 % en 2023 contre 25,87 % en 2022.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q08",
+   "question": "Combien d'UPA les bureaux communaux ont-ils enregistrées en 2023 et comment ce chiffre a-t-il évolué depuis 2022 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2023",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2023",
+     "page": 32
+    }
+   ],
+   "valeurs_attendues": [
+    "3 557",
+    "39,83"
+   ],
+   "termes_cles": [
+    "UPA"
+   ],
+   "reponse_attendue": "3 557 UPA, soit une baisse de 39,83 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q09",
+   "question": "Quel est le stock de PME estimé en 2024 et le nombre total d'entreprises en activité ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2024",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2024",
+     "page": 9
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 16
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 17
+    },
+    {
+     "doc_id": "rapport_analyse_2024",
+     "page": 7
+    }
+   ],
+   "valeurs_attendues": [
+    "443 524",
+    "444 302"
+   ],
+   "termes_cles": [
+    "PME"
+   ],
+   "reponse_attendue": "443 524 PME sur 444 302 entreprises.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q10",
+   "question": "Combien d'entreprises créées dans les CFCE en 2024 relèvent du secteur tertiaire ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2024",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2024",
+     "page": 10
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 20
+    }
+   ],
+   "valeurs_attendues": [
+    "18 029",
+    "85,4"
+   ],
+   "termes_cles": [
+    "tertiaire"
+   ],
+   "reponse_attendue": "18 029 créations, soit 85,4 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q11",
+   "question": "Combien d'UPA les bureaux communaux d'artisanat ont-ils enregistrées en 2024 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2024",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2024",
+     "page": 2
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 10
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 37
+    },
+    {
+     "doc_id": "rapport_analyse_2024",
+     "page": 2
+    }
+   ],
+   "valeurs_attendues": [
+    "3 602",
+    "1,3"
+   ],
+   "termes_cles": [
+    "UPA"
+   ],
+   "reponse_attendue": "3 602 UPA, en hausse de 1,3 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q12",
+   "question": "Sur quelles enquêtes repose l'estimation du nombre d'unités de production informelles en 2024 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2024",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2023",
+     "page": 47
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 44
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 45
+    },
+    {
+     "doc_id": "contexte_competitivite_pme_2024",
+     "page": 35
+    }
+   ],
+   "valeurs_attendues": [
+    "2,5",
+    "3,4"
+   ],
+   "termes_cles": [
+    "EESI"
+   ],
+   "reponse_attendue": "Interpolation à partir de l'EESI2 (2,5 millions, 2010) et de l'EESI3 (3,4 millions, 2021).",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q13",
+   "question": "Combien de PME du secteur secondaire comptait-on en 2016 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2024",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2021",
+     "page": 20
+    },
+    {
+     "doc_id": "annuaire_2022",
+     "page": 19
+    },
+    {
+     "doc_id": "annuaire_2023",
+     "page": 15
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 17
+    },
+    {
+     "doc_id": "rapport_analyse_2021",
+     "page": 10
+    }
+   ],
+   "valeurs_attendues": [
+    "31 694"
+   ],
+   "termes_cles": [
+    "Secondaire"
+   ],
+   "reponse_attendue": "31 694 PME du secteur secondaire en 2016.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q14",
+   "question": "Combien de PME ont été créées au CFCE de Douala en 2024 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2024",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2024",
+     "page": 19
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 21
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 23
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 24
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 25
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 27
+    },
+    {
+     "doc_id": "rapport_analyse_2024",
+     "page": 11
+    }
+   ],
+   "valeurs_attendues": [
+    "6 815"
+   ],
+   "termes_cles": [
+    "Douala"
+   ],
+   "reponse_attendue": "6 815 PME créées au CFCE de Douala.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q15",
+   "question": "Quelle a été la croissance économique mondiale en 2024 selon le FMI ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2024",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2021",
+     "page": 35
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 12
+    },
+    {
+     "doc_id": "contexte_inflation_2023",
+     "page": 7
+    },
+    {
+     "doc_id": "note_conjoncture_2025_T1",
+     "page": 5
+    },
+    {
+     "doc_id": "note_conjoncture_2024_T2",
+     "page": 5
+    }
+   ],
+   "valeurs_attendues": [
+    "3,2",
+    "3,0"
+   ],
+   "termes_cles": [
+    "FMI",
+    "mondiale"
+   ],
+   "reponse_attendue": "3,2 % en 2024 contre 3,0 % en 2023.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q16",
+   "question": "À combien s'élève le concours financier du FMI au Cameroun ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "annuaire_2021",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2021",
+     "page": 40
+    }
+   ],
+   "valeurs_attendues": [
+    "483",
+    "375"
+   ],
+   "termes_cles": [
+    "DTS"
+   ],
+   "reponse_attendue": "483 millions de DTS, environ 375 milliards de FCFA.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q17",
+   "question": "Quelle part du stock de PME est concentrée à Douala et à Yaoundé ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2024",
+   "pertinents": [
+    {
+     "doc_id": "rapport_analyse_2021",
+     "page": 10
+    },
+    {
+     "doc_id": "rapport_analyse_2022",
+     "page": 8
+    },
+    {
+     "doc_id": "rapport_analyse_2023",
+     "page": 9
+    },
+    {
+     "doc_id": "rapport_analyse_2024",
+     "page": 8
+    }
+   ],
+   "valeurs_attendues": [
+    "33,5",
+    "23,9",
+    "57,4"
+   ],
+   "termes_cles": [
+    "Douala"
+   ],
+   "reponse_attendue": "Douala 33,5 %, Yaoundé 23,9 %, soit 57,4 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q18",
+   "question": "Quelle est la part des PME du secteur secondaire en 2022 et en 2024 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2024",
+   "pertinents": [
+    {
+     "doc_id": "rapport_analyse_2024",
+     "page": 8
+    }
+   ],
+   "valeurs_attendues": [
+    "18,16",
+    "22,70"
+   ],
+   "termes_cles": [
+    "secondaire"
+   ],
+   "reponse_attendue": "18,16 % en 2022, 22,70 % en 2024.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q19",
+   "question": "De combien les créations d'entreprises dans les CFCE ont-elles augmenté entre 2019 et 2024 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2024",
+   "pertinents": [
+    {
+     "doc_id": "rapport_analyse_2024",
+     "page": 10
+    }
+   ],
+   "valeurs_attendues": [
+    "14 229",
+    "21 132",
+    "48,5"
+   ],
+   "termes_cles": [
+    "CFCE"
+   ],
+   "reponse_attendue": "De 14 229 à 21 132, soit +48,5 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q20",
+   "question": "Combien d'OES ont été créées en 2024 et quelle est l'évolution par rapport à 2023 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2024",
+   "pertinents": [
+    {
+     "doc_id": "rapport_analyse_2024",
+     "page": 12
+    }
+   ],
+   "valeurs_attendues": [
+    "3 909",
+    "3 865",
+    "1,1"
+   ],
+   "termes_cles": [
+    "OES"
+   ],
+   "reponse_attendue": "3 909 contre 3 865 en 2023, soit +1,1 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q21",
+   "question": "Dans quelles régions se concentrent les créations d'OES en 2024 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2024",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2023",
+     "page": 26
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 30
+    },
+    {
+     "doc_id": "annuaire_2024",
+     "page": 31
+    },
+    {
+     "doc_id": "rapport_analyse_2024",
+     "page": 13
+    }
+   ],
+   "valeurs_attendues": [
+    "31,10",
+    "18,1"
+   ],
+   "termes_cles": [
+    "Sud"
+   ],
+   "reponse_attendue": "Sud (31,10 %), Centre (18,1 %), Littoral, Nord.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q22",
+   "question": "Comment ont évolué les enregistrements d'UPA dans les bureaux communaux depuis 2019 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2024",
+   "pertinents": [
+    {
+     "doc_id": "rapport_analyse_2024",
+     "page": 14
+    }
+   ],
+   "valeurs_attendues": [
+    "68,74"
+   ],
+   "termes_cles": [
+    "UPA"
+   ],
+   "reponse_attendue": "Forte baisse : -68,74 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q23",
+   "question": "Quelle proportion des UPA enregistrées en 2024 est portée par des femmes ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2024",
+   "pertinents": [
+    {
+     "doc_id": "rapport_analyse_2024",
+     "page": 15
+    }
+   ],
+   "valeurs_attendues": [
+    "53,7",
+    "46,3"
+   ],
+   "termes_cles": [
+    "femmes"
+   ],
+   "reponse_attendue": "53,7 % contre 46,3 % pour les hommes.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q24",
+   "question": "Combien de PME formelles le Cameroun pourrait-il compter au regard de la vitalité du secteur informel ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2024",
+   "pertinents": [
+    {
+     "doc_id": "rapport_analyse_2024",
+     "page": 17
+    }
+   ],
+   "valeurs_attendues": [
+    "2 000 000"
+   ],
+   "termes_cles": [
+    "informel"
+   ],
+   "reponse_attendue": "Environ 2 000 000 de PME formelles.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q25",
+   "question": "Combien de PME sont bien structurées et font une déclaration statistique et fiscale ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2024",
+   "pertinents": [
+    {
+     "doc_id": "rapport_analyse_2024",
+     "page": 9
+    }
+   ],
+   "valeurs_attendues": [
+    "62 124"
+   ],
+   "termes_cles": [
+    "déclaration"
+   ],
+   "reponse_attendue": "62 124 PME, soit 14 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q26",
+   "question": "Quelle proportion des promoteurs de PME a au plus 40 ans en 2023 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2023",
+   "pertinents": [
+    {
+     "doc_id": "rapport_analyse_2023",
+     "page": 10
+    }
+   ],
+   "valeurs_attendues": [
+    "69,77"
+   ],
+   "termes_cles": [
+    "40 ans"
+   ],
+   "reponse_attendue": "69,77 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q27",
+   "question": "Comment a évolué la part des OES dans le secteur secondaire entre 2022 et 2023 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2023",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2022",
+     "page": 31
+    },
+    {
+     "doc_id": "annuaire_2022",
+     "page": 41
+    },
+    {
+     "doc_id": "note_conjoncture_2022_T3",
+     "page": 18
+    },
+    {
+     "doc_id": "rapport_analyse_2022",
+     "page": 11
+    },
+    {
+     "doc_id": "rapport_analyse_2023",
+     "page": 14
+    },
+    {
+     "doc_id": "rapport_analyse_2023",
+     "page": 15
+    }
+   ],
+   "valeurs_attendues": [
+    "15,18"
+   ],
+   "termes_cles": [
+    "secondaire"
+   ],
+   "reponse_attendue": "De 15,18 % à 20,39 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q28",
+   "question": "Comment évolue la part des hommes dans les enregistrements d'UPA depuis 2018 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2023",
+   "pertinents": [
+    {
+     "doc_id": "rapport_analyse_2023",
+     "page": 17
+    }
+   ],
+   "valeurs_attendues": [
+    "64,9",
+    "51,22"
+   ],
+   "termes_cles": [
+    "hommes"
+   ],
+   "reponse_attendue": "De 64,9 % en 2018 à 51,22 % en 2023.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q29",
+   "question": "Quel montant de crédits la BC-PME a-t-elle débloqué en 2022 et pour combien d'entreprises ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2022",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2022",
+     "page": 27
+    },
+    {
+     "doc_id": "rapport_analyse_2022",
+     "page": 17
+    }
+   ],
+   "valeurs_attendues": [
+    "10 942 703 443",
+    "434"
+   ],
+   "termes_cles": [
+    "BC-PME"
+   ],
+   "reponse_attendue": "10 942 703 443 FCFA pour 434 entreprises.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q30",
+   "question": "Quelle quantité de blé le Cameroun a-t-il importée en 2021 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2022",
+   "pertinents": [
+    {
+     "doc_id": "rapport_analyse_2022",
+     "page": 16
+    }
+   ],
+   "valeurs_attendues": [
+    "966 400"
+   ],
+   "termes_cles": [
+    "blé"
+   ],
+   "reponse_attendue": "966 400 tonnes.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q31",
+   "question": "Dans quelles régions l'enregistrement des UPA est-il majoritaire en 2022 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2022",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2022",
+     "page": 40
+    },
+    {
+     "doc_id": "rapport_analyse_2022",
+     "page": 12
+    }
+   ],
+   "valeurs_attendues": [
+    "26,49",
+    "16,85"
+   ],
+   "termes_cles": [
+    "Extrême-Nord"
+   ],
+   "reponse_attendue": "Extrême-Nord (26,49 %), Centre (16,85 %), Littoral.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q32",
+   "question": "Combien d'artisans ont été enregistrés dans les registres communaux en 2021 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2021",
+   "pertinents": [
+    {
+     "doc_id": "rapport_analyse_2021",
+     "page": 15
+    }
+   ],
+   "valeurs_attendues": [
+    "6 132",
+    "7 482"
+   ],
+   "termes_cles": [
+    "artisans"
+   ],
+   "reponse_attendue": "6 132 contre 7 482 en 2020.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q33",
+   "question": "Combien de formalisations d'entreprises supplémentaires a-t-on dénombré en 2021 par rapport à 2020 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2021",
+   "pertinents": [
+    {
+     "doc_id": "rapport_analyse_2021",
+     "page": 11
+    }
+   ],
+   "valeurs_attendues": [
+    "4 910",
+    "45,96"
+   ],
+   "termes_cles": [
+    "formalisations"
+   ],
+   "reponse_attendue": "4 910 de plus, soit +45,96 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q34",
+   "question": "Quel est le taux de mortalité des très petites entreprises selon le RGE-2 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "rapport_analyse_2021",
+   "pertinents": [
+    {
+     "doc_id": "rapport_analyse_2021",
+     "page": 13
+    }
+   ],
+   "valeurs_attendues": [
+    "45,6"
+   ],
+   "termes_cles": [
+    "mortalité"
+   ],
+   "reponse_attendue": "45,6 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q35",
+   "question": "Sur combien d'entreprises repose la note de conjoncture du 3e trimestre 2022 et quel est le taux de couverture ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "note_conjoncture_2022_T3",
+   "pertinents": [
+    {
+     "doc_id": "note_conjoncture_2022_T3",
+     "page": 5
+    },
+    {
+     "doc_id": "note_conjoncture_2022_T3",
+     "page": 17
+    }
+   ],
+   "valeurs_attendues": [
+    "314",
+    "62,8"
+   ],
+   "termes_cles": [
+    "couverture"
+   ],
+   "reponse_attendue": "314 entreprises, taux de couverture de 62,8 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q36",
+   "question": "Quelle proportion de chefs d'entreprise n'a pas recruté de personnel au 3e trimestre 2022 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "note_conjoncture_2022_T3",
+   "pertinents": [
+    {
+     "doc_id": "note_conjoncture_2022_T3",
+     "page": 11
+    },
+    {
+     "doc_id": "note_conjoncture_2022_T3",
+     "page": 15
+    }
+   ],
+   "valeurs_attendues": [
+    "88,2"
+   ],
+   "termes_cles": [
+    "recruté"
+   ],
+   "reponse_attendue": "88,2 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q37",
+   "question": "Quelle part des chefs d'entreprise a réalisé de nouveaux investissements au 3e trimestre 2022 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "note_conjoncture_2022_T3",
+   "pertinents": [
+    {
+     "doc_id": "note_conjoncture_2022_T3",
+     "page": 12
+    },
+    {
+     "doc_id": "note_conjoncture_2022_T3",
+     "page": 15
+    }
+   ],
+   "valeurs_attendues": [
+    "18,9"
+   ],
+   "termes_cles": [
+    "investissements"
+   ],
+   "reponse_attendue": "18,9 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q38",
+   "question": "Quelle proportion de PME a recruté au moins un employé au 4e trimestre 2023 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "note_conjoncture_2023_T4",
+   "pertinents": [
+    {
+     "doc_id": "note_conjoncture_2023_T4",
+     "page": 13
+    }
+   ],
+   "valeurs_attendues": [
+    "23,1",
+    "14,8"
+   ],
+   "termes_cles": [
+    "recruté"
+   ],
+   "reponse_attendue": "23,1 % contre 14,8 % au trimestre précédent.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q39",
+   "question": "Quelle part des OES a connu une trésorerie difficile au 4e trimestre 2023 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "note_conjoncture_2023_T4",
+   "pertinents": [
+    {
+     "doc_id": "note_conjoncture_2023_T4",
+     "page": 18
+    }
+   ],
+   "valeurs_attendues": [
+    "63,8",
+    "53,4"
+   ],
+   "termes_cles": [
+    "trésorerie"
+   ],
+   "reponse_attendue": "63,8 % contre 53,4 % au 3e trimestre.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q40",
+   "question": "Quelle proportion d'UPA a vu son volume d'activité s'améliorer au 4e trimestre 2023 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "note_conjoncture_2023_T4",
+   "pertinents": [
+    {
+     "doc_id": "note_conjoncture_2023_T4",
+     "page": 20
+    },
+    {
+     "doc_id": "note_conjoncture_2023_T4",
+     "page": 28
+    }
+   ],
+   "valeurs_attendues": [
+    "72,8"
+   ],
+   "termes_cles": [
+    "UPA"
+   ],
+   "reponse_attendue": "72,8 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q41",
+   "question": "Quelle proportion de PME a enregistré un résultat net négatif au premier trimestre 2024 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "note_conjoncture_2024_T1",
+   "pertinents": [
+    {
+     "doc_id": "note_conjoncture_2024_T1",
+     "page": 11
+    },
+    {
+     "doc_id": "note_conjoncture_2025_T1",
+     "page": 10
+    },
+    {
+     "doc_id": "note_conjoncture_2024_T2",
+     "page": 10
+    },
+    {
+     "doc_id": "note_conjoncture_2024_T3",
+     "page": 11
+    }
+   ],
+   "valeurs_attendues": [
+    "48,7",
+    "26,2"
+   ],
+   "termes_cles": [
+    "résultat net"
+   ],
+   "reponse_attendue": "48,7 % négatif, 26,2 % nul.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q42",
+   "question": "Quelles sont les principales raisons de la hausse des coûts de production au premier trimestre 2024 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "note_conjoncture_2024_T1",
+   "pertinents": [
+    {
+     "doc_id": "note_conjoncture_2024_T1",
+     "page": 10
+    }
+   ],
+   "valeurs_attendues": [
+    "38,35",
+    "27,78"
+   ],
+   "termes_cles": [
+    "matières premières"
+   ],
+   "reponse_attendue": "Matières premières (38,35 %), transport (27,78 %), énergie.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q43",
+   "question": "Quelle part des PME n'a pas réalisé de nouveaux investissements au 1er trimestre 2024 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "note_conjoncture_2024_T1",
+   "pertinents": [
+    {
+     "doc_id": "note_conjoncture_2024_T1",
+     "page": 12
+    },
+    {
+     "doc_id": "note_conjoncture_2025_T1",
+     "page": 11
+    },
+    {
+     "doc_id": "note_conjoncture_2024_T2",
+     "page": 11
+    }
+   ],
+   "valeurs_attendues": [
+    "71,3"
+   ],
+   "termes_cles": [
+    "investissements"
+   ],
+   "reponse_attendue": "71,3 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q44",
+   "question": "Quelle proportion de PME déclare une trésorerie difficile au 2e trimestre 2024 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "note_conjoncture_2024_T2",
+   "pertinents": [
+    {
+     "doc_id": "note_conjoncture_2024_T2",
+     "page": 11
+    },
+    {
+     "doc_id": "note_conjoncture_2024_T3",
+     "page": 12
+    }
+   ],
+   "valeurs_attendues": [
+    "69,80"
+   ],
+   "termes_cles": [
+    "trésorerie"
+   ],
+   "reponse_attendue": "Plus de 69,80 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q45",
+   "question": "Quelles raisons les PME avancent-elles pour expliquer leur niveau d'activité au deuxième trimestre 2024 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "note_conjoncture_2024_T2",
+   "pertinents": [
+    {
+     "doc_id": "note_conjoncture_2024_T2",
+     "page": 8
+    }
+   ],
+   "valeurs_attendues": [
+    "56,20",
+    "30,60"
+   ],
+   "termes_cles": [
+    "concurrence"
+   ],
+   "reponse_attendue": "Inflation (56,20 %), concurrence (30,60 %), financement, insécurité.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q46",
+   "question": "Comment a évolué la part des chefs d'entreprise percevant une dynamique positive de leur activité jusqu'au 3e trimestre 2024 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "note_conjoncture_2024_T3",
+   "pertinents": [
+    {
+     "doc_id": "note_conjoncture_2024_T3",
+     "page": 8
+    }
+   ],
+   "valeurs_attendues": [
+    "55,7",
+    "41,0",
+    "38,0"
+   ],
+   "termes_cles": [
+    "dynamique"
+   ],
+   "reponse_attendue": "55,7 % (T3 2023), 41,0 % (T2 2024), 38,0 % (T3 2024).",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q47",
+   "question": "Quelle proportion des chefs d'entreprise jugeait ses coûts de production compétitifs au 3e trimestre 2024 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "note_conjoncture_2024_T3",
+   "pertinents": [
+    {
+     "doc_id": "note_conjoncture_2024_T3",
+     "page": 9
+    }
+   ],
+   "valeurs_attendues": [
+    "73,8"
+   ],
+   "termes_cles": [
+    "compétitifs"
+   ],
+   "reponse_attendue": "73,8 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q48",
+   "question": "Quelle part des PME juge sa situation de trésorerie soutenable au premier trimestre 2025 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "note_conjoncture_2025_T1",
+   "pertinents": [
+    {
+     "doc_id": "note_conjoncture_2025_T1",
+     "page": 11
+    }
+   ],
+   "valeurs_attendues": [
+    "30,6",
+    "36,1"
+   ],
+   "termes_cles": [
+    "trésorerie"
+   ],
+   "reponse_attendue": "30,6 % contre 36,1 % au trimestre précédent.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q49",
+   "question": "Quelle part des entreprises déclarait un résultat net négatif au premier trimestre 2025 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "note_conjoncture_2025_T1",
+   "pertinents": [
+    {
+     "doc_id": "note_conjoncture_2025_T1",
+     "page": 10
+    }
+   ],
+   "valeurs_attendues": [
+    "53,5",
+    "51,6"
+   ],
+   "termes_cles": [
+    "résultat net"
+   ],
+   "reponse_attendue": "53,5 % contre 51,6 % au T4 2024.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q50",
+   "question": "Quel était le taux d'inflation mondial en 2022 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "contexte_inflation_2023",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2022",
+     "page": 15
+    },
+    {
+     "doc_id": "contexte_inflation_2023",
+     "page": 5
+    },
+    {
+     "doc_id": "contexte_inflation_2023",
+     "page": 6
+    },
+    {
+     "doc_id": "contexte_inflation_2023",
+     "page": 7
+    },
+    {
+     "doc_id": "contexte_inflation_2023",
+     "page": 22
+    },
+    {
+     "doc_id": "rapport_analyse_2022",
+     "page": 6
+    }
+   ],
+   "valeurs_attendues": [
+    "8,8",
+    "4,7"
+   ],
+   "termes_cles": [
+    "inflation"
+   ],
+   "reponse_attendue": "8,8 % en 2022 contre 4,7 % en 2021.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q51",
+   "question": "Quel était le taux d'inflation dans la zone CEMAC en 2022 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "contexte_inflation_2023",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2021",
+     "page": 35
+    },
+    {
+     "doc_id": "contexte_inflation_2023",
+     "page": 5
+    },
+    {
+     "doc_id": "contexte_inflation_2023",
+     "page": 10
+    }
+   ],
+   "valeurs_attendues": [
+    "5,5",
+    "1,5"
+   ],
+   "termes_cles": [
+    "CEMAC"
+   ],
+   "reponse_attendue": "5,5 % en 2022 contre 1,5 % en 2021.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q52",
+   "question": "Quelles régions portent l'inflation au Cameroun en 2022 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "contexte_inflation_2023",
+   "pertinents": [
+    {
+     "doc_id": "contexte_inflation_2023",
+     "page": 13
+    }
+   ],
+   "valeurs_attendues": [
+    "7,4",
+    "7,3",
+    "7,1"
+   ],
+   "termes_cles": [
+    "Adamaoua"
+   ],
+   "reponse_attendue": "Adamaoua (7,4 %), Ouest (7,3 %), Sud-Ouest (7,1 %).",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q53",
+   "question": "Quel montant de subvention sur les carburants le Cameroun a-t-il levé en 2023 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "contexte_inflation_2023",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2024",
+     "page": 55
+    },
+    {
+     "doc_id": "contexte_inflation_2023",
+     "page": 15
+    }
+   ],
+   "valeurs_attendues": [
+    "700"
+   ],
+   "termes_cles": [
+    "subvention"
+   ],
+   "reponse_attendue": "Près de 700 milliards de FCFA.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q54",
+   "question": "Quelle part des emplois créés par les entreprises est fournie par les PME ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "contexte_competitivite_pme_2024",
+   "pertinents": [
+    {
+     "doc_id": "contexte_competitivite_pme_2024",
+     "page": 23
+    }
+   ],
+   "valeurs_attendues": [
+    "70,20",
+    "3,38"
+   ],
+   "termes_cles": [
+    "emplois"
+   ],
+   "reponse_attendue": "70,20 % des emplois ; 3,38 millions d'entreprises.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q55",
+   "question": "Quel montant la loi de finances 2021 a-t-elle alloué à la ligne de garantie et quelle part revient aux PME ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "contexte_competitivite_pme_2024",
+   "pertinents": [
+    {
+     "doc_id": "contexte_competitivite_pme_2024",
+     "page": 25
+    },
+    {
+     "doc_id": "contexte_competitivite_pme_2024",
+     "page": 37
+    },
+    {
+     "doc_id": "note_conjoncture_2023_T4",
+     "page": 26
+    }
+   ],
+   "valeurs_attendues": [
+    "200",
+    "70"
+   ],
+   "termes_cles": [
+    "garantie"
+   ],
+   "reponse_attendue": "200 milliards de FCFA, dont 70 % pour les PME.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q56",
+   "question": "Quel volume d'huile de palme le Cameroun a-t-il importé en 2023 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "contexte_competitivite_pme_2024",
+   "pertinents": [
+    {
+     "doc_id": "contexte_competitivite_pme_2024",
+     "page": 17
+    }
+   ],
+   "valeurs_attendues": [
+    "144 068",
+    "21,2"
+   ],
+   "termes_cles": [
+    "huile de palme"
+   ],
+   "reponse_attendue": "144 068 tonnes, couvrant 21,2 % du déficit.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q57",
+   "question": "Quel montant de ligne de crédit a été mis en place en faveur des TPE et des PME ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "contexte_bulletin_2024",
+   "pertinents": [
+    {
+     "doc_id": "contexte_bulletin_2024",
+     "page": 2
+    }
+   ],
+   "valeurs_attendues": [
+    "10"
+   ],
+   "termes_cles": [
+    "ligne de credits de 10 milliards"
+   ],
+   "reponse_attendue": "Une ligne de crédits de 10 milliards de FCFA.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q58",
+   "question": "Quelle proportion des chefs d'entreprise juge les coûts et conditionnalités du crédit comme des obstacles ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "contexte_competitivite_pme_2024",
+   "pertinents": [
+    {
+     "doc_id": "contexte_competitivite_pme_2024",
+     "page": 24
+    }
+   ],
+   "valeurs_attendues": [
+    "92"
+   ],
+   "termes_cles": [
+    "conditionnalités"
+   ],
+   "reponse_attendue": "92 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "Q59",
+   "question": "Quelles croissance et inflation le Cameroun a-t-il connues en 2022 selon le bulletin sur la loi de finances 2023 ?",
+   "hors_corpus": false,
+   "source": "auteur",
+   "document_cible": "contexte_bulletin_2023",
+   "pertinents": [
+    {
+     "doc_id": "annuaire_2022",
+     "page": 15
+    },
+    {
+     "doc_id": "contexte_bulletin_2023",
+     "page": 1
+    },
+    {
+     "doc_id": "note_conjoncture_2024_T3",
+     "page": 7
+    },
+    {
+     "doc_id": "rapport_analyse_2022",
+     "page": 6
+    }
+   ],
+   "valeurs_attendues": [
+    "3.4",
+    "6.2"
+   ],
+   "termes_cles": [
+    "inflation"
+   ],
+   "reponse_attendue": "Croissance de 3,4 % et inflation de 6,2 %.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "H01",
+   "question": "Quel est le taux de chômage des jeunes diplômés au Sénégal en 2023 ?",
+   "hors_corpus": true,
+   "source": "auteur",
+   "pertinents": [],
+   "valeurs_attendues": [],
+   "reponse_attendue": "Abstention attendue.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "H02",
+   "question": "Combien d'entreprises ont été créées au Gabon en 2024 ?",
+   "hors_corpus": true,
+   "source": "auteur",
+   "pertinents": [],
+   "valeurs_attendues": [],
+   "reponse_attendue": "Abstention attendue.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "H03",
+   "question": "Quel est le cours de l'action MTN à la bourse de Douala ?",
+   "hors_corpus": true,
+   "source": "auteur",
+   "pertinents": [],
+   "valeurs_attendues": [],
+   "reponse_attendue": "Abstention attendue.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "H04",
+   "question": "Quelle est la recette traditionnelle du ndolé ?",
+   "hors_corpus": true,
+   "source": "auteur",
+   "pertinents": [],
+   "valeurs_attendues": [],
+   "reponse_attendue": "Abstention attendue.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "H05",
+   "question": "Quels ont été les résultats des Lions indomptables à la CAN 2024 ?",
+   "hors_corpus": true,
+   "source": "auteur",
+   "pertinents": [],
+   "valeurs_attendues": [],
+   "reponse_attendue": "Abstention attendue.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "H06",
+   "question": "Quel est le salaire moyen des enseignants du secondaire au Cameroun ?",
+   "hors_corpus": true,
+   "source": "auteur",
+   "pertinents": [],
+   "valeurs_attendues": [],
+   "reponse_attendue": "Abstention attendue.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "H07",
+   "question": "Combien de touristes étrangers ont visité le Kenya en 2022 ?",
+   "hors_corpus": true,
+   "source": "auteur",
+   "pertinents": [],
+   "valeurs_attendues": [],
+   "reponse_attendue": "Abstention attendue.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "H08",
+   "question": "Combien de lits d'hôpital compte le Tchad par habitant ?",
+   "hors_corpus": true,
+   "source": "auteur",
+   "pertinents": [],
+   "valeurs_attendues": [],
+   "reponse_attendue": "Abstention attendue.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "H09",
+   "question": "Quelle est la production de cacao de la Côte d'Ivoire en 2024 ?",
+   "hors_corpus": true,
+   "source": "auteur",
+   "pertinents": [],
+   "valeurs_attendues": [],
+   "reponse_attendue": "Abstention attendue.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  },
+  {
+   "id": "H10",
+   "question": "Quel est le taux de pénétration de l'internet mobile en Europe ?",
+   "hors_corpus": true,
+   "source": "auteur",
+   "pertinents": [],
+   "valeurs_attendues": [],
+   "reponse_attendue": "Abstention attendue.",
+   "annotateur_1": {
+    "pertinence": null
+   },
+   "annotateur_2": {
+    "pertinence": null
+   }
+  }
+ ]
+}

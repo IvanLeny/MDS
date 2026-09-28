@@ -1,0 +1,24 @@
+# Prototype MINPMEESA — dépendances épinglées (Python 3.11).
+# Toutes s'installent par roues précompilées sous Windows 64 bits : aucun
+# compilateur C n'est requis.
+pymupdf==1.28.2          # lecture des PDF (texte positionné, tableaux)
+rank-bm25==0.2.2         # index lexical BM25
+faiss-cpu==1.15.1        # index dense sur disque
+onnxruntime==1.30.0      # exécution de l'encodeur au format ONNX (sans PyTorch)
+tokenizers==0.23.2       # découpage en jetons de l'encodeur
+numpy==2.4.6
+scipy==1.17.1            # test de Wilcoxon apparié
+PyYAML==6.0.1            # config.yaml, lexique
+python-docx==1.2.0       # export Word
+openpyxl==3.1.5          # fichiers Excel (appariement, grilles H3)
+matplotlib==3.11.2       # figures du chapitre 4
+pandas==3.0.6            # tableaux de l'interface
+streamlit==1.64.0        # interface locale
+pytest==9.1.1            # tests
+
+# Facultatif (installés par scripts/telecharger_modeles.py sur un poste
+# connecté, une seule fois) :
+#   sentence-transformers  : pour télécharger et convertir bge-m3, camembert
+#   llama-cpp-python       : repli sans serveur si Ollama n'est pas installé
+#                            (roue précompilée CPU : --extra-index-url
+#                             https://abetlen.github.io/llama-cpp-python/whl/cpu)

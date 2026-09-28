@@ -1,0 +1,11 @@
+# Modèles téléchargés (plusieurs Go) : récupérés par scripts/telecharger_modeles.py
+models/
+# Base et index : entièrement reconstructibles par python -m minpmeesa.ingestion.build
+data/base/
+# Fichiers temporaires
+__pycache__/
+*.pyc
+.pytest_cache/
+~$*.docx
+~$*.xlsx
+.streamlit/secrets.toml

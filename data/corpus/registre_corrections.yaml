@@ -1,0 +1,26 @@
+# Corrections manuelles du registre, repérées par l'empreinte sha256 du PDF
+# (le nom de fichier n'est jamais une source de vérité).
+#
+# Le type, l'exercice et le trimestre sont détectés par le contenu : les 18 PDF
+# sont correctement détectés sans correction (vérifié le 2026-09-28, voir
+# data/corpus/inventaire.csv). Les entrées ci-dessous ne fixent que ce que le
+# contenu ne dit pas : un identifiant et un titre lisibles pour les documents
+# de contexte, et le statut de diffusion.
+#
+# STATUT DE DIFFUSION : tous les documents sont supposés « publie ».
+# À CONFIRMER auprès de la Cellule des Statistiques avant exploitation.
+# Aucun document réel n'est marqué « interne » pour les besoins d'un test : le
+# cloisonnement est testé avec un document synthétique (tests/test_statut.py).
+documents:
+  cc93c0d5939f1beec39219ca39b2854cb077b1acf1c96f87d97ee15c7ab5598d:
+    doc_id: contexte_inflation_2023
+    titre: "Note de perspective n°001/2023 : situation inflationniste et effets sur les PMEESA (juillet 2023)"
+  aa864e8cf7bda2334ff2a6025039baf302f07021668c0fcf5b1a1aceb2421353:
+    doc_id: contexte_competitivite_pme_2024
+    titre: "Note de perspective n°001/2024 : compétitivité des PME camerounaises"
+  9704b9be12d26fd1fc176cd20f11a46ee6feaa581c2f6c9aaa1e9cdf9e916a13:
+    doc_id: contexte_bulletin_2023
+    titre: "Bulletin PMEESA : innovations fiscales et douanières de la loi de finances 2023 (import-substitution)"
+  3e977c2fb0fedcae86ef94f5de36e464bfd0a1265dbcb810be97ccbffe8b8fe0:
+    doc_id: contexte_bulletin_2024
+    titre: "Bulletin d'informations n°4 PMEESA : offre de crédits et garantie de l'État (avril 2024)"
