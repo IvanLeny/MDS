@@ -10,7 +10,7 @@ from ..generation.llm import obtenir
 
 def main():
     ap = argparse.ArgumentParser(prog="minpmeesa")
-    ap.add_argument("--llm", default=None, choices=["ollama", "llamacpp", "none"])
+    ap.add_argument("--llm", default=None, choices=["ollama", "api", "llamacpp", "none"])
     sp = ap.add_subparsers(dest="cmd", required=True)
     sp.add_parser("construire", help="reconstruire la base depuis data/corpus")
     c = sp.add_parser("consulter"); c.add_argument("question")

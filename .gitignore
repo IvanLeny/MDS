@@ -6,3 +6,4 @@ models/*
 data/base/
 .venv/
 *.egg-info/
+data/cache/

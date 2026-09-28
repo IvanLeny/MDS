@@ -36,7 +36,7 @@ def embeddings(cfg):
 
 
 def llm(cfg):
-    for nom in cfg["llm"]["candidats"]:
+    for nom in cfg["llm"]["ollama"]["candidats"]:
         print(f"ollama pull {nom}")
         subprocess.run(["ollama", "pull", nom], check=False)
 

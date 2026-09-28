@@ -282,7 +282,7 @@ def resume(R: dict, cfg: dict) -> str:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--llm", default=None, choices=["none", "ollama", "llamacpp"])
+    ap.add_argument("--llm", default=None, choices=["ollama", "api", "llamacpp", "none"])
     ap.add_argument("--sans-seuil", action="store_true", help="ne pas reporter le seuil calibré dans config.yaml")
     ap.add_argument("--h3", default=None, help="h3_saisie_temps.xlsx rempli")
     ap.add_argument("--grille", default=None, help="h3_grille_evaluation.xlsx rempli")

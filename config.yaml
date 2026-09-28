@@ -91,18 +91,35 @@ commentaire:
 #  Modèle de langage (Tableau 3.2)
 # ---------------------------------------------------------------------
 llm:
-  moteur: ollama                  # ollama | llamacpp | none
-  modele: qwen2.5:7b-instruct-q4_K_M
-  candidats:
-    - qwen2.5:3b-instruct-q4_K_M
-    - qwen2.5:7b-instruct-q4_K_M
-    - llama3.2:3b-instruct-q4_K_M
-    - mistral:7b-instruct-q4_K_M
-    - phi3.5:3.8b-mini-instruct-q4_K_M
-  url: http://127.0.0.1:11434     # Ollama local uniquement
+  # Double moteur (section 2.2.2) : une interface, deux moteurs, choisis ici sans toucher au code.
+  #   ollama : moteur CIBLE du déploiement, local, sans réseau ;
+  #   api    : service distant compatible OpenAI (Groq), DÉVELOPPEMENT uniquement, documents publics,
+  #            modèle à poids ouverts identique à un modèle Ollama (résultats transposables) ;
+  #   none   : sans modèle de langage (gabarits déterministes, signalé) ;
+  #   llamacpp : repli local si Ollama est absent (fichier GGUF).
+  backend: ollama
   temperature: 0
-  delai_max_s: 180
   nouvelles_tentatives_json: 1
+  ollama:
+    modele: llama3.1:8b           # retenu (Q4_K_M par défaut dans Ollama) = mêmes poids que Groq llama-3.1-8b-instant
+    url: http://127.0.0.1:11434   # Ollama local uniquement
+    delai_max_s: 180
+    candidats:                    # Tableau 3.2, comparés si le temps et la connexion le permettent
+      - llama3.1:8b
+      - qwen2.5:7b-instruct
+      - mistral:7b-instruct
+      - llama3.2:3b
+  api:
+    fournisseur: groq
+    url: https://api.groq.com/openai/v1
+    modele: llama-3.1-8b-instant  # mêmes poids que llama3.1:8b (Ollama)
+    modele_borne_haute: llama-3.3-70b-versatile   # borne haute de qualité, NON déployable sur le poste de la Cellule
+    cle_env: GROQ_API_KEY         # la clé est lue dans cette variable d'environnement, jamais écrite dans le code
+    delai_max_s: 60
+    essais_reseau: 3              # nouvelles tentatives en cas de coupure (attente croissante)
+    attente_base_s: 2
+    intervalle_min_s: 2.1         # file d'attente : espacement minimal entre deux appels (compte gratuit)
+    cache: data/cache/llm         # cache disque : un appel réussi n'est jamais refait
   gguf: models/llm/modele.gguf    # repli llama-cpp-python
 
 # ---------------------------------------------------------------------

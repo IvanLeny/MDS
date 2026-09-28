@@ -53,5 +53,5 @@ def generer(llm: str | None = None, exercice: int = 2024) -> dict:
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--llm", default=None, choices=["none", "ollama", "llamacpp"])
+    ap.add_argument("--llm", default=None, choices=["ollama", "api", "llamacpp", "none"])
     print(json.dumps(generer(ap.parse_args().llm), indent=2, ensure_ascii=False))

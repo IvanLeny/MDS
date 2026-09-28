@@ -16,7 +16,7 @@ from ..guards import literal_check, provenance
 from ..retrieval import indicator_context as ic
 from ..store import db
 from . import prompts
-from .llm import ClientLLM, ErreurLLM
+from .llm import ClientLLM, ErreurLLM, decrire
 
 MODE_EXTRACTIF = "extractif (sans modèle de langage)"
 
@@ -167,6 +167,7 @@ def commenter(con, code: str, exercice: int, client: ClientLLM | None = None,
             "tableau_n": ctx.tableau_n, "tableau_intitule": ctx.tableau_intitule,
             "doc_annuaire": ctx.doc_annuaire, "provisoire": ctx.provisoire,
             "statut_appariement": ctx.statut_appariement, "modele": modele,
+            "moteur": decrire(client)["moteur"],
             "mode_extractif": client is None, "controle_litteral": controle, "avec_appui": avec_appui}
     motif = abst.avant_generation(ctx)
     if motif:

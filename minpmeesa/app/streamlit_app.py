@@ -78,9 +78,10 @@ def afficher_commentaire(res: dict):
 cfg = config.charger()
 st.sidebar.title("📊 Aide à la décision")
 st.sidebar.caption("Publications statistiques du MINPMEESA")
-choix_llm = st.sidebar.selectbox("Rédaction", ["ollama", "none"],
+choix_llm = st.sidebar.selectbox("Rédaction", ["ollama", "none", "api"],
                                  format_func=lambda x: {"ollama": "Modèle de langage local (Ollama)",
-                                                        "none": "Sans modèle de langage (gabarits)"}[x])
+                                                        "none": "Sans modèle de langage (gabarits)",
+                                                        "api": "Service distant — développement seulement"}[x])
 client, explication = client_llm(choix_llm)
 st.sidebar.caption(f"Moteur de rédaction : {explication}")
 page = st.sidebar.radio("Page", ["Parcours", "Base documentaire"])
