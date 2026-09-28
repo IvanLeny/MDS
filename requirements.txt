@@ -17,3 +17,4 @@ pytest==9.1.1
 # Encodeurs neuronaux (bge-m3, e5, camembert) : chargés depuis models/.
 # Installés sur le poste cible ; torch CPU s'installe aussi par wheel sous Windows.
 sentence-transformers==6.1.0
+playwright==1.55.0       # captures d'écran automatisées (scripts/captures.py), facultatif

@@ -91,6 +91,16 @@ def signaux(m: Moteur, jeu: list[dict], signal: str | None = None) -> list[tuple
     return [(q["id"], m.signal_confiance(q["question"], autorises, signal), q["hors_corpus"]) for q in jeu]
 
 
+def _seuil(sig: list[tuple[float, bool]], critere: str = "equilibre", refus_max: float = 0.05) -> float:
+    if critere == "refus_a_tort_max":
+        ic = sorted(s for s, h in sig if not h)
+        k = int(refus_max * len(ic))              # nombre de refus à tort tolérés
+        haut = ic[k] if ic else 0.0
+        bas = max([s for s in ic if s < haut] + [s for s, h in sig if h and s < haut] + [0.0])
+        return (haut + bas) / 2
+    return _meilleur_seuil(sig)
+
+
 def _meilleur_seuil(sig: list[tuple[float, bool]]) -> float:
     """Seuil maximisant l'exactitude équilibrée (abstention sur hors corpus,
     réponse sur les questions du corpus)."""
@@ -109,9 +119,11 @@ def _meilleur_seuil(sig: list[tuple[float, bool]]) -> float:
 
 
 def calibrer_abstention(m: Moteur, jeu: list[dict], plis: int, graine: int, sortie: Path | None = None,
-                        signal: str | None = None) -> dict:
+                        signal: str | None = None, critere: str | None = None) -> dict:
     """Seuil calibré + estimation HORS ÉCHANTILLON par validation croisée stratifiée."""
     signal = signal or m.cfg["consultation"]["signal_abstention"]
+    critere = critere or m.cfg["consultation"]["critere_calibration"]
+    rmax = m.cfg["consultation"]["refus_a_tort_max"]
     sig = signaux(m, jeu, signal)
     rng = random.Random(graine)
     hc = [s for s in sig if s[2]]
@@ -122,7 +134,7 @@ def calibrer_abstention(m: Moteur, jeu: list[dict], plis: int, graine: int, sort
     decisions = []
     for i in range(plis):
         train = [(s, h) for j, f in enumerate(folds) if j != i for _, s, h in f]
-        t = _meilleur_seuil(train)
+        t = _seuil(train, critere, rmax)
         for qid, s, h in folds[i]:
             decisions.append({"id": qid, "signal": round(s, 3), "hors_corpus": h,
                               "seuil_pli": round(t, 3), "abstention": s < t})
@@ -131,8 +143,8 @@ def calibrer_abstention(m: Moteur, jeu: list[dict], plis: int, graine: int, sort
     abst_ok = sum(1 for d in decisions if d["hors_corpus"] and d["abstention"])
     faux_pos = sum(1 for d in decisions if not d["hors_corpus"] and d["abstention"])
     rep_hc = sum(1 for d in decisions if d["hors_corpus"] and not d["abstention"])
-    seuil = _meilleur_seuil([(s, h) for _, s, h in sig])
-    res = {"signal": signal,
+    seuil = _seuil([(s, h) for _, s, h in sig], critere, rmax)
+    res = {"signal": signal, "critere": critere,
            "description_signal": {"bm25_max": "meilleur score BM25 de la question (sans expansion)",
                                   "dense_max": "meilleur cosinus de la voie dense"}[signal],
            "seuil_calibre": round(seuil, 3), "plis": plis,
@@ -141,7 +153,7 @@ def calibrer_abstention(m: Moteur, jeu: list[dict], plis: int, graine: int, sort
            "taux_abstention_a_tort": round(faux_pos / n_ic, 4) if n_ic else None,
            "reponses_hors_corpus_non_abstenues": rep_hc, "n_hors_corpus": n_hc, "n_corpus": n_ic}
     if sortie:
-        _csv(sortie / f"h1_abstention_validation_croisee_{signal}.csv", decisions)
+        _csv(sortie / f"h1_abstention_validation_croisee_{signal}_{critere}.csv", decisions)
     return res
 
 

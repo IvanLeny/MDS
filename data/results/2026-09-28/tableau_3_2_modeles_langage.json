@@ -1,0 +1,22 @@
+[
+  {
+    "modele": "qwen2.5:3b-instruct-q4_K_M",
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste"
+  },
+  {
+    "modele": "qwen2.5:7b-instruct-q4_K_M",
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste"
+  },
+  {
+    "modele": "llama3.2:3b-instruct-q4_K_M",
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste"
+  },
+  {
+    "modele": "mistral:7b-instruct-q4_K_M",
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste"
+  },
+  {
+    "modele": "phi3.5:3.8b-mini-instruct-q4_K_M",
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste"
+  }
+]

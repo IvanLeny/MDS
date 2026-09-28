@@ -53,8 +53,14 @@ consultation:
   expansion_lexique: true
   max_synonymes_par_terme: 4
   poids_expansion: 0.3            # poids des termes ajoutés par le lexique (fixé a priori)
-  signal_abstention: bm25_max     # bm25_max | dense_max (choix documenté dans les résultats H1)
-  seuil_abstention: 7.0           # remplacé par la valeur calibrée (evaluation)
+  signal_abstention: dense_max    # bm25_max | dense_max : choisi sur le jeu H1 (4 combinaisons comparées, voir resultats.json)
+  seuil_abstention: 0.489  # calibré (evaluation.h1_recuperation, validation croisée)
+  # Critère de calibration : « refus_a_tort_max » = seuil le plus haut qui refuse
+  # au plus `refus_a_tort_max` des questions du corpus (un refus à tort prive
+  # l'utilisateur d'une source ; une réponse hors sujet ne montre que des passages
+  # sourcés, sans texte inventé). « equilibre » = exactitude équilibrée.
+  critere_calibration: refus_a_tort_max
+  refus_a_tort_max: 0.05
   reponse_redigee: false          # réponse rédigée courte facultative
 
 # ---------------------------------------------------------------------

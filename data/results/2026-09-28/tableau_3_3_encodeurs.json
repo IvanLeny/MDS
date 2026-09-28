@@ -1,0 +1,28 @@
+[
+  {
+    "encodeur": "BAAI/bge-m3",
+    "statut": "non mesuré : modèle absent de models/embeddings (à télécharger avec scripts/telecharger_modeles.py sur un poste connecté)"
+  },
+  {
+    "encodeur": "intfloat/multilingual-e5-large",
+    "statut": "non mesuré : modèle absent de models/embeddings (à télécharger avec scripts/telecharger_modeles.py sur un poste connecté)"
+  },
+  {
+    "encodeur": "dangvantuan/sentence-camembert-base",
+    "statut": "non mesuré : modèle absent de models/embeddings (à télécharger avec scripts/telecharger_modeles.py sur un poste connecté)"
+  },
+  {
+    "encodeur": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "statut": "non mesuré : modèle absent de models/embeddings (à télécharger avec scripts/telecharger_modeles.py sur un poste connecté)"
+  },
+  {
+    "encodeur": "repli-hors-ligne-tfidf-svd",
+    "temps_indexation_s": 22.01,
+    "dimension": 256,
+    "dense_succes_5": 0.75,
+    "dense_mrr": 0.5592,
+    "hybride_succes_5": 0.7885,
+    "hybride_mrr": 0.581,
+    "statut": "mesuré"
+  }
+]
