@@ -1,5 +1,9 @@
 {
-  "llm": "repli en mode extractif : Ollama indisponible ou modèle qwen2.5:7b-instruct-q4_K_M absent ; fichier GGUF absent (models/llm/modele.gguf)",
+  "llm": "repli en mode extractif : Ollama indisponible ou modèle llama3.1:8b absent ; fichier GGUF absent (models/llm/modele.gguf)",
+  "moteur_llm": {
+    "moteur": "none",
+    "modele": "aucun (mode extractif)"
+  },
   "encodeur": "repli-hors-ligne-tfidf-svd",
   "h1_recuperation": {
     "n_questions": 52,
@@ -13,7 +17,7 @@
         "succes_5": 0.7115,
         "mrr": 0.5261,
         "ndcg_5": 0.5867,
-        "duree_mediane_s": 0.006
+        "duree_mediane_s": 0.007
       },
       {
         "configuration": "dense",
@@ -22,7 +26,7 @@
         "succes_5": 0.75,
         "mrr": 0.5592,
         "ndcg_5": 0.7051,
-        "duree_mediane_s": 0.099
+        "duree_mediane_s": 0.098
       },
       {
         "configuration": "hybride_k10",
@@ -31,7 +35,7 @@
         "succes_5": 0.7692,
         "mrr": 0.585,
         "ndcg_5": 0.6981,
-        "duree_mediane_s": 0.105
+        "duree_mediane_s": 0.106
       },
       {
         "configuration": "hybride_k20",
@@ -40,7 +44,7 @@
         "succes_5": 0.7692,
         "mrr": 0.5743,
         "ndcg_5": 0.7027,
-        "duree_mediane_s": 0.103
+        "duree_mediane_s": 0.108
       },
       {
         "configuration": "hybride_k60",
@@ -58,7 +62,7 @@
         "succes_5": 0.7308,
         "mrr": 0.566,
         "ndcg_5": 0.7186,
-        "duree_mediane_s": 0.096
+        "duree_mediane_s": 0.1
       },
       {
         "configuration": "lexicale_sans_lexique",
@@ -195,7 +199,7 @@
     },
     {
       "encodeur": "repli-hors-ligne-tfidf-svd",
-      "temps_indexation_s": 22.01,
+      "temps_indexation_s": 22.67,
       "dimension": 256,
       "dense_succes_5": 0.75,
       "dense_mrr": 0.5592,
@@ -206,24 +210,48 @@
   ],
   "choix_llm": [
     {
-      "modele": "qwen2.5:3b-instruct-q4_K_M",
-      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste"
+      "moteur": "ollama",
+      "modele": "llama3.1:8b",
+      "deployable": true,
+      "retenu": true,
+      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
     },
     {
-      "modele": "qwen2.5:7b-instruct-q4_K_M",
-      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste"
+      "moteur": "ollama",
+      "modele": "qwen2.5:7b-instruct",
+      "deployable": true,
+      "retenu": false,
+      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
     },
     {
-      "modele": "llama3.2:3b-instruct-q4_K_M",
-      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste"
+      "moteur": "ollama",
+      "modele": "mistral:7b-instruct",
+      "deployable": true,
+      "retenu": false,
+      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
     },
     {
-      "modele": "mistral:7b-instruct-q4_K_M",
-      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste"
+      "moteur": "ollama",
+      "modele": "llama3.2:3b",
+      "deployable": true,
+      "retenu": false,
+      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
     },
     {
-      "modele": "phi3.5:3.8b-mini-instruct-q4_K_M",
-      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste"
+      "moteur": "api:groq",
+      "modele": "llama-3.1-8b-instant",
+      "deployable": false,
+      "borne_haute": false,
+      "retenu": false,
+      "statut": "non mesuré : clé API absente : définir la variable d'environnement GROQ_API_KEY"
+    },
+    {
+      "moteur": "api:groq",
+      "modele": "llama-3.3-70b-versatile",
+      "deployable": false,
+      "borne_haute": true,
+      "retenu": false,
+      "statut": "non mesuré : clé API absente : définir la variable d'environnement GROQ_API_KEY"
     }
   ],
   "h1_ancrage_2024": {
@@ -249,6 +277,24 @@
       "invention": 7
     }
   },
+  "h1_reference_gabarits_2024": {
+    "statut_gabarits": "mesuré",
+    "provisoire": true,
+    "n": 13,
+    "encodeur": "repli-hors-ligne-tfidf-svd",
+    "reference": "commentaires publiés du rapport d'analyse",
+    "gabarits": {
+      "rouge_l": 0.1385,
+      "similarite": 0.4004,
+      "couv_ind": 1.0,
+      "valeurs_retenues_moy": 3.6154,
+      "mots_moy": 61.3846
+    },
+    "llm_ancre": {
+      "statut": "non mesuré",
+      "raison": "aucun modèle de langage disponible"
+    }
+  },
   "h1_ancrage_2023": {
     "statut": "non mesuré",
     "raison": "aucun modèle de langage disponible : la comparaison avec/sans appui porte sur des sorties de modèle."
@@ -272,37 +318,60 @@
       "invention": 16
     }
   },
+  "h1_reference_gabarits_2023": {
+    "statut_gabarits": "mesuré",
+    "provisoire": true,
+    "n": 14,
+    "encodeur": "repli-hors-ligne-tfidf-svd",
+    "reference": "commentaires publiés du rapport d'analyse",
+    "gabarits": {
+      "rouge_l": 0.1166,
+      "similarite": 0.3805,
+      "couv_ind": 1.0,
+      "valeurs_retenues_moy": 3.0,
+      "mots_moy": 56.7143
+    },
+    "llm_ancre": {
+      "statut": "non mesuré",
+      "raison": "aucun modèle de langage disponible"
+    }
+  },
   "h3_temps_systeme": {
     "consultation": {
       "n": 62,
-      "mediane": 0.199,
-      "p90": 0.456,
-      "max": 0.676
+      "mediane": 0.202,
+      "p90": 0.398,
+      "max": 0.877
     },
     "commentaire": {
       "n": 13,
-      "mediane": 0.006,
-      "p90": 0.378,
-      "max": 0.492
+      "mediane": 0.011,
+      "p90": 0.11,
+      "max": 0.385
     },
     "note d'analyse": {
       "n": 3,
-      "mediane": 2.185,
-      "p90": 2.306,
-      "max": 2.336
+      "mediane": 2.162,
+      "p90": 2.33,
+      "max": 2.372
     },
     "note stratégique": {
       "n": 2,
-      "mediane": 1.699,
-      "p90": 1.857,
-      "max": 1.896
+      "mediane": 1.88,
+      "p90": 1.902,
+      "max": 1.908
     },
     "poste": "poste de développement (Linux, CPU) — à refaire sur le poste cible Windows"
   },
   "h3_verification_automatique_notes": [
     {
-      "titre": "Note d'analyse stratégique — exercice 2024",
-      "fichier": "note_strategique_2024.docx",
+      "titre": "Note d'analyse stratégique — exercice 2024 — gabarits",
+      "fichier": "note_strategique_2024_gabarits.docx",
+      "version": "gabarits",
+      "exercice": 2024,
+      "moteur": "none",
+      "modele": "extractif (sans modèle de langage)",
+      "redaction": "gabarits",
       "verification": {
         "BN4_toute_valeur_tracee": true,
         "BN4_valeurs_non_tracees": [],
@@ -315,8 +384,13 @@
       "nb_evolutions": 6
     },
     {
-      "titre": "Note d'analyse stratégique — exercice 2023",
-      "fichier": "note_strategique_2023.docx",
+      "titre": "Note d'analyse stratégique — exercice 2023 — gabarits",
+      "fichier": "note_strategique_2023_gabarits.docx",
+      "version": "gabarits",
+      "exercice": 2023,
+      "moteur": "none",
+      "modele": "extractif (sans modèle de langage)",
+      "redaction": "gabarits",
       "verification": {
         "BN4_toute_valeur_tracee": true,
         "BN4_valeurs_non_tracees": [],
@@ -337,5 +411,5 @@
     "statut": "non mesuré",
     "raison": "notes des deux lecteurs à saisir dans h3_grille_evaluation.xlsx"
   },
-  "duree_totale_s": 102.6
+  "duree_totale_s": 116.1
 }

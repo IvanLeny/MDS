@@ -17,7 +17,7 @@
   },
   {
     "encodeur": "repli-hors-ligne-tfidf-svd",
-    "temps_indexation_s": 22.01,
+    "temps_indexation_s": 22.67,
     "dimension": 256,
     "dense_succes_5": 0.75,
     "dense_mrr": 0.5592,

@@ -35,8 +35,14 @@ Poste visé : Windows 10/11, 8 à 16 Go de mémoire, sans carte graphique. Deux 
 
 ## 3. Réglages
 
-- `config.yaml`, section `llm` : `modele` = le modèle retenu (Tableau 3.2) ; `moteur: none` pour
-  travailler sans modèle de langage (mode extractif).
+- `config.yaml`, section `llm` : `backend: ollama` sur le poste de la Cellule (modèle `llama3.1:8b`,
+  à installer avec `ollama pull llama3.1:8b`) ; `backend: none` pour travailler sans modèle de langage
+  (mode extractif, signalé).
+- Moteur `api` (**développement seulement**, jamais sur le poste de la Cellule) : Groq, modèle
+  `llama-3.1-8b-instant`, mêmes poids que `llama3.1:8b`. Définir la clé dans une variable
+  d'environnement, jamais dans un fichier du projet :
+  `setx GROQ_API_KEY "votre_cle"` (Windows) ou `export GROQ_API_KEY=...` (Linux). Puis `backend: api`.
+  Les réponses sont gardées en cache (`data/cache/llm`, hors Git) : un appel réussi n'est jamais refait.
 - `config.yaml`, section `embeddings` : `modele` = l'encodeur retenu (Tableau 3.3). Après un changement
   d'encodeur, **reconstruire la base**.
 
@@ -48,6 +54,8 @@ Poste visé : Windows 10/11, 8 à 16 Go de mémoire, sans carte graphique. Deux 
 | « repli en mode extractif : Ollama indisponible » | Ollama n'est pas lancé, ou le modèle n'est pas installé | lancer Ollama ; `ollama list` doit afficher le modèle de `config.yaml` |
 | `'python' n'est pas reconnu…` | Python absent du PATH | réinstaller Python en cochant « Add to PATH » |
 | Le navigateur ne s'ouvre pas | pare-feu ou navigateur par défaut | ouvrir `http://127.0.0.1:8501` à la main |
-| Réponses très lentes | modèle 7B trop lourd pour le poste | choisir un modèle 3B dans `config.yaml` |
+| Réponses très lentes | modèle 8B trop lourd pour le poste | essayer `llama3.2:3b` (`llm.ollama.modele`) |
+| « clé API absente : définir la variable d'environnement GROQ_API_KEY » | moteur `api` choisi sans clé | définir la clé, ou revenir à `backend: ollama` |
+| Appels `api` ralentis | limite du compte gratuit atteinte | normal : le client attend la réinitialisation et met les appels en file |
 | `MemoryError` à la construction | mémoire insuffisante avec bge-m3 | réduire `embeddings.taille_lot` à 4 |
 | « Aucune source suffisante » trop fréquent | seuil d'abstention trop strict | relancer `run_all` sur le poste pour recalibrer le seuil |

@@ -91,14 +91,15 @@ def grille_xlsx(chemin: Path, notes: list[dict]) -> Path:
     ws = wb.active
     ws.title = "grille"
     _entete(ws, ["note", "fichier", "critere", "libelle", "verification_automatique",
-                 "lecteur_1 (0/1/2)", "lecteur_2 (0/1/2)", "remarques"])
+                 "lecteur_1 (0/1/2)", "lecteur_2 (0/1/2)", "remarques", "version"])
     for n in notes:
         v = n["verification"]
         auto = {"BN4": "satisfait" if v["BN4_toute_valeur_tracee"] else "NON satisfait",
                 "BN5": ("satisfait" if v["BN5_longueur_ok"] and v["BN5_rubriques"] and v["BN5_messages_cles_3"]
                         else "NON satisfait") + f" ({v['nb_mots']} mots)"}
         for c, lib in CRITERES.items():
-            ws.append([n["titre"], n["fichier"], c, lib, auto.get(c, "non vérifiable automatiquement"), None, None, ""])
+            ws.append([n["titre"], n["fichier"], c, lib, auto.get(c, "non vérifiable automatiquement"), None, None, "",
+                       n.get("version", "")])
     for col, w in zip("ABCDEFGH", [40, 32, 7, 70, 32, 16, 16, 30]):
         ws.column_dimensions[col].width = w
     wb.save(chemin)

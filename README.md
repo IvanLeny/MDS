@@ -1,8 +1,13 @@
 # Aide à la décision à partir des publications statistiques du MINPMEESA
 
-Prototype du mémoire de Master 2 MDSMS (ISSEA) d'Ivan Leny ABONDO MEMANG : *« Conception d'un
-système d'aide à la décision fondé sur les publications statistiques du MINPMEESA : de la génération
-assistée des commentaires à la note d'analyse stratégique »*.
+Prototype du mémoire de Master 2 MDSMS (ISSEA) d'Ivan Leny ABONDO MEMANG : *« Conception et évaluation d'un
+système de génération augmentée par récupération (RAG) hybride à restitution contrôlée, appliqué aux
+publications statistiques du MINPMEESA : de la génération assistée des commentaires à la note d'analyse
+stratégique »*.
+
+Principe directeur : **le modèle rédige, il ne calcule ni ne décide.** Le programme retrouve
+l'information, calcule les variations, sélectionne les évolutions et vérifie chaque chiffre ; le modèle
+de langage local (llama3.1:8b via Ollama) rédige.
 
 **En 10 lignes, pour un non-informaticien :**
 
@@ -44,7 +49,10 @@ python -m pytest                             # tests
 
 - Les résultats sont **PROVISOIRES** tant que les tables d'appariement (`data/pairing/a_valider_20XX.xlsx`)
   n'ont pas été validées par double lecture.
-- Les modèles (bge-m3, modèles de langage via Ollama) n'ont pas pu être téléchargés dans
+- Deux moteurs pour le modèle de langage, choisis dans `config.yaml` (`llm.backend`) :
+  `ollama` (cible, local, `llama3.1:8b`) et `api` (développement seulement, Groq
+  `llama-3.1-8b-instant`, mêmes poids ; clé dans la variable `GROQ_API_KEY`).
+- Les modèles (bge-m3, modèles de langage via Ollama, service Groq) n'ont pas pu être joints dans
   l'environnement de développement (accès réseau refusé) : la voie dense utilise un encodeur de repli
   hors ligne, et la rédaction se fait en **mode extractif** (gabarits), signalé dans chaque sortie.
   H1 (ancrage) et H2 sont donc « non mesurés » pour l'instant ; ils se mesurent sur le poste cible

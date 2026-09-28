@@ -1,5 +1,9 @@
 # Valeurs et textes à insérer dans le mémoire v5
 
+Titre (v5.1) : *« Conception et évaluation d'un système de génération augmentée par récupération (RAG)
+hybride à restitution contrôlée, appliqué aux publications statistiques du MINPMEESA : de la génération
+assistée des commentaires à la note d'analyse stratégique »*.
+
 Toutes les valeurs ci-dessous sortent d'exécutions réelles, dont la source est indiquée.
 Résultats de référence : `data/results/2026-09-28/` (run du 28/09/2026, config `config.yaml`, graine 42).
 
@@ -55,9 +59,22 @@ Les 18 documents sont au statut « publie », à confirmer auprès de la Cellule
 
 ## 3.1.4 / Tableau 3.2 — Choix du modèle de langage (source : `tableau_3_2_modeles_langage.json`)
 
-Les cinq candidats (qwen2.5 3B et 7B, llama3.2 3B, mistral 7B, phi3.5 3.8B) sont **non mesurés** : aucun
-modèle n'était installé dans Ollama sur le poste de mesure. → À remplir après `run_all` sur le poste cible
-(temps médian, taux de JSON valide, taux de valeurs écartées sur 20 indicateurs).
+Choix arrêté (v5.1) : **`llama3.1:8b`** (Ollama, Q4_K_M, local : moteur du déploiement) et, pendant le
+développement, **Groq `llama-3.1-8b-instant`** (mêmes poids ouverts). En option, `llama-3.3-70b-versatile`
+sert de borne haute de qualité, non déployable sur le poste de la Cellule.
+
+| Moteur / modèle | Déployable | Temps médian | JSON valide | Valeurs écartées |
+|---|---|---|---|---|
+| ollama / llama3.1:8b (retenu) | oui | non mesuré (Ollama absent du poste de mesure) | — | — |
+| ollama / qwen2.5:7b-instruct | oui | non mesuré | — | — |
+| ollama / mistral:7b-instruct | oui | non mesuré | — | — |
+| ollama / llama3.2:3b | oui | non mesuré | — | — |
+| api Groq / llama-3.1-8b-instant | non (développement) | non mesuré (service injoignable, clé absente) | — | — |
+| api Groq / llama-3.3-70b-versatile | non (borne haute) | non mesuré | — | — |
+
+→ À remplir par `run_all --llm api` (avec `GROQ_API_KEY`), puis `run_all --llm ollama` sur le poste cible.
+Le choix du couple est **arrêté**, mais pas encore étayé par des mesures du prototype : le signaler dans le
+texte (voir `docs/ECARTS_MEMOIRE.md`, E12).
 
 ## 3.1.5 / Tableau 3.3 — Choix de l'encodeur (source : `tableau_3_3_encodeurs.json`)
 
@@ -67,14 +84,15 @@ modèle n'était installé dans Ollama sur le poste de mesure. → À remplir ap
 | multilingual-e5-large | non mesuré | — | — |
 | sentence-camembert-base | non mesuré | — | — |
 | MiniLM-L12 (repli léger) | non mesuré | — | — |
-| Repli hors ligne TF-IDF + SVD (256 d.) | 0,79 | 0,58 | 22,0 s (904 passages) |
+| Repli hors ligne TF-IDF + SVD (256 d.) | 0,79 | 0,58 | 22,7 s (904 passages) |
 
 ## 3.4.2 — Interface
 
 Quatre parcours et une page « Base documentaire » (`minpmeesa/app/streamlit_app.py`) ; captures dans
 `data/outputs/captures/` (Annexe III). Temps de réponse sur le poste de développement (Linux, 4 cœurs,
-15,7 Go, sans GPU, mode extractif) : consultation, médiane **0,20 s** (P90 0,46 s) ; commentaire, médiane
-**0,01 s** (P90 0,38 s) ; note d'analyse d'un chapitre, **2,19 s** ; note stratégique, **1,70 s**.
+15,7 Go, sans GPU, mode extractif) : consultation, médiane **0,20 s** (P90 0,40 s) ; commentaire, médiane
+**0,01 s** (P90 0,11 s) ; note d'analyse d'un chapitre, **2,16 s** ; note stratégique, **1,88 s**.
+Ces temps n'incluent aucun appel à un modèle de langage : à refaire sur le poste cible avec `llama3.1:8b`.
 
 ## 3.5.4 / Tableau 3.8 / Annexe V — Note stratégique 2024
 
@@ -109,6 +127,21 @@ questions du corpus refusées à tort (5,8 %) ; seuil 0,489 (cosinus dense).
 Kappa du jeu de questions : **non mesuré** (seconde annotation à faire).
 
 ## 4.3 — H1, ancrage : **non mesuré** (aucun modèle de langage). 4.4 — H2 : **non mesuré** (même raison).
+
+### Référence « gabarits » (v5.1) — source : `exercice_20XX/h1_reference_gabarits_par_indicateur.csv`
+
+Mêmes indicateurs rédigés en mode `--llm none`, comparés aux commentaires **publiés** du rapport d'analyse
+(encodeur de repli pour la similarité) :
+
+| Exercice | n | ROUGE-L | Similarité | Indicateurs commentés | Valeurs citées (moy.) | Mots (moy.) |
+|---|---|---|---|---|---|---|
+| 2024 | 13 | 0,14 | 0,40 | 100 % | 3,6 | 61 |
+| 2023 | 14 | 0,12 | 0,38 | 100 % | 3,0 | 57 |
+
+Le côté « LLM ancré » est **non mesuré**. Texte possible une fois la mesure faite : « Face à une rédaction
+automatique par gabarits (ROUGE-L 0,14), le modèle ancré atteint ……… (p = ………) », à présenter
+honnêtement, que le résultat soit favorable ou non. La grille BN contient les deux versions de la note
+stratégique (gabarits : 2024, 6 évolutions, 689 mots ; 2023, 2 évolutions, 255 mots).
 
 Analyse complémentaire mesurée, **qui n'est pas H2** (source : `exercice_20XX/analyse_commentaires_publies*.csv`).
 Le contrôle littéral est appliqué aux commentaires **publiés** par le ministère.

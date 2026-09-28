@@ -45,7 +45,7 @@
       "max_synonymes_par_terme": 4,
       "poids_expansion": 0.3,
       "signal_abstention": "dense_max",
-      "seuil_abstention": 7.0,
+      "seuil_abstention": 0.489,
       "critere_calibration": "refus_a_tort_max",
       "refus_a_tort_max": 0.05,
       "reponse_redigee": false
@@ -75,19 +75,32 @@
       "longueur_min_enonce": 5
     },
     "llm": {
-      "moteur": "ollama",
-      "modele": "qwen2.5:7b-instruct-q4_K_M",
-      "candidats": [
-        "qwen2.5:3b-instruct-q4_K_M",
-        "qwen2.5:7b-instruct-q4_K_M",
-        "llama3.2:3b-instruct-q4_K_M",
-        "mistral:7b-instruct-q4_K_M",
-        "phi3.5:3.8b-mini-instruct-q4_K_M"
-      ],
-      "url": "http://127.0.0.1:11434",
+      "backend": "ollama",
       "temperature": 0,
-      "delai_max_s": 180,
       "nouvelles_tentatives_json": 1,
+      "ollama": {
+        "modele": "llama3.1:8b",
+        "url": "http://127.0.0.1:11434",
+        "delai_max_s": 180,
+        "candidats": [
+          "llama3.1:8b",
+          "qwen2.5:7b-instruct",
+          "mistral:7b-instruct",
+          "llama3.2:3b"
+        ]
+      },
+      "api": {
+        "fournisseur": "groq",
+        "url": "https://api.groq.com/openai/v1",
+        "modele": "llama-3.1-8b-instant",
+        "modele_borne_haute": "llama-3.3-70b-versatile",
+        "cle_env": "GROQ_API_KEY",
+        "delai_max_s": 60,
+        "essais_reseau": 3,
+        "attente_base_s": 2,
+        "intervalle_min_s": 2.1,
+        "cache": "data/cache/llm"
+      },
       "gguf": "models/llm/modele.gguf"
     },
     "note_strategique": {
@@ -123,10 +136,14 @@
       }
     }
   },
-  "config_hash": "f16d7bf59fdc",
+  "config_hash": "e2226d5e0bcb",
   "graine": 42,
   "encodeur": "repli-hors-ligne-tfidf-svd",
-  "modele_langage": "repli en mode extractif : Ollama indisponible ou modèle qwen2.5:7b-instruct-q4_K_M absent ; fichier GGUF absent (models/llm/modele.gguf)",
+  "modele_langage": "repli en mode extractif : Ollama indisponible ou modèle llama3.1:8b absent ; fichier GGUF absent (models/llm/modele.gguf)",
+  "moteur_llm": {
+    "moteur": "none",
+    "modele": "aucun (mode extractif)"
+  },
   "versions": {
     "python": "3.11.15",
     "pymupdf": "1.28.2",
@@ -148,7 +165,7 @@
     "ram_go": 15.7,
     "carte_graphique": "non utilisée (CPU seul)"
   },
-  "duree_s": 102.6,
+  "duree_s": 116.1,
   "documents": [
     {
       "doc_id": "annuaire_2021",

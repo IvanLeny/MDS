@@ -122,3 +122,11 @@ def test_selection_du_moteur_par_config(monkeypatch):
     assert c is None and llm.decrire(c)["moteur"] == "none"
     assert cfg["llm"]["ollama"]["modele"] == "llama3.1:8b"
     assert cfg["llm"]["api"]["modele"] == "llama-3.1-8b-instant"
+
+
+def test_moteur_livre_est_local():
+    """Le réglage livré n'appelle jamais de service distant (le moteur api est réservé au développement)."""
+    cfg = config.charger()
+    assert cfg["llm"]["backend"] in ("ollama", "llamacpp", "none")
+    from urllib.parse import urlparse
+    assert urlparse(cfg["llm"]["ollama"]["url"]).hostname in llm.LOCAUX

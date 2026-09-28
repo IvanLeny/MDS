@@ -1,5 +1,5 @@
 {
-  "modele": "repli en mode extractif : Ollama indisponible ou modèle qwen2.5:7b-instruct-q4_K_M absent ; fichier GGUF absent (models/llm/modele.gguf)",
+  "modele": "repli en mode extractif : Ollama indisponible ou modèle llama3.1:8b absent ; fichier GGUF absent (models/llm/modele.gguf)",
   "commentaire_enonces": 6,
   "note_analyse_tableaux_commentes": 17,
   "note_analyse_tableaux_a_commenter_manuellement": 3,

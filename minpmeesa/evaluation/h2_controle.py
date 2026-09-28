@@ -217,3 +217,53 @@ def _csv(chemin: Path, lignes: list[dict]):
         w = csv.DictWriter(f, fieldnames=champs, delimiter=";")
         w.writeheader()
         w.writerows(lignes)
+
+
+def comparer_gabarits(con, client, encodeur, exercice: int, sortie: Path | None) -> dict:
+    """Référence « gabarits » (H1) : les mêmes commentaires rédigés en mode --llm none
+    (gabarits déterministes) et par le LLM ancré, comparés au commentaire PUBLIÉ du
+    rapport d'analyse (ROUGE-L, similarité sémantique avec le même encodeur, couverture).
+    Le côté gabarits se mesure sans modèle de langage ; le côté LLM exige un modèle."""
+    statuts, provisoire = statuts_evaluation(con, exercice)
+    lignes = []
+    for a in indicateurs(con, exercice, statuts):
+        ref = a.get("commentaire_publie")
+        if not ref:
+            continue
+        vr = encodeur.encoder_requete(ref)
+        ligne = {"code": a["code_indicateur"]}
+        confs = [("gabarits", None)] + ([("llm_ancre", client)] if client is not None else [])
+        for nom, cl in confs:
+            r = cm.commenter(con, a["code_indicateur"], exercice, cl)
+            t = cm.texte(r)
+            ligne[f"rouge_l_{nom}"] = round(M.rouge_l(t, ref), 4) if t else 0.0
+            ligne[f"sim_{nom}"] = round(M.cosinus(encodeur.encoder_requete(t), vr), 4) if t else 0.0
+            ligne[f"commente_{nom}"] = int(not r.get("abstention"))
+            ligne[f"valeurs_retenues_{nom}"] = sum(len(lc.nombres(e["texte"])) for e in r.get("enonces", []))
+            ligne[f"mots_{nom}"] = len(t.split())
+        lignes.append(ligne)
+    if sortie:
+        _csv(sortie / "h1_reference_gabarits_par_indicateur.csv", lignes)
+    n = len(lignes)
+
+    def moy(k):
+        v = [l[k] for l in lignes if k in l]
+        return round(sum(v) / len(v), 4) if v else None
+
+    res = {"statut_gabarits": "mesuré" if n else "non mesuré", "provisoire": provisoire, "n": n,
+           "encodeur": encodeur.nom, "reference": "commentaires publiés du rapport d'analyse",
+           "gabarits": {"rouge_l": moy("rouge_l_gabarits"), "similarite": moy("sim_gabarits"),
+                        "couv_ind": moy("commente_gabarits"), "valeurs_retenues_moy": moy("valeurs_retenues_gabarits"),
+                        "mots_moy": moy("mots_gabarits")}}
+    if client is None:
+        res["llm_ancre"] = {"statut": "non mesuré", "raison": "aucun modèle de langage disponible"}
+    else:
+        res["llm_ancre"] = {"statut": "mesuré", "modele": client.nom, "rouge_l": moy("rouge_l_llm_ancre"),
+                            "similarite": moy("sim_llm_ancre"), "couv_ind": moy("commente_llm_ancre"),
+                            "valeurs_retenues_moy": moy("valeurs_retenues_llm_ancre"),
+                            "mots_moy": moy("mots_llm_ancre")}
+        res["wilcoxon_rouge_l_llm_vs_gabarits"] = stats.wilcoxon(
+            [l["rouge_l_llm_ancre"] for l in lignes], [l["rouge_l_gabarits"] for l in lignes])
+        res["wilcoxon_similarite_llm_vs_gabarits"] = stats.wilcoxon(
+            [l["sim_llm_ancre"] for l in lignes], [l["sim_gabarits"] for l in lignes])
+    return res

@@ -90,3 +90,36 @@ désaccords entre lecteurs.
 **Écart.** Les temps rapportés ont été mesurés sur le poste de développement (Linux, 4 cœurs, 15,7 Go),
 en mode extractif. Ils sont à refaire sur le poste cible Windows avec le modèle de langage retenu, qui
 dominera le temps d'un commentaire.
+
+## E11. (v5.1) Moteur `api` et contrainte « aucun appel réseau à l'exécution »
+
+**Écart apparent.** Le moteur `api` (Groq) appelle un service distant, alors que le mémoire exige
+l'absence d'appel réseau. Ce moteur n'est **jamais** celui du déploiement : `config.yaml` livre
+`backend: ollama`, le test d'absence d'appel réseau porte sur ce réglage, et le moteur `api` exige une
+clé fournie volontairement.
+
+**Texte proposé.** « Pendant le développement, les commentaires ont pu être générés par un service
+distant compatible OpenAI (Groq, modèle `llama-3.1-8b-instant`), sur les seules publications diffusées,
+avec des poids ouverts identiques au modèle `llama3.1:8b` exécuté localement par Ollama. En exploitation,
+seul le moteur local est utilisé, et le poste ne fait aucun appel réseau. »
+
+## E12. (v5.1) Mesures faites dans cette session
+
+Le service Groq était injoignable depuis l'environnement de développement (connexion refusée par le
+proxy) et aucune clé `GROQ_API_KEY` n'était définie. Ollama n'était pas installé. Par conséquent :
+H1 (ancrage), H2, le côté « LLM ancré » de la référence gabarits et le Tableau 3.2 sont **non mesurés**.
+Le côté « gabarits » est mesuré. Le couple retenu (`llama3.1:8b` / `llama-3.1-8b-instant`) est un
+**choix arrêté par l'étudiant** (septembre 2026) : il n'est pas encore justifié par des mesures de ce
+prototype. Relancer `run_all --llm api` avec la clé, puis `--llm ollama` sur le poste cible.
+
+## E13. (v5.1) Quantification Q4_K_M de `llama3.1:8b`
+
+Le nom `llama3.1:8b` dans Ollama désigne la variante quantifiée par défaut (Q4_K_M à la date de
+rédaction). **À vérifier** avec `ollama show llama3.1:8b` sur le poste cible, et à reporter dans le Tableau 3.2.
+
+## E14. (v5.1) Référence « gabarits »
+
+Les gabarits (`--llm none`) sont des phrases déterministes construites à partir des valeurs et
+variations autorisées. Ils ne reprennent pas le style des modèles de rédaction : leur ROUGE-L contre les
+commentaires publiés est donc attendu faible. La comparaison vaut surtout pour la couverture et pour la
+grille BN (notes stratégiques des deux versions, à noter par les lecteurs).

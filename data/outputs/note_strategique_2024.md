@@ -37,9 +37,9 @@
 - annuaire_2024, tableau 29, p. 38
 - annuaire_2024, tableau 30, p. 38
 - Note de perspective n°001/2024 : compétitivité des PME camerounaises, p. 3 (objectif documenté)
-- Commentaire n° 74 (pme-typologie) — non validé
-- Commentaire n° 75 (pme-secteur-activite) — non validé
-- Commentaire n° 64 (stock-pme-secteur-activite) — non validé
-- Commentaire n° 66 (pme-creees-sur-periode) — non validé
-- Commentaire n° 71 (upa-enregistrees-dans-bureaux-communaux-region) — non validé
-- Commentaire n° 73 (upa-enregistrees-typologie-artisanat-region) — non validé
+- Commentaire n° 786 (pme-typologie) — non validé
+- Commentaire n° 787 (pme-secteur-activite) — non validé
+- Commentaire n° 776 (stock-pme-secteur-activite) — non validé
+- Commentaire n° 778 (pme-creees-sur-periode) — non validé
+- Commentaire n° 783 (upa-enregistrees-dans-bureaux-communaux-region) — non validé
+- Commentaire n° 785 (upa-enregistrees-typologie-artisanat-region) — non validé

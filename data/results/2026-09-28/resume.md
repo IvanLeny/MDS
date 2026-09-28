@@ -1,7 +1,9 @@
-# Résumé de l'évaluation — 102.6 s d'exécution
+# Résumé de l'évaluation — 116.1 s d'exécution
 
 > **Résultats PROVISOIRES** : les tables d'appariement ne sont pas encore validées par double lecture ; l'évaluation utilise les appariements « candidats ».
-> Encodeur utilisé : `repli-hors-ligne-tfidf-svd`. Modèle de langage : repli en mode extractif : Ollama indisponible ou modèle qwen2.5:7b-instruct-q4_K_M absent ; fichier GGUF absent (models/llm/modele.gguf).
+> **Moteur du modèle de langage : `none` — modèle : `aucun (mode extractif)`** (repli en mode extractif : Ollama indisponible ou modèle llama3.1:8b absent ; fichier GGUF absent (models/llm/modele.gguf)).
+> Encodeur utilisé : `repli-hors-ligne-tfidf-svd`.
+
 
 ## Tableau 4.1 — Confrontation des hypothèses aux critères
 
@@ -30,7 +32,18 @@ Règle : « validée » si tous les critères sont mesurés et atteints ; « non
 - **Abstention** (validation croisée) : 90 % des questions hors sujet sont refusées ; 3 question(s) du corpus sur 52 sont refusées à tort. Seuil calibré : 0,489 (signal et critère : dense_max/refus_a_tort_max ; les autres combinaisons figurent dans resultats.json).
 - **Rédaction avec modèle de langage (H1 ancrage, H2)** : aucun modèle de langage disponible : la comparaison avec/sans appui porte sur des sorties de modèle.
 - **Analyse complémentaire** (ce n'est pas H2) : dans les commentaires publiés de 2024, 61 valeurs sur 123 (49,6 %) se retrouvent telles quelles dans le tableau apparié ou les variations calculées ; les autres se répartissent en arrondi : 1, calcul : 49, chiffre d'un autre exercice : 5, invention : 7.
-- **Temps de réponse du système** (poste de développement) : consultation : médiane 0,20 s, P90 0,46 s ; commentaire : médiane 0,01 s, P90 0,38 s ; note d'analyse : médiane 2,19 s, P90 2,31 s ; note stratégique : médiane 1,70 s, P90 1,86 s.
+- **Temps de réponse du système** (poste de développement) : consultation : médiane 0,20 s, P90 0,40 s ; commentaire : médiane 0,01 s, P90 0,11 s ; note d'analyse : médiane 2,16 s, P90 2,33 s ; note stratégique : médiane 1,88 s, P90 1,90 s.
+
+## Référence « gabarits » : le modèle de langage apporte-t-il quelque chose ?
+
+Comparaison aux 13 commentaires publiés de 2024 (encodeur `repli-hors-ligne-tfidf-svd`).
+
+| Rédaction | ROUGE-L | Similarité | Indicateurs commentés | Valeurs citées (moy.) | Mots (moy.) |
+|---|---|---|---|---|---|
+| Gabarits (sans LLM) | 0,14 | 0,40 | 1,00 | 3,6 | 61 |
+| LLM ancré | non mesuré | — | — | — | — |
+
+Côté LLM : non mesuré (aucun modèle de langage disponible). Les notes stratégiques des deux versions sont à noter dans h3_grille_evaluation.xlsx dès qu'un modèle est disponible.
 
 ## Choix des modèles (Tableaux 3.2 et 3.3)
 
@@ -38,12 +51,13 @@ Règle : « validée » si tous les critères sont mesurés et atteints ; « non
 - intfloat/multilingual-e5-large : non mesuré : modèle absent de models/embeddings (à télécharger avec scripts/telecharger_modeles.py sur un poste connecté)
 - dangvantuan/sentence-camembert-base : non mesuré : modèle absent de models/embeddings (à télécharger avec scripts/telecharger_modeles.py sur un poste connecté)
 - sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 : non mesuré : modèle absent de models/embeddings (à télécharger avec scripts/telecharger_modeles.py sur un poste connecté)
-- repli-hors-ligne-tfidf-svd : Succès@5 (hybride) 0,79, MRR 0,58, indexation 22,0 s
-- qwen2.5:3b-instruct-q4_K_M : non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste
-- qwen2.5:7b-instruct-q4_K_M : non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste
-- llama3.2:3b-instruct-q4_K_M : non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste
-- mistral:7b-instruct-q4_K_M : non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste
-- phi3.5:3.8b-mini-instruct-q4_K_M : non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste
+- repli-hors-ligne-tfidf-svd : Succès@5 (hybride) 0,79, MRR 0,58, indexation 22,7 s
+- ollama / llama3.1:8b (retenu) : non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)
+- ollama / qwen2.5:7b-instruct : non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)
+- ollama / mistral:7b-instruct : non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)
+- ollama / llama3.2:3b : non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)
+- api:groq / llama-3.1-8b-instant : non mesuré : clé API absente : définir la variable d'environnement GROQ_API_KEY
+- api:groq / llama-3.3-70b-versatile — borne haute, non déployable : non mesuré : clé API absente : définir la variable d'environnement GROQ_API_KEY
 
 ## Ce qui reste à faire par l'étudiant
 

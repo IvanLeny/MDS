@@ -1,22 +1,46 @@
 [
   {
-    "modele": "qwen2.5:3b-instruct-q4_K_M",
-    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste"
+    "moteur": "ollama",
+    "modele": "llama3.1:8b",
+    "deployable": true,
+    "retenu": true,
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
   },
   {
-    "modele": "qwen2.5:7b-instruct-q4_K_M",
-    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste"
+    "moteur": "ollama",
+    "modele": "qwen2.5:7b-instruct",
+    "deployable": true,
+    "retenu": false,
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
   },
   {
-    "modele": "llama3.2:3b-instruct-q4_K_M",
-    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste"
+    "moteur": "ollama",
+    "modele": "mistral:7b-instruct",
+    "deployable": true,
+    "retenu": false,
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
   },
   {
-    "modele": "mistral:7b-instruct-q4_K_M",
-    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste"
+    "moteur": "ollama",
+    "modele": "llama3.2:3b",
+    "deployable": true,
+    "retenu": false,
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
   },
   {
-    "modele": "phi3.5:3.8b-mini-instruct-q4_K_M",
-    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé) sur ce poste"
+    "moteur": "api:groq",
+    "modele": "llama-3.1-8b-instant",
+    "deployable": false,
+    "borne_haute": false,
+    "retenu": false,
+    "statut": "non mesuré : clé API absente : définir la variable d'environnement GROQ_API_KEY"
+  },
+  {
+    "moteur": "api:groq",
+    "modele": "llama-3.3-70b-versatile",
+    "deployable": false,
+    "borne_haute": true,
+    "retenu": false,
+    "statut": "non mesuré : clé API absente : définir la variable d'environnement GROQ_API_KEY"
   }
 ]

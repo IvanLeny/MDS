@@ -89,7 +89,8 @@ def executer(llm: str | None = None, appliquer_seuil: bool = True) -> Path:
     con = m.con
     client, expl_llm = obtenir(cfg, llm)
     jeu = h1.charger_jeu()
-    R: dict = {"llm": expl_llm, "encodeur": m.nom_encodeur}
+    from ..generation.llm import decrire
+    R: dict = {"llm": expl_llm, "moteur_llm": decrire(client), "encodeur": m.nom_encodeur}
     print("H1 récupération…", flush=True)
 
     # ---------------- H1 : récupération, abstention, kappa
@@ -116,6 +117,7 @@ def executer(llm: str | None = None, appliquer_seuil: bool = True) -> Path:
         R[f"h1_ancrage_{ex}"] = h2.evaluer_h1_ancrage(con, client, m.encodeur, ex, d)
         R[f"h2_{ex}"] = h2.evaluer_h2(con, client, ex, d, cfg["graine"], ev["echantillon_relecture"])
         R[f"commentaires_publies_{ex}"] = h2.analyser_commentaires_publies(con, ex, d)
+        R[f"h1_reference_gabarits_{ex}"] = h2.comparer_gabarits(con, client, m.encodeur, ex, d)
 
     # ---------------- H3 : temps de réponse du système
     print("H3 temps de réponse…", flush=True)
@@ -130,13 +132,21 @@ def executer(llm: str | None = None, appliquer_seuil: bool = True) -> Path:
     for k in range(3):
         durees["note d'analyse"].append(analysis_note.rediger(con, ev["exercice"], chapitre=r"CHAPITRE I\b",
                                                               client=client, moteur=m)["duree_s"])
+    # Notes stratégiques à noter (grille BN) : version LLM (si disponible) ET version gabarits (référence)
+    versions = [("llm", client)] if client is not None else []
+    versions.append(("gabarits", None))
     for ex in (ev["exercice"], ev["exercice_secondaire"]):
-        ns = strategic_note.rediger(con, ex, client, m)
-        durees["note stratégique"].append(ns["duree_s"])
-        f = sortie / f"note_strategique_{ex}.docx"
-        docx_export.exporter_note_strategique(ns, f)
-        notes_h3.append({"titre": ns["titre"], "fichier": f.name, "verification": strategic_note.verifier_bn4_bn5(ns),
-                         "provisoire": ns["provisoire"], "nb_evolutions": ns["nb_evolutions"]})
+        for nom_v, cl in versions:
+            ns = strategic_note.rediger(con, ex, cl, m)
+            if cl is client:
+                durees["note stratégique"].append(ns["duree_s"])
+            f = sortie / f"note_strategique_{ex}_{nom_v}.docx"
+            docx_export.exporter_note_strategique(ns, f)
+            notes_h3.append({"titre": f"{ns['titre']} — {'modèle de langage' if cl else 'gabarits'}",
+                             "fichier": f.name, "version": nom_v, "exercice": ex,
+                             "moteur": ns.get("moteur"), "modele": ns["modele"], "redaction": ns.get("redaction"),
+                             "verification": strategic_note.verifier_bn4_bn5(ns),
+                             "provisoire": ns["provisoire"], "nb_evolutions": ns["nb_evolutions"]})
     R["h3_temps_systeme"] = {k: stats.mediane_p90(v) for k, v in durees.items()}
     R["h3_temps_systeme"]["poste"] = "poste de développement (Linux, CPU) — à refaire sur le poste cible Windows"
     R["h3_verification_automatique_notes"] = notes_h3
@@ -168,6 +178,13 @@ def executer(llm: str | None = None, appliquer_seuil: bool = True) -> Path:
                                 {"ancrage simple": [a_["exactitude"], a_["couv_ind"]],
                                  "ancrage + citation littérale": [b_["exactitude"], b_["couv_ind"]]},
                                 "H2 — exactitude et couverture, avec ou sans contrôle", "taux")
+    g = R[f"h1_reference_gabarits_{ev['exercice']}"]
+    figures.barres_groupees(sortie / "figure_h1_gabarits_vs_llm.png", ["ROUGE-L", "Similarité", "Couv_ind"],
+                            {"gabarits (sans LLM)": [g["gabarits"]["rouge_l"], g["gabarits"]["similarite"], g["gabarits"]["couv_ind"]],
+                             "LLM ancré": ([g["llm_ancre"]["rouge_l"], g["llm_ancre"]["similarite"], g["llm_ancre"]["couv_ind"]]
+                                           if g["llm_ancre"].get("statut") == "mesuré" else [None, None, None])},
+                            f"H1 — référence gabarits et LLM ancré, contre les commentaires publiés {ev['exercice']}",
+                            "score", note="n.m. = non mesuré")
     cp = [R[f"commentaires_publies_{ex}"] for ex in (ev["exercice"], ev["exercice_secondaire"])]
     figures.barres_groupees(sortie / "figure_commentaires_publies.png", [str(c["exercice"]) for c in cp],
                             {"part des valeurs retrouvées littéralement": [c["part_retrouvee"] for c in cp]},
@@ -177,7 +194,7 @@ def executer(llm: str | None = None, appliquer_seuil: bool = True) -> Path:
     R["duree_totale_s"] = round(time.time() - t0, 1)
     _j(sortie / "resultats.json", R)
     manifest = {"date": date.today().isoformat(), "config": cfg, "config_hash": config.config_hash(),
-                "graine": cfg["graine"], "encodeur": m.nom_encodeur, "modele_langage": expl_llm,
+                "graine": cfg["graine"], "encodeur": m.nom_encodeur, "modele_langage": expl_llm, "moteur_llm": R["moteur_llm"],
                 "versions": _versions(), "machine": _machine(), "duree_s": R["duree_totale_s"],
                 "documents": [{"doc_id": r["doc_id"], "fichier": r["fichier"], "sha256": r["sha256"],
                                "statut_diffusion": r["statut_diffusion"]}
@@ -224,7 +241,11 @@ def resume(R: dict, cfg: dict) -> str:
     L = [f"# Résumé de l'évaluation — {R.get('duree_totale_s')} s d'exécution", "",
          "> **Résultats PROVISOIRES** : les tables d'appariement ne sont pas encore validées par double lecture ; "
          "l'évaluation utilise les appariements « candidats »." if prov else "",
-         f"> Encodeur utilisé : `{R['encodeur']}`. Modèle de langage : {R['llm']}.", "",
+         f"> **Moteur du modèle de langage : `{R['moteur_llm']['moteur']}` — modèle : `{R['moteur_llm']['modele']}`** "
+         f"({R['llm']}).", f"> Encodeur utilisé : `{R['encodeur']}`.",
+         ("> ⚠ Moteur `api` : service distant utilisé en DÉVELOPPEMENT, mêmes poids ouverts que le modèle Ollama "
+          "du déploiement ; les temps de réponse ne sont pas transposables au poste cible."
+          if R['moteur_llm']['moteur'] == "api" else ""), "",
          "## Tableau 4.1 — Confrontation des hypothèses aux critères", "",
          "| Hypothèse | Critère | Valeur mesurée | p-value | Critère atteint ? |", "|---|---|---|---|---|",
          f"| H1 | Succès@5 (hybride) ≥ 0,80 | {_f(s5)} | — | {'oui' if c_h1[0][1] else 'non'} |",
@@ -262,12 +283,32 @@ def resume(R: dict, cfg: dict) -> str:
     L.append("- **Temps de réponse du système** (poste de développement) : "
              + " ; ".join(f"{k} : médiane {_f(v['mediane'], 2)} s, P90 {_f(v['p90'], 2)} s"
                           for k, v in t.items() if isinstance(v, dict) and v.get("n")) + ".")
+    g = R[f"h1_reference_gabarits_{ex}"]
+    L += ["", "## Référence « gabarits » : le modèle de langage apporte-t-il quelque chose ?", "",
+          f"Comparaison aux {g['n']} commentaires publiés de {ex} (encodeur `{g['encodeur']}`).", "",
+          "| Rédaction | ROUGE-L | Similarité | Indicateurs commentés | Valeurs citées (moy.) | Mots (moy.) |",
+          "|---|---|---|---|---|---|",
+          f"| Gabarits (sans LLM) | {_f(g['gabarits']['rouge_l'])} | {_f(g['gabarits']['similarite'])} | "
+          f"{_f(g['gabarits']['couv_ind'])} | {_f(g['gabarits']['valeurs_retenues_moy'], 1)} | {_f(g['gabarits']['mots_moy'], 0)} |"]
+    la = g["llm_ancre"]
+    if la.get("statut") == "mesuré":
+        L.append(f"| LLM ancré ({la['modele']}) | {_f(la['rouge_l'])} | {_f(la['similarite'])} | {_f(la['couv_ind'])} | "
+                 f"{_f(la['valeurs_retenues_moy'], 1)} | {_f(la['mots_moy'], 0)} |")
+        w_ = g["wilcoxon_rouge_l_llm_vs_gabarits"]
+        L.append(f"\nWilcoxon apparié (ROUGE-L, LLM contre gabarits) : Δ = {_f(w_['delta_moyen'], 3)}, p = {_p(w_)}. "
+                 + ("Le LLM fait mieux que les gabarits." if (w_['p_value'] or 1) < 0.05 and w_['delta_moyen'] > 0
+                    else "Le LLM ne fait pas significativement mieux que les gabarits sur ce critère."))
+    else:
+        L.append(f"| LLM ancré | non mesuré | — | — | — | — |")
+        L.append(f"\nCôté LLM : non mesuré ({la.get('raison')}). Les notes stratégiques des deux versions sont à noter "
+                 "dans h3_grille_evaluation.xlsx dès qu'un modèle est disponible.")
     L += ["", "## Choix des modèles (Tableaux 3.2 et 3.3)", ""]
     for e in R["choix_encodeur"]:
         L.append(f"- {e['encodeur']} : " + (f"Succès@5 (hybride) {_f(e['hybride_succes_5'])}, MRR {_f(e['hybride_mrr'])}, "
                                             f"indexation {_f(e['temps_indexation_s'], 1)} s" if e["statut"] == "mesuré" else e["statut"]))
     for e in R["choix_llm"]:
-        L.append(f"- {e['modele']} : " + (f"temps médian {e['temps_median_s']} s, JSON valide {e['taux_json_valide']}, "
+        L.append(f"- {e['moteur']} / {e['modele']}{' (retenu)' if e.get('retenu') else ''}"
+                 f"{' — borne haute, non déployable' if e.get('borne_haute') else ''} : " + (f"temps médian {e['temps_median_s']} s, JSON valide {e['taux_json_valide']}, "
                                           f"valeurs écartées {e['taux_valeurs_ecartees']}" if e["statut"] == "mesuré" else e["statut"]))
     L += ["", "## Ce qui reste à faire par l'étudiant", "",
           "- valider les tables d'appariement (double lecture) puis relancer la reconstruction et l'évaluation ;",
