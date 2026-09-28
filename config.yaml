@@ -1,0 +1,133 @@
+# =====================================================================
+#  Configuration du prototype MINPMEESA (mémoire v5, chapitres 2 et 3)
+#  Tout paramètre expérimental vit ici : aucune valeur n'est codée en dur.
+# =====================================================================
+
+graine: 42
+
+chemins:
+  corpus: data/corpus
+  registre: data/corpus/registre.yaml
+  base: data/base                 # base SQLite + index (reconstructibles, hors Git)
+  lexique: data/lexique/synonymes.yaml
+  appariement: data/pairing
+  gold: data/gold
+  resultats: data/results
+  sorties: data/outputs
+  modeles: models
+
+# ---------------------------------------------------------------------
+#  Ingestion (2.3, 3.2)
+# ---------------------------------------------------------------------
+ingestion:
+  passage_tokens_min: 400         # taille des passages de texte (tokens)
+  passage_tokens_max: 800
+  recouvrement: 0.15              # 10 à 20 % de recouvrement
+  passage_tokens_plancher: 20     # en dessous : fragment rejeté (bruit)
+  lignes_courantes_ratio: 0.3     # ligne répétée sur >= 30 % des pages = en-tête/pied
+
+# ---------------------------------------------------------------------
+#  Encodeur (Tableau 3.3)
+# ---------------------------------------------------------------------
+embeddings:
+  modele: BAAI/bge-m3             # principal
+  candidats:
+    - BAAI/bge-m3
+    - intfloat/multilingual-e5-large
+    - dangvantuan/sentence-camembert-base
+  repli_leger: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+  # Si aucun modèle n'est présent dans models/embeddings, le programme utilise
+  # un encodeur hors ligne TF-IDF + SVD (signalé dans toutes les sorties).
+  repli_hors_ligne_dims: 256
+  taille_lot: 16
+
+# ---------------------------------------------------------------------
+#  Service 1 : consultation (3.2.5)
+# ---------------------------------------------------------------------
+consultation:
+  k_bm25: 50
+  k_dense: 50
+  rrf_k: 60                       # ablation : 10, 20, 60
+  rrf_k_ablation: [10, 20, 60]
+  top_n: 5
+  expansion_lexique: true
+  max_synonymes_par_terme: 4
+  signal_abstention: bm25_max     # score comparé au seuil
+  seuil_abstention: 7.0           # remplacé par la valeur calibrée (evaluation)
+  reponse_redigee: false          # réponse rédigée courte facultative
+
+# ---------------------------------------------------------------------
+#  Appariement (2.3.2)
+# ---------------------------------------------------------------------
+appariement:
+  poids_intitule: 0.5
+  poids_valeurs: 0.5
+  seuil_candidat: 0.35            # en dessous : « a_verifier »
+  seuil_code_stable: 0.55         # similarité d'intitulés pour réutiliser un code d'une édition à l'autre
+  # Statuts utilisables par les services tant que la validation humaine n'est
+  # pas faite. Toute sortie fondée sur un « candidat » est marquée PROVISOIRE.
+  statuts_utilisables: [valide, candidat]
+  statuts_evaluation: [valide]
+  repli_evaluation_candidats: true  # si aucune ligne validée : candidats, résultats PROVISOIRES
+
+# ---------------------------------------------------------------------
+#  Service 2 : commentaire (3.2.4, 3.3)
+# ---------------------------------------------------------------------
+commentaire:
+  nb_modeles_redaction: 3         # commentaires antérieurs fournis comme modèles
+  max_valeurs_contexte: 120
+  decimales_pct: 1                # convention : 1 décimale pour les %
+  annees_exclues: [2010, 2035]    # bornes des millésimes non contrôlés
+  longueur_min_enonce: 5          # mots, après retrait d'une valeur (R3)
+
+# ---------------------------------------------------------------------
+#  Modèle de langage (Tableau 3.2)
+# ---------------------------------------------------------------------
+llm:
+  moteur: ollama                  # ollama | llamacpp | none
+  modele: qwen2.5:7b-instruct-q4_K_M
+  candidats:
+    - qwen2.5:3b-instruct-q4_K_M
+    - qwen2.5:7b-instruct-q4_K_M
+    - llama3.2:3b-instruct-q4_K_M
+    - mistral:7b-instruct-q4_K_M
+    - phi3.5:3.8b-mini-instruct-q4_K_M
+  url: http://127.0.0.1:11434     # Ollama local uniquement
+  temperature: 0
+  delai_max_s: 180
+  nouvelles_tentatives_json: 1
+  gguf: models/llm/modele.gguf    # repli llama-cpp-python
+
+# ---------------------------------------------------------------------
+#  Service 4 : note stratégique (3.5.2 à 3.5.4)
+# ---------------------------------------------------------------------
+note_strategique:
+  nb_min: 5
+  nb_max: 7
+  historique_min: 3               # < 3 points : |var_rel| seul
+  bonus_objectif: 1.0
+  tendance_meme_signe: 3          # même signe sur 3 exercices = tendance
+  max_mots: 900                   # ~2 pages
+  seuil_objectif: 0.12            # similarité minimale pour rattacher un objectif documenté
+
+note_analyse:
+  accepter_non_valides: true      # démonstration : commentaires non validés, signalés
+
+# ---------------------------------------------------------------------
+#  Évaluation (2.4)
+# ---------------------------------------------------------------------
+evaluation:
+  exercice: 2024
+  exercice_secondaire: 2023
+  k_succes: [1, 5]
+  plis_calibration: 5
+  nb_indicateurs_llm: 20
+  echantillon_relecture: 30
+  criteres:
+    h1_succes5: 0.80
+    h2_tfr_max: 0.05
+    h2_couv_ind_min: 0.80
+    h3_reduction_temps: 0.50
+    h3_part_notes_conformes: 0.80
+    h3_criteres_min: 4
+    h3_moyenne_bn: 1.5

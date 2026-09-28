@@ -1,0 +1,35 @@
+# Registre des documents du corpus (Annexe I).
+# type / exercice / trimestre : vérifiés par le CONTENU (pas par le nom de fichier).
+# statut_diffusion : « publie » pour les 18 publications ; À CONFIRMER auprès de la
+#   Cellule (statut_confirme: false tant que ce n'est pas fait).
+# Règle pour les documents de contexte : exercice = année de publication (règle
+#   prudente pour le filtre temporel BF6).
+documents:
+  - {doc_id: annuaire_2021, fichier: annuaire_2021.pdf, titre: "Annuaire statistique des PMEESA 2021", type: annuaire, exercice: 2021, trimestre: null, statut_diffusion: publie}
+  - {doc_id: annuaire_2022, fichier: annuaire_2022.pdf, titre: "Annuaire statistique 2022 sur les PMEESA", type: annuaire, exercice: 2022, trimestre: null, statut_diffusion: publie}
+  - {doc_id: annuaire_2023, fichier: annuaire_2023.pdf, titre: "Annuaire statistique 2023 sur les PMEESA", type: annuaire, exercice: 2023, trimestre: null, statut_diffusion: publie,
+     remarque: "Le titre courant de chaque page indique à tort « 2022 » ; exercice 2023 établi par le contenu (stock des PME 2023)."}
+  - {doc_id: annuaire_2024, fichier: annuaire_2024.pdf, titre: "Annuaire statistique 2024 sur les PMEESA", type: annuaire, exercice: 2024, trimestre: null, statut_diffusion: publie,
+     remarque: "La page de garde indique à tort « 2022 » ; exercice 2024 établi par le contenu."}
+  - {doc_id: rapport_analyse_2021, fichier: rapport_analyse_2021.pdf, titre: "Rapport d'analyse de l'annuaire statistique 2021 sur les PMEESA", type: rapport_analyse, exercice: 2021, trimestre: null, statut_diffusion: publie}
+  - {doc_id: rapport_analyse_2022, fichier: rapport_analyse_2022.pdf, titre: "Rapport d'analyse de l'annuaire statistique 2022 sur les PMEESA", type: rapport_analyse, exercice: 2022, trimestre: null, statut_diffusion: publie}
+  - {doc_id: rapport_analyse_2023, fichier: rapport_analyse_2023.pdf, titre: "Rapport d'analyse de l'annuaire statistique 2023 sur les PMEESA", type: rapport_analyse, exercice: 2023, trimestre: null, statut_diffusion: publie,
+     remarque: "La page de garde reprend le titre « Annuaire statistique 2022 »."}
+  - {doc_id: rapport_analyse_2024, fichier: rapport_analyse_2024.pdf, titre: "Rapport d'analyse de l'annuaire statistique 2024 sur les PMEESA", type: rapport_analyse, exercice: 2024, trimestre: null, statut_diffusion: publie}
+  - {doc_id: note_conjoncture_T3_2022, fichier: note_conjoncture_T3_2022.pdf, titre: "Note de conjoncture, 3e trimestre 2022", type: note_conjoncture, exercice: 2022, trimestre: T3, statut_diffusion: publie}
+  - {doc_id: note_conjoncture_T4_2023, fichier: note_conjoncture_T4_2023.pdf, titre: "Note de conjoncture, 4e trimestre 2023", type: note_conjoncture, exercice: 2023, trimestre: T4, statut_diffusion: publie}
+  - {doc_id: note_conjoncture_T1_2024, fichier: note_conjoncture_T1_2024.pdf, titre: "Note de conjoncture, 1er trimestre 2024", type: note_conjoncture, exercice: 2024, trimestre: T1, statut_diffusion: publie}
+  - {doc_id: note_conjoncture_T2_2024, fichier: note_conjoncture_T2_2024.pdf, titre: "Note de conjoncture, 2e trimestre 2024", type: note_conjoncture, exercice: 2024, trimestre: T2, statut_diffusion: publie}
+  - {doc_id: note_conjoncture_T3_2024, fichier: note_conjoncture_T3_2024.pdf, titre: "Note de conjoncture, 3e trimestre 2024", type: note_conjoncture, exercice: 2024, trimestre: T3, statut_diffusion: publie}
+  - {doc_id: note_conjoncture_T1_2025, fichier: note_conjoncture_T1_2025.pdf, titre: "Note de conjoncture, 1er trimestre 2025", type: note_conjoncture, exercice: 2025, trimestre: T1, statut_diffusion: publie,
+     remarque: "L'ancien prototype la marquait « interne » pour simulation ; statut remis à « publie » (statut réel à confirmer)."}
+  - {doc_id: contexte_bulletin_2023_05, fichier: contexte_bulletin_2023_05.pdf, titre: "Bulletin : innovations fiscales et douanières de la loi de finances 2023 (import-substitution)", type: contexte, exercice: 2023, trimestre: null, statut_diffusion: publie,
+     remarque: "La détection automatique propose 2020 (mentions « SND 2020-2030 ») ; le bulletin porte sur la loi de finances 2023."}
+  - {doc_id: contexte_bulletin_2024, fichier: contexte_bulletin_2024.pdf, titre: "Bulletin d'informations n°4 : offre de crédits et garantie de l'État (avril 2024)", type: contexte, exercice: 2024, trimestre: null, statut_diffusion: publie}
+  - {doc_id: contexte_perspective_inflation_2023, fichier: contexte_perspective_inflation_2023.pdf, titre: "Note de perspective n°001/2023 : inflation et PMEESA (juillet 2023)", type: contexte, exercice: 2023, trimestre: null, statut_diffusion: publie,
+     remarque: "Données jusqu'à octobre 2022, publiée en juillet 2023 : exercice = année de publication. La détection automatique la classe à tort en rapport d'analyse (nombreux graphiques)."}
+  - {doc_id: contexte_perspective_competitivite_pme, fichier: contexte_perspective_competitivite_pme.pdf, titre: "Note de perspective n°001/2024 : compétitivité des PME camerounaises", type: contexte, exercice: 2024, trimestre: null, statut_diffusion: publie,
+     remarque: "Publiée en 2024 (cite le rapport MINEPAT d'avril 2024) ; la détection automatique propose 2023 (année des données)."}
+  # Document SYNTHÉTIQUE de test (cloisonnement) : exclu de toute mesure de qualité.
+  - {doc_id: test_interne_fictif, fichier: test_interne_fictif.pdf, titre: "DOCUMENT DE TEST FICTIF (usage interne simulé)", type: contexte, exercice: 2024, trimestre: null, statut_diffusion: interne, test_synthetique: true, statut_confirme: true,
+     remarque: "Généré par scripts/creer_document_test.py. Contenu inventé, sans valeur statistique."}
