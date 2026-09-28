@@ -1,8 +1,8 @@
 """Client du modèle de langage (Tableau 3.2) : une interface, deux moteurs.
 
-- `ollama` : moteur CIBLE, local (127.0.0.1), sans réseau — llama3.1:8b ;
+- `ollama` : moteur CIBLE, local (127.0.0.1), sans réseau — gpt-oss:20b ;
 - `api`    : service distant compatible OpenAI (Groq), pendant le DÉVELOPPEMENT seulement,
-             avec les mêmes poids ouverts (llama-3.1-8b-instant) pour que les résultats
+             avec les mêmes poids ouverts (openai/gpt-oss-20b) pour que les résultats
              restent transposables au déploiement local ;
 - `llamacpp` : repli local (fichier GGUF) ; `none` : mode extractif (gabarits), signalé.
 

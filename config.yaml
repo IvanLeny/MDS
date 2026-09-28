@@ -101,10 +101,11 @@ llm:
   temperature: 0
   nouvelles_tentatives_json: 1
   ollama:
-    modele: llama3.1:8b           # retenu (Q4_K_M par défaut dans Ollama) = mêmes poids que Groq llama-3.1-8b-instant
+    modele: gpt-oss:20b           # retenu (option A) = mêmes poids ouverts que Groq openai/gpt-oss-20b
     url: http://127.0.0.1:11434   # Ollama local uniquement
-    delai_max_s: 180
+    delai_max_s: 900              # modèle 20B sur CPU : plusieurs minutes par commentaire
     candidats:                    # Tableau 3.2, comparés si le temps et la connexion le permettent
+      - gpt-oss:20b
       - llama3.1:8b
       - qwen2.5:7b-instruct
       - mistral:7b-instruct
@@ -112,10 +113,11 @@ llm:
   api:
     fournisseur: groq
     url: https://api.groq.com/openai/v1
-    modele: llama-3.1-8b-instant  # mêmes poids que llama3.1:8b (Ollama)
-    modele_borne_haute: llama-3.3-70b-versatile   # borne haute de qualité, NON déployable sur le poste de la Cellule
+    modele: openai/gpt-oss-20b    # mêmes poids ouverts (Apache 2.0) que gpt-oss:20b (Ollama)
+    # llama-3.1-8b-instant n'est plus proposé par Groq pour ce compte (liste vérifiée par scripts/tester_groq.py --lister)
+    modele_borne_haute: openai/gpt-oss-120b       # borne haute de qualité, NON déployable sur le poste de la Cellule
     cle_env: GROQ_API_KEY         # la clé est lue dans cette variable d'environnement, jamais écrite dans le code
-    delai_max_s: 60
+    delai_max_s: 120
     essais_reseau: 3              # nouvelles tentatives en cas de coupure (attente croissante)
     attente_base_s: 2
     intervalle_min_s: 2.1         # file d'attente : espacement minimal entre deux appels (compte gratuit)

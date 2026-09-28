@@ -120,8 +120,9 @@ def test_selection_du_moteur_par_config(monkeypatch):
     assert c is None and "GROQ_API_KEY" in expl                # repli signalé, jamais d'appel sans clé
     c, expl = llm.obtenir(cfg, "none")
     assert c is None and llm.decrire(c)["moteur"] == "none"
-    assert cfg["llm"]["ollama"]["modele"] == "llama3.1:8b"
-    assert cfg["llm"]["api"]["modele"] == "llama-3.1-8b-instant"
+    # option A : mêmes poids ouverts en développement (Groq) et en déploiement (Ollama)
+    assert cfg["llm"]["ollama"]["modele"] == "gpt-oss:20b"
+    assert cfg["llm"]["api"]["modele"] == "openai/gpt-oss-20b"
 
 
 def test_moteur_livre_est_local():

@@ -99,8 +99,8 @@ l'absence d'appel réseau. Ce moteur n'est **jamais** celui du déploiement : `c
 clé fournie volontairement.
 
 **Texte proposé.** « Pendant le développement, les commentaires ont pu être générés par un service
-distant compatible OpenAI (Groq, modèle `llama-3.1-8b-instant`), sur les seules publications diffusées,
-avec des poids ouverts identiques au modèle `llama3.1:8b` exécuté localement par Ollama. En exploitation,
+distant compatible OpenAI (Groq, modèle `openai/gpt-oss-20b`), sur les seules publications diffusées,
+avec des poids ouverts identiques au modèle `gpt-oss:20b` exécuté localement par Ollama. En exploitation,
 seul le moteur local est utilisé, et le poste ne fait aucun appel réseau. »
 
 ## E12. (v5.1) Mesures faites dans cette session
@@ -108,11 +108,11 @@ seul le moteur local est utilisé, et le poste ne fait aucun appel réseau. »
 Le service Groq était injoignable depuis l'environnement de développement (connexion refusée par le
 proxy) et aucune clé `GROQ_API_KEY` n'était définie. Ollama n'était pas installé. Par conséquent :
 H1 (ancrage), H2, le côté « LLM ancré » de la référence gabarits et le Tableau 3.2 sont **non mesurés**.
-Le côté « gabarits » est mesuré. Le couple retenu (`llama3.1:8b` / `llama-3.1-8b-instant`) est un
+Le côté « gabarits » est mesuré. Le couple initialement retenu (`llama3.1:8b` / `llama-3.1-8b-instant`, voir E15) était un
 **choix arrêté par l'étudiant** (septembre 2026) : il n'est pas encore justifié par des mesures de ce
 prototype. Relancer `run_all --llm api` avec la clé, puis `--llm ollama` sur le poste cible.
 
-## E13. (v5.1) Quantification Q4_K_M de `llama3.1:8b`
+## E13. (v5.1) Quantification Q4_K_M de `llama3.1:8b` (candidat secondaire depuis E15)
 
 Le nom `llama3.1:8b` dans Ollama désigne la variante quantifiée par défaut (Q4_K_M à la date de
 rédaction). **À vérifier** avec `ollama show llama3.1:8b` sur le poste cible, et à reporter dans le Tableau 3.2.
@@ -123,3 +123,26 @@ Les gabarits (`--llm none`) sont des phrases déterministes construites à parti
 variations autorisées. Ils ne reprennent pas le style des modèles de rédaction : leur ROUGE-L contre les
 commentaires publiés est donc attendu faible. La comparaison vaut surtout pour la couverture et pour la
 grille BN (notes stratégiques des deux versions, à noter par les lecteurs).
+
+## E15. (v5.1, octobre 2026) Changement de modèle : `gpt-oss-20b` remplace `llama3.1:8b`
+
+**Constat.** Le couple arrêté en septembre 2026 (`llama3.1:8b` / Groq `llama-3.1-8b-instant`) n'est plus
+réalisable : Groq répond « model_not_found » pour `llama-3.1-8b-instant`, et la liste des modèles du compte
+(`scripts/tester_groq.py --lister`) ne comporte plus aucun modèle Llama conversationnel. Parmi les
+modèles proposés, seul `openai/gpt-oss-20b` réunit les deux conditions du mémoire : **poids ouverts**
+(licence Apache 2.0) et **même modèle exécutable localement par Ollama** (`gpt-oss:20b`).
+
+**Choix retenu (option A, décision de l'étudiant).** `api` = Groq `openai/gpt-oss-20b` (développement) ;
+`ollama` = `gpt-oss:20b` (déploiement) ; borne haute non déployable : `openai/gpt-oss-120b`.
+
+**Conséquences à reporter.** Le modèle compte 20 milliards de paramètres (architecture à mélange d'experts)
+au lieu de 8 : le poste de la Cellule doit disposer de **16 Go de RAM** (la borne basse de 8 Go du
+chapitre 2.2.2 ne suffit plus), et la rédaction d'un commentaire sur CPU prend plusieurs minutes.
+Format de quantification : celui distribué par Ollama pour `gpt-oss:20b` (à relever avec
+`ollama show gpt-oss:20b`), et non Q4_K_M.
+
+**Texte proposé (Tableau 3.2 et 3.1.4).** « Le modèle de langage retenu est gpt-oss-20b (poids ouverts,
+licence Apache 2.0). Pendant le développement, il est appelé via le service Groq (`openai/gpt-oss-20b`) ;
+en exploitation, les mêmes poids sont exécutés localement par Ollama (`gpt-oss:20b`), sans connexion
+réseau. Ce choix remplace llama3.1:8b, retiré du catalogue du service de développement ; il exige un poste
+de 16 Go de mémoire vive. llama3.1:8b reste comparé comme candidat local plus léger. »

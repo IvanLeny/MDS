@@ -7,7 +7,7 @@ stratégique »*.
 
 Principe directeur : **le modèle rédige, il ne calcule ni ne décide.** Le programme retrouve
 l'information, calcule les variations, sélectionne les évolutions et vérifie chaque chiffre ; le modèle
-de langage local (llama3.1:8b via Ollama) rédige.
+de langage local (gpt-oss:20b via Ollama) rédige.
 
 **En 10 lignes, pour un non-informaticien :**
 
@@ -50,8 +50,8 @@ python -m pytest                             # tests
 - Les résultats sont **PROVISOIRES** tant que les tables d'appariement (`data/pairing/a_valider_20XX.xlsx`)
   n'ont pas été validées par double lecture.
 - Deux moteurs pour le modèle de langage, choisis dans `config.yaml` (`llm.backend`) :
-  `ollama` (cible, local, `llama3.1:8b`) et `api` (développement seulement, Groq
-  `llama-3.1-8b-instant`, mêmes poids ; clé dans la variable `GROQ_API_KEY`).
+  `ollama` (cible, local, `gpt-oss:20b`) et `api` (développement seulement, Groq
+  `openai/gpt-oss-20b`, mêmes poids ouverts ; clé dans la variable `GROQ_API_KEY`).
 - Les modèles (bge-m3, modèles de langage via Ollama, service Groq) n'ont pas pu être joints dans
   l'environnement de développement (accès réseau refusé) : la voie dense utilise un encodeur de repli
   hors ligne, et la rédaction se fait en **mode extractif** (gabarits), signalé dans chaque sortie.

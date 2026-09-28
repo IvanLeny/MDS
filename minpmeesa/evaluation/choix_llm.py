@@ -1,9 +1,9 @@
 """Choix du modèle de langage (Tableau 3.2) : temps médian d'un commentaire, taux
 de JSON valide, taux de valeurs écartées, sur 20 indicateurs.
 
-Candidats Ollama (déployables) : llama3.1:8b (retenu), qwen2.5:7b-instruct,
-mistral:7b-instruct, llama3.2:3b. Moteur `api` (développement) : llama-3.1-8b-instant
-(mêmes poids que llama3.1:8b) et, en option, llama-3.3-70b-versatile comme BORNE
+Candidats Ollama (déployables) : gpt-oss:20b (retenu), llama3.1:8b, qwen2.5:7b-instruct,
+mistral:7b-instruct, llama3.2:3b. Moteur `api` (développement) : openai/gpt-oss-20b
+(mêmes poids que gpt-oss:20b) et, en option, openai/gpt-oss-120b comme BORNE
 HAUTE, non déployable. Un candidat indisponible est déclaré « non mesuré ».
 """
 from __future__ import annotations

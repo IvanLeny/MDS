@@ -59,18 +59,20 @@ Les 18 documents sont au statut « publie », à confirmer auprès de la Cellule
 
 ## 3.1.4 / Tableau 3.2 — Choix du modèle de langage (source : `tableau_3_2_modeles_langage.json`)
 
-Choix arrêté (v5.1) : **`llama3.1:8b`** (Ollama, Q4_K_M, local : moteur du déploiement) et, pendant le
-développement, **Groq `llama-3.1-8b-instant`** (mêmes poids ouverts). En option, `llama-3.3-70b-versatile`
-sert de borne haute de qualité, non déployable sur le poste de la Cellule.
+Choix retenu (option A, octobre 2026, voir `docs/ECARTS_MEMOIRE.md` E15) : **`gpt-oss:20b`** (Ollama,
+local : moteur du déploiement) et, pendant le développement, **Groq `openai/gpt-oss-20b`** (mêmes poids
+ouverts). Borne haute non déployable : `openai/gpt-oss-120b`. Le couple initial `llama3.1:8b` /
+`llama-3.1-8b-instant` n'est plus disponible chez Groq.
 
 | Moteur / modèle | Déployable | Temps médian | JSON valide | Valeurs écartées |
 |---|---|---|---|---|
-| ollama / llama3.1:8b (retenu) | oui | non mesuré (Ollama absent du poste de mesure) | — | — |
+| ollama / gpt-oss:20b (retenu) | oui (16 Go RAM) | non mesuré (Ollama absent du poste de mesure) | — | — |
+| ollama / llama3.1:8b | oui | non mesuré | — | — |
 | ollama / qwen2.5:7b-instruct | oui | non mesuré | — | — |
 | ollama / mistral:7b-instruct | oui | non mesuré | — | — |
 | ollama / llama3.2:3b | oui | non mesuré | — | — |
-| api Groq / llama-3.1-8b-instant | non (développement) | non mesuré (service injoignable, clé absente) | — | — |
-| api Groq / llama-3.3-70b-versatile | non (borne haute) | non mesuré | — | — |
+| api Groq / openai/gpt-oss-20b | non (développement) | à mesurer (`run_all --llm api`) | — | — |
+| api Groq / openai/gpt-oss-120b | non (borne haute) | à mesurer | — | — |
 
 → À remplir par `run_all --llm api` (avec `GROQ_API_KEY`), puis `run_all --llm ollama` sur le poste cible.
 Le choix du couple est **arrêté**, mais pas encore étayé par des mesures du prototype : le signaler dans le
@@ -92,7 +94,7 @@ Quatre parcours et une page « Base documentaire » (`minpmeesa/app/streamlit_ap
 `data/outputs/captures/` (Annexe III). Temps de réponse sur le poste de développement (Linux, 4 cœurs,
 15,7 Go, sans GPU, mode extractif) : consultation, médiane **0,20 s** (P90 0,40 s) ; commentaire, médiane
 **0,01 s** (P90 0,11 s) ; note d'analyse d'un chapitre, **2,16 s** ; note stratégique, **1,88 s**.
-Ces temps n'incluent aucun appel à un modèle de langage : à refaire sur le poste cible avec `llama3.1:8b`.
+Ces temps n'incluent aucun appel à un modèle de langage : à refaire sur le poste cible avec `gpt-oss:20b`.
 
 ## 3.5.4 / Tableau 3.8 / Annexe V — Note stratégique 2024
 

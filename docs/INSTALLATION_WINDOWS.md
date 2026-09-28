@@ -35,11 +35,11 @@ Poste visé : Windows 10/11, 8 à 16 Go de mémoire, sans carte graphique. Deux 
 
 ## 3. Réglages
 
-- `config.yaml`, section `llm` : `backend: ollama` sur le poste de la Cellule (modèle `llama3.1:8b`,
-  à installer avec `ollama pull llama3.1:8b`) ; `backend: none` pour travailler sans modèle de langage
+- `config.yaml`, section `llm` : `backend: ollama` sur le poste de la Cellule (modèle `gpt-oss:20b`,
+  à installer avec `ollama pull gpt-oss:20b` ; **16 Go de RAM requis**, rédaction lente sur CPU) ; `backend: none` pour travailler sans modèle de langage
   (mode extractif, signalé).
 - Moteur `api` (**développement seulement**, jamais sur le poste de la Cellule) : Groq, modèle
-  `llama-3.1-8b-instant`, mêmes poids que `llama3.1:8b`. Définir la clé dans une variable
+  `openai/gpt-oss-20b`, mêmes poids ouverts que `gpt-oss:20b`. Tester : `python scripts\tester_groq.py`. Définir la clé dans une variable
   d'environnement, jamais dans un fichier du projet :
   `setx GROQ_API_KEY "votre_cle"` (Windows) ou `export GROQ_API_KEY=...` (Linux). Puis `backend: api`.
   Les réponses sont gardées en cache (`data/cache/llm`, hors Git) : un appel réussi n'est jamais refait.
@@ -54,7 +54,8 @@ Poste visé : Windows 10/11, 8 à 16 Go de mémoire, sans carte graphique. Deux 
 | « repli en mode extractif : Ollama indisponible » | Ollama n'est pas lancé, ou le modèle n'est pas installé | lancer Ollama ; `ollama list` doit afficher le modèle de `config.yaml` |
 | `'python' n'est pas reconnu…` | Python absent du PATH | réinstaller Python en cochant « Add to PATH » |
 | Le navigateur ne s'ouvre pas | pare-feu ou navigateur par défaut | ouvrir `http://127.0.0.1:8501` à la main |
-| Réponses très lentes | modèle 8B trop lourd pour le poste | essayer `llama3.2:3b` (`llm.ollama.modele`) |
+| Réponses très lentes, ou « délai dépassé » | gpt-oss:20b sur CPU | normal (plusieurs minutes) ; si le poste a moins de 16 Go, voir `docs/ECARTS_MEMOIRE.md` E15 |
+| « HTTP 404 … model_not_found » (moteur api) | modèle retiré par Groq | `python scripts\tester_groq.py --lister`, puis adapter `llm.api.modele` |
 | « clé API absente : définir la variable d'environnement GROQ_API_KEY » | moteur `api` choisi sans clé | définir la clé, ou revenir à `backend: ollama` |
 | Appels `api` ralentis | limite du compte gratuit atteinte | normal : le client attend la réinitialisation et met les appels en file |
 | `MemoryError` à la construction | mémoire insuffisante avec bge-m3 | réduire `embeddings.taille_lot` à 4 |
