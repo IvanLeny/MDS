@@ -1,0 +1,18 @@
+{
+  "modele": "repli en mode extractif : Ollama indisponible ou modèle qwen2.5:7b-instruct-q4_K_M absent ; fichier GGUF absent (models/llm/modele.gguf)",
+  "commentaire_enonces": 6,
+  "note_analyse_tableaux_commentes": 17,
+  "note_analyse_tableaux_a_commenter_manuellement": 3,
+  "note_strategique_evolutions": 6,
+  "note_strategique_mots": 689,
+  "verification_bn4_bn5": {
+    "BN4_toute_valeur_tracee": true,
+    "BN4_valeurs_non_tracees": [],
+    "BN5_rubriques": true,
+    "BN5_messages_cles_3": true,
+    "BN5_longueur_ok": true,
+    "nb_mots": 689
+  },
+  "provisoire": true,
+  "mode_extractif": true
+}

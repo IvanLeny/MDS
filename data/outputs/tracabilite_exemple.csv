@@ -1,0 +1,13 @@
+﻿enonce;code_indicateur;commentaire_prod_id;commentaire_valide;variation;valeur;valeur_id;ligne;colonne;document;tableau;page
+Par rapport à 2023, l'évolution la plus marquée concerne « Stock des PME » (hausse de 12,8 %).;pme-typologie;74;False;12,8;443 524;11833;Stock des PME;2024 (e);annuaire_2024;16;27
+Par rapport à 2023, l'évolution la plus marquée concerne « Stock des PME » (hausse de 12,8 %).;pme-typologie;74;False;12,8;393 166;11832;Stock des PME;2023 (e);annuaire_2024;16;27
+Par rapport à 2023, l'évolution la plus marquée concerne « Primaire » (hausse de 12,1 %).;pme-secteur-activite;75;False;12,1;102;11875;Primaire;2024 (e);annuaire_2024;17;27
+Par rapport à 2023, l'évolution la plus marquée concerne « Primaire » (hausse de 12,1 %).;pme-secteur-activite;75;False;12,1;91;11874;Primaire;2023 (e);annuaire_2024;17;27
+Par rapport à 2023, l'évolution la plus marquée concerne « Secondaire » (hausse de 26,1 %).;stock-pme-secteur-activite;64;False;26,1;100 680;10138;Secondaire;2024(e) · Effectif;annuaire_2024;2;17
+Par rapport à 2023, l'évolution la plus marquée concerne « Secondaire » (hausse de 26,1 %).;stock-pme-secteur-activite;64;False;26,1;79 815;10136;Secondaire;2023 (e) · Effectif;annuaire_2024;2;17
+Par rapport à 2023, l'évolution la plus marquée concerne « Ebolowa » (hausse de 8,4 %).;pme-creees-sur-periode;66;False;8,4;142;10408;Ebolowa;2024;annuaire_2024;7;19
+Par rapport à 2023, l'évolution la plus marquée concerne « Ebolowa » (hausse de 8,4 %).;pme-creees-sur-periode;66;False;8,4;131;10407;Ebolowa;2023;annuaire_2024;7;19
+Par rapport à 2023, l'évolution la plus marquée concerne « Masculin » (baisse de 3,9 %).;upa-enregistrees-dans-bureaux-communaux-region;71;False;3,9;1668;12814;Masculin;2024 · Effectif;annuaire_2024;29;38
+Par rapport à 2023, l'évolution la plus marquée concerne « Masculin » (baisse de 3,9 %).;upa-enregistrees-dans-bureaux-communaux-region;71;False;3,9;1 735;12812;Masculin;2023 · Effectif;annuaire_2024;29;38
+Par rapport à 2023, l'évolution la plus marquée concerne « Art » (baisse de 3,5 %).;upa-enregistrees-typologie-artisanat-region;73;False;3,5;931;12855;Art;2024 · Effectif;annuaire_2024;30;38
+Par rapport à 2023, l'évolution la plus marquée concerne « Art » (baisse de 3,5 %).;upa-enregistrees-typologie-artisanat-region;73;False;3,5;965;12853;Art;2023 · Effectif;annuaire_2024;30;38

@@ -38,12 +38,14 @@ class Contexte:
 
     @property
     def provisoire(self) -> bool:
-        return self.statut_appariement != "valide"
+        return self.statut_appariement not in ("valide", "tableau (sans appariement)")
 
     def autorisees(self) -> list[dict]:
         """Valeurs admises par le contrôle littéral, chacune avec sa source."""
         out = []
-        for v in self.valeurs:
+        # l'exercice traité d'abord : une valeur présente dans plusieurs colonnes est
+        # rattachée à la colonne de l'exercice
+        for v in _prioriser_valeurs(self.valeurs, self.exercice):
             src = {"nature": "valeur", "valeur_id": v["valeur_id"], "doc_id": v["doc_id"],
                    "page": v["page"], "tableau_n": v["tableau_n"], "ligne": v["ligne"], "colonne": v["colonne"]}
             out.append({"texte": v["valeur_texte"], "source": src})
@@ -98,9 +100,22 @@ def _prioriser_variations(vs: list[dict], ex: int) -> list[dict]:
 def construire(con: sqlite3.Connection, code: str, exercice: int, statuts: list[str],
                nb_modeles: int = 3, moteur=None) -> Contexte:
     ctx = Contexte(code, exercice)
-    app = con.execute(
-        f"SELECT * FROM appariement WHERE code_indicateur=? AND exercice=? "
-        f"AND statut IN ({','.join('?' * len(statuts))})", (code, exercice, *statuts)).fetchone()
+    m = re.fullmatch(r"tableau-(\d+)", code)
+    if m:
+        # Tableau de l'Annuaire commenté pour lui-même (note d'analyse d'un chapitre).
+        ann = con.execute("SELECT doc_id FROM documents WHERE type='annuaire' AND exercice=? "
+                          "AND statut_diffusion='publie'", (exercice,)).fetchone()
+        tit = con.execute("SELECT tableau_intitule FROM valeurs WHERE doc_id=? AND tableau_n=? LIMIT 1",
+                          (ann[0] if ann else "", int(m.group(1)))).fetchone() if ann else None
+        if not ann or not tit:
+            ctx.abstention = f"tableau {m.group(1)} introuvable dans l'Annuaire {exercice}"
+            return ctx
+        app = {"graphique_intitule": tit[0], "tableau_n": int(m.group(1)), "tableau_intitule": tit[0],
+               "doc_annuaire": ann[0], "statut": "tableau (sans appariement)"}
+    else:
+        app = con.execute(
+            f"SELECT * FROM appariement WHERE code_indicateur=? AND exercice=? "
+            f"AND statut IN ({','.join('?' * len(statuts))})", (code, exercice, *statuts)).fetchone()
     if not app or app["tableau_n"] is None:
         ctx.abstention = "aucun tableau apparié (et utilisable) pour cet indicateur et cet exercice"
         return ctx
@@ -112,8 +127,13 @@ def construire(con: sqlite3.Connection, code: str, exercice: int, statuts: list[
         "SELECT v.* FROM valeurs v JOIN documents d USING(doc_id) "
         "WHERE v.doc_id=? AND v.tableau_n=? AND d.exercice=? AND d.statut_diffusion='publie' "
         "ORDER BY v.valeur_id", (app["doc_annuaire"], app["tableau_n"], exercice))]
-    ctx.variations = [dict(r) for r in con.execute(
-        "SELECT * FROM variations WHERE code_indicateur=? AND exercice=?", (code, exercice))]
+    if m:
+        from ..compute.variations import variations_tableau
+        from dataclasses import asdict
+        ctx.variations = [asdict(v) for v in variations_tableau(con, code, exercice, ctx.doc_annuaire, ctx.tableau_n)]
+    else:
+        ctx.variations = [dict(r) for r in con.execute(
+            "SELECT * FROM variations WHERE code_indicateur=? AND exercice=?", (code, exercice))]
     # Modèles de rédaction : exercices STRICTEMENT antérieurs (BF6), dans la requête.
     ctx.modeles = [dict(r) for r in con.execute(
         "SELECT p.passage_id, p.doc_id, p.page, p.texte, d.exercice FROM passages p "

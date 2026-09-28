@@ -83,9 +83,16 @@ def variations_indicateur(con: sqlite3.Connection, code: str, exercice: int,
                       (code, exercice)).fetchone()
     if not app or app["tableau_n"] is None:
         return []
+    return variations_tableau(con, code, exercice, app["doc_annuaire"], app["tableau_n"], dec_pct, croisees=True)
+
+
+def variations_tableau(con: sqlite3.Connection, code: str, exercice: int, doc_annuaire: str,
+                       tableau_n: int, dec_pct: int = 1, croisees: bool = False) -> list[Variation]:
+    """Variations d'un tableau de l'Annuaire de l'exercice (colonnes millésimées) ;
+    `croisees` : à défaut de série, éditions antérieures du même indicateur."""
     vals = con.execute(
         "SELECT * FROM valeurs WHERE doc_id=? AND tableau_n=? AND valeur_num IS NOT NULL",
-        (app["doc_annuaire"], app["tableau_n"])).fetchall()
+        (doc_annuaire, tableau_n)).fetchall()
     series: dict[tuple, dict[int, sqlite3.Row]] = {}
     sans_annee: dict[tuple, sqlite3.Row] = {}
     for v in vals:
@@ -109,7 +116,7 @@ def variations_indicateur(con: sqlite3.Connection, code: str, exercice: int,
                                  ref["valeur_num"], va, vat, vr, vrt, cur["unite"],
                                  cur["valeur_id"], ref["valeur_id"]))
     # 2) tableaux sans série : éditions antérieures du même indicateur
-    if not out and sans_annee:
+    if not out and sans_annee and croisees:
         anciens = con.execute(
             "SELECT * FROM appariement WHERE code_indicateur=? AND exercice<? "
             "AND tableau_n IS NOT NULL ORDER BY exercice", (code, exercice)).fetchall()

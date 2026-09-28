@@ -87,6 +87,16 @@ def _verbe(x: float, hausse: str, baisse: str, stable: str = "reste stable") -> 
     return hausse if x > 0 else baisse if x < 0 else stable
 
 
+def _une_colonne(vals: list[dict]) -> list[dict]:
+    """Tableau à deux dimensions : on ne lit qu'UNE colonne (la colonne « Total »
+    s'il y en a une ; sinon la seule colonne présente ; sinon rien)."""
+    cols = list(dict.fromkeys(v["colonne"] for v in vals))
+    if len(cols) <= 1:
+        return vals
+    tot = [c for c in cols if re.search(r"\btotal\b|ensemble", c, re.I)]
+    return [v for v in vals if v["colonne"] == tot[-1]] if tot else []
+
+
 def extractif(ctx: ic.Contexte) -> list[dict]:
     """Gabarits déterministes à partir des seules valeurs et variations du contexte."""
     ex = ctx.exercice
@@ -95,8 +105,8 @@ def extractif(ctx: ic.Contexte) -> list[dict]:
     if not courant:
         return []
     est_total = lambda l: bool(re.search(r"(^|/\s*)total", l, re.I))
-    niveaux = [v for v in courant if v["unite"] != "%" and "%" not in (v["sous_colonne"] or "")]
-    parts = [v for v in courant if v["unite"] == "%" or "%" in (v["sous_colonne"] or "")]
+    niveaux = _une_colonne([v for v in courant if v["unite"] != "%" and "%" not in (v["sous_colonne"] or "")])
+    parts = _une_colonne([v for v in courant if v["unite"] == "%" or "%" in (v["sous_colonne"] or "")])
     enonces = []
     tit = ctx.tableau_intitule or ctx.indicateur
     # total général uniquement (pas un sous-total « Yaoundé / Total »)
@@ -165,6 +175,9 @@ def commenter(con, code: str, exercice: int, client: ClientLLM | None = None,
     bruts = []
     if client is None:
         enonces = extractif(ctx)
+        if not enonces:
+            return _fin(con, abst.resultat(code, exercice, "tableau non exploitable par les gabarits extractifs "
+                                           "(libellés ou colonnes non reconnus)", **base), t0, journaliser, modele)
     else:
         if avec_appui:
             sys_, usr = prompts.SYSTEME_COMMENTAIRE, prompts.utilisateur_commentaire(
