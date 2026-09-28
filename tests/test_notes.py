@@ -65,3 +65,66 @@ def test_exports_word(base_complete, m, tmp_path):
     p = docx_export.exporter_note_strategique(note, tmp_path / "n.docx")
     t = "\n".join(x.text for x in Document(p).paragraphs)
     assert all(r in t for r in strategic_note.RUBRIQUES)
+
+
+class _FauxLLM:
+    nom, moteur, modele = "faux:llm", "faux", "llm"
+
+    def __init__(self, reponse):
+        self.reponse = reponse
+
+    def generer(self, systeme, utilisateur, json_attendu=True):
+        return self.reponse
+
+
+@pytest.fixture
+def commentaires_valides(base_complete, m):
+    """La note stratégique part des commentaires VALIDÉS : on valide ceux produits en mode
+    gabarits, puis on rétablit l'état initial."""
+    ids = []
+    for (code,) in base_complete.execute("SELECT code_indicateur FROM appariement WHERE exercice=2024 "
+                                         "AND statut IN ('valide','candidat') AND tableau_n IS NOT NULL"):
+        r = commentary.commenter(base_complete, code, 2024, None, journaliser=True, moteur=m)
+        if not r.get("abstention"):
+            analysis_note.valider_production(base_complete, r["prod_id"], "test")
+            ids.append(r["prod_id"])
+    yield ids
+    for i in ids:
+        analysis_note.valider_production(base_complete, i, "test", "a_relire")
+
+
+def test_note_strategique_redigee_par_le_llm_et_controlee(base_complete, m, commentaires_valides):
+    import json
+    ref = strategic_note.rediger(base_complete, 2024, None, m, journaliser=False)
+    c0 = ref["selection"][0]["code"]
+    rep = json.dumps({
+        "messages_cles": ["Le stock progresse nettement.", "Les créations restent dynamiques.",
+                          "Les UPA reculent de 99,9 %."],                       # chiffre inventé
+        "evolutions": [{"code": c0, "mise_en_perspective": "Cette hausse s'inscrit dans une tendance durable."}],
+        "points_attention": ["Le recul des UPA appelle une vigilance."],
+        "pistes": ["Renforcer l'accompagnement des artisans.", "Viser 25 000 créations par an."]},  # chiffre interdit
+        ensure_ascii=False)
+    # le programme sélectionne toujours (même sélection) : seul le client change
+    note = strategic_note.rediger(base_complete, 2024, _FauxLLM(rep), m, journaliser=False)
+    assert [c["code"] for c in note["selection"]] == [c["code"] for c in ref["selection"]]   # BN1 : le programme
+    assert note["redaction"] == "modèle de langage" and note["moteur"] == "faux"
+    textes = " ".join(b["texte"] for r in strategic_note.RUBRIQUES for b in note["rubriques"][r])
+    assert "99,9" not in textes and "25 000" not in textes
+    assert {e["valeur"] for e in note["valeurs_ecartees"]} >= {"99,9", "25 000"}
+    assert "tendance durable" in textes
+
+
+def test_note_strategique_repli_gabarits_si_json_invalide(base_complete, m, commentaires_valides):
+    note = strategic_note.rediger(base_complete, 2024, _FauxLLM("pas du json"), m, journaliser=False)
+    assert note["redaction"].startswith("gabarits (repli")
+    assert strategic_note.verifier_bn4_bn5(note)["BN4_toute_valeur_tracee"]
+
+
+def test_reformulation_consultation_controlee(m):
+    import json
+    from minpmeesa.retrieval import consultation
+    f = _FauxLLM(json.dumps({"reponse": "Les CFCE ont enregistré 21 132 PME en 2024. Cela représente 55 555 emplois."}))
+    r = consultation.consulter("Combien de PME ont été créées dans les CFCE en 2024 ?", m,
+                               journaliser=False, rediger=True, client=f)
+    assert "21 132" in r["reponse"]["texte"] and "55 555" not in r["reponse"]["texte"]
+    assert r["reponse"]["valeurs_ecartees"][0]["valeur"] == "55 555"

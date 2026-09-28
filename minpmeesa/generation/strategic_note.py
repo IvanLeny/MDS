@@ -17,6 +17,7 @@ Même contrôle de citation littérale que le service 2.
 """
 from __future__ import annotations
 
+import json
 import re
 import statistics as st
 import time
@@ -28,7 +29,7 @@ from ..guards.normalize import canon
 from ..retrieval import indicator_context as ic
 from ..store import db
 from ..texte import jaccard
-from . import analysis_note, commentary as cm
+from . import analysis_note, commentary as cm, prompts
 
 RUBRIQUES = ["Messages clés", "Évolutions marquantes", "Points d'attention", "Pistes pour la décision", "Sources"]
 _OBJECTIF = re.compile(r"objectif|cible|à l[’']horizon|horizon 20\d\d|SND ?-?30|vise[rà]?\b|ambition|"
@@ -154,9 +155,8 @@ def _nom(c) -> str:
     return c["commentaire"].get("indicateur") or c["commentaire"].get("tableau_intitule") or c["code"]
 
 
-def _assembler(con, exercice, retenus, candidats, non_valides, abstentions, client, ns) -> dict:
-    ex = exercice
-    blocs: dict[str, list[dict]] = {r: [] for r in RUBRIQUES}
+def _gabarits(blocs: dict, retenus: list[dict]) -> None:
+    """Rédaction par gabarits déterministes (mode sans modèle de langage, ou repli)."""
     for c in retenus[:3]:
         blocs["Messages clés"].append({"texte": c["enonce"]["texte"], "code": c["code"]})
     for c in retenus:
@@ -170,13 +170,6 @@ def _assembler(con, exercice, retenus, candidats, non_valides, abstentions, clie
     for c in retenus:
         if c["var_rel"] < 0:
             blocs["Points d'attention"].append({"texte": f"Recul observé pour « {_nom(c)} ».", "code": c["code"]})
-    if non_valides:
-        blocs["Points d'attention"].append({"texte": f"{len(non_valides)} commentaire(s) mobilisé(s) n'ont pas encore "
-                                                     "été validés par la Cellule : la note est à relire.", "code": None})
-    if abstentions:
-        blocs["Points d'attention"].append({"texte": "Certains indicateurs n'ont pas pu être commentés faute de "
-                                                     "sources suffisantes ; ils sont à commenter manuellement.",
-                                            "code": None})
     for c in retenus:
         if c["var_rel"] < 0:
             p = (f"Examiner les causes du recul de « {_nom(c)} » et envisager des mesures d'accompagnement ciblées.")
@@ -185,6 +178,57 @@ def _assembler(con, exercice, retenus, candidats, non_valides, abstentions, clie
         else:
             p = f"Poursuivre le suivi de « {_nom(c)} » et préciser, le cas échéant, un objectif de référence."
         blocs["Pistes pour la décision"].append({"texte": p, "code": c["code"]})
+
+
+def _rediger_llm(client, retenus: list[dict], ex: int) -> dict | None:
+    """Le modèle rédige messages clés, mise en perspective, points d'attention et pistes,
+    à partir des SEULS éléments fournis par le programme. None si la réponse est inexploitable
+    (repli sur les gabarits, signalé)."""
+    elements = [{"code": c["code"], "indicateur": _nom(c), "constat_valide": c["enonce"]["texte"],
+                 "sens": "hausse" if c["var_rel"] > 0 else "baisse" if c["var_rel"] < 0 else "stable",
+                 "qualification_programme": c["qualification"],
+                 "objectif_documente": c["objectif"]["texte"] if c["objectif"] else None} for c in retenus]
+    try:
+        brut = client.generer(prompts.SYSTEME_NOTE_STRATEGIQUE, prompts.utilisateur_note_strategique(ex, elements))
+        d = json.loads(re.sub(r"^```(?:json)?|```$", "", brut.strip(), flags=re.M))
+    except Exception:
+        return None
+    if not isinstance(d, dict) or not isinstance(d.get("messages_cles"), list) or len(d["messages_cles"]) < 3:
+        return None
+    for cle in ("points_attention", "pistes"):
+        if not isinstance(d.get(cle, []), list):
+            return None
+    d["messages_cles"] = [str(x) for x in d["messages_cles"] if str(x).strip()]
+    d["points_attention"] = [str(x) for x in d.get("points_attention", []) if str(x).strip()]
+    d["pistes"] = [str(x) for x in d.get("pistes", []) if str(x).strip()]
+    d["evolutions"] = [e for e in d.get("evolutions", []) if isinstance(e, dict)]
+    return d
+
+
+def _assembler(con, exercice, retenus, candidats, non_valides, abstentions, client, ns) -> dict:
+    ex = exercice
+    blocs: dict[str, list[dict]] = {r: [] for r in RUBRIQUES}
+    redaction = _rediger_llm(client, retenus, ex) if client is not None else None
+    if redaction:
+        # Le modèle rédige ; le programme a sélectionné (BN1), qualifié (BN2) et apporté les objectifs (BN3).
+        blocs["Messages clés"] = [{"texte": t, "code": None} for t in redaction["messages_cles"][:3]]
+        persp = {e.get("code"): e.get("mise_en_perspective", "") for e in redaction.get("evolutions", [])}
+        for c in retenus:
+            t = f"{_nom(c)} : {c['enonce']['texte']} {persp.get(c['code'], '')}".strip()
+            t += (f" Objectif documenté : « {c['objectif']['texte']} » ({c['objectif']['titre']}, "
+                  f"p. {c['objectif']['page']})." if c["objectif"] else " Aucun objectif documenté dans le corpus.")
+            blocs["Évolutions marquantes"].append({"texte": t, "code": c["code"]})
+        blocs["Points d'attention"] = [{"texte": t, "code": None} for t in redaction.get("points_attention", [])]
+        blocs["Pistes pour la décision"] = [{"texte": t, "code": None} for t in redaction.get("pistes", [])]
+    else:
+        _gabarits(blocs, retenus)
+    if non_valides:
+        blocs["Points d'attention"].append({"texte": f"{len(non_valides)} commentaire(s) mobilisé(s) n'ont pas encore "
+                                                     "été validés par la Cellule : la note est à relire.", "code": None})
+    if abstentions:
+        blocs["Points d'attention"].append({"texte": "Certains indicateurs n'ont pas pu être commentés faute de "
+                                                     "sources suffisantes ; ils sont à commenter manuellement.",
+                                            "code": None})
     # Sources (BN4)
     trace = []
     for c in retenus:
@@ -242,6 +286,9 @@ def _assembler(con, exercice, retenus, candidats, non_valides, abstentions, clie
         "tracabilite": trace, "valeurs_ecartees": ecartees, "abstentions": abstentions,
         "commentaires_non_valides": non_valides, "nb_mots": n_mots, "max_mots": ns["max_mots"],
         "mode_extractif": client is None, "modele": client.nom if client else cm.MODE_EXTRACTIF,
+        "moteur": client.moteur if client else "none",
+        "redaction": "modèle de langage" if redaction else ("gabarits" if client is None else
+                                                           "gabarits (repli : réponse du modèle inexploitable)"),
         "provisoire": any(c["commentaire"].get("provisoire") for c in retenus),
     }
 

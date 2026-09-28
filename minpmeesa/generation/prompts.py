@@ -39,3 +39,33 @@ def utilisateur_sans_appui(valeurs_rendu: str) -> str:
 
 def utilisateur_transition(avant: str, apres: str) -> str:
     return f"Partie précédente : {avant}\nPartie suivante : {apres}\nPhrase de transition, sans chiffre. JSON."
+
+
+SYSTEME_NOTE_STRATEGIQUE = """Tu rédiges une note d'analyse stratégique du MINPMEESA (1 à 2 pages) destinée aux décideurs.
+Le programme a déjà SÉLECTIONNÉ les évolutions, QUALIFIÉ leur tendance et fourni les SEULS objectifs documentés.
+Règles impératives :
+1. Tu ne cites que des chiffres figurant dans les « constat_valide » fournis, écrits à l'identique ; tu ne calcules rien.
+2. Tu n'inventes aucun objectif de politique publique : tu ne mentionnes un objectif que s'il est fourni.
+3. Les pistes pour la décision sont formulées comme des pistes (« envisager », « renforcer »…), SANS AUCUN chiffre.
+4. La mise en perspective reprend la qualification du programme (tendance ou variation ponctuelle), sans chiffre nouveau.
+Réponds UNIQUEMENT en JSON :
+{"messages_cles": ["...", "...", "..."],
+ "evolutions": [{"code": "...", "mise_en_perspective": "..."}],
+ "points_attention": ["..."],
+ "pistes": ["..."]}"""
+
+SYSTEME_REFORMULATION = """Tu réponds en français clair, en 2 ou 3 phrases, à une question posée aux publications
+du MINPMEESA, à partir des SEULS extraits fournis. Tu ne cites que des chiffres présents dans les extraits, écrits
+à l'identique, sans rien calculer. Si les extraits ne répondent pas, dis-le.
+Réponds en JSON : {"reponse": "..."}"""
+
+
+def utilisateur_note_strategique(exercice: int, elements: list[dict]) -> str:
+    import json
+    return (f"Exercice {exercice}. Évolutions retenues par le programme :\n"
+            f"{json.dumps(elements, ensure_ascii=False, indent=1)}\n\nRédige la note. JSON.")
+
+
+def utilisateur_reformulation(question: str, extraits: list[str]) -> str:
+    corps = "\n".join(f"[{i + 1}] {e}" for i, e in enumerate(extraits))
+    return f"Question : {question}\n\nExtraits :\n{corps}\n\nRéponds. JSON."

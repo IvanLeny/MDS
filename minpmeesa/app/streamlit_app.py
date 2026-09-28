@@ -100,8 +100,12 @@ if page == "Parcours" and m:
     with t1:
         st.subheader("Poser une question aux publications")
         q = st.text_input("Votre question", placeholder="Ex. : Combien de PME ont été créées dans les CFCE en 2024 ?")
+        rep = st.checkbox("Ajouter une réponse rédigée courte (facultatif)")
         if q:
-            r = consultation.consulter(q, m)
+            r = consultation.consulter(q, m, rediger=rep, client=client)
+            if r.get("reponse") and r["reponse"].get("texte"):
+                st.success(r["reponse"]["texte"])
+                st.caption(f"Réponse rédigée ({r['reponse'].get('redaction')}), chiffres contrôlés contre les extraits.")
             if r["abstention"]:
                 st.warning(r["message"])
             for i, p in enumerate(r["passages"], 1):

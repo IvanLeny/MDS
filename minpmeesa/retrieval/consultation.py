@@ -45,8 +45,30 @@ def reponse_redigee(passages: list[dict], question: str) -> dict:
     return {"texte": " ".join(e["texte"] for e in ctrl.enonces), "valeurs_ecartees": ctrl.ecartees}
 
 
+def reponse_llm(client, passages: list[dict], question: str) -> dict | None:
+    """Reformulation en français clair par le modèle de langage (facultative), à partir des
+    seuls extraits restitués ; chaque chiffre est contrôlé contre ces extraits."""
+    import json
+    import re as _re
+    from ..generation import prompts
+    extraits = [p["texte"][:1500] for p in passages[:3]]
+    try:
+        brut = client.generer(prompts.SYSTEME_REFORMULATION, prompts.utilisateur_reformulation(question, extraits))
+        texte = json.loads(_re.sub(r"^```(?:json)?|```$", "", brut.strip(), flags=_re.M)).get("reponse", "")
+    except Exception:
+        return None
+    if not isinstance(texte, str) or not texte.strip():
+        return None
+    autorisees = [{"texte": v, "source": {"passage_id": p["passage_id"], "doc_id": p["doc_id"], "page": p["page"]}}
+                  for p in passages[:3] for v in literal_check.nombres(p["texte"])]
+    ctrl = literal_check.controler([{"type": "constat", "texte": t} for t in _re.split(r"(?<=[.!?])\s+", texte) if t],
+                                   autorisees, [])
+    return {"texte": " ".join(e["texte"] for e in ctrl.enonces), "valeurs_ecartees": ctrl.ecartees,
+            "redaction": getattr(client, "nom", "modèle de langage")}
+
+
 def consulter(question: str, m: Moteur | None = None, mode: str = "hybride",
-              journaliser: bool = True, rediger: bool | None = None) -> dict:
+              journaliser: bool = True, rediger: bool | None = None, client=None) -> dict:
     t0 = time.time()
     m = m or moteur_defaut()
     cfg = m.cfg["consultation"]
@@ -69,7 +91,8 @@ def consulter(question: str, m: Moteur | None = None, mode: str = "hybride",
                 "section": p["section"], "extrait": _extrait(p["texte"], question),
                 "texte": p["texte"], "score": round(r.score, 5)})
         if (cfg["reponse_redigee"] if rediger is None else rediger) and sortie["passages"]:
-            sortie["reponse"] = reponse_redigee(sortie["passages"], question)
+            r = reponse_llm(client, sortie["passages"], question) if client is not None else None
+            sortie["reponse"] = r or {**reponse_redigee(sortie["passages"], question), "redaction": "extractive"}
     sortie["duree_s"] = round(time.time() - t0, 3)
     if journaliser:
         db.journaliser(m.con, "consultation", {"question": question, "mode": mode},
