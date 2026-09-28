@@ -175,7 +175,10 @@ class ClientAPI(ClientLLM):
                 self._attendre_tour()
                 req = urllib.request.Request(
                     f"{self.url}/chat/completions", data=json.dumps(corps).encode(),
-                    headers={"Content-Type": "application/json", "Authorization": f"Bearer {self._cle}"})
+                    headers={"Content-Type": "application/json", "Accept": "application/json",
+                             "Authorization": f"Bearer {self._cle}",
+                             # un identifiant explicite : certains pare-feu (Cloudflare) refusent « Python-urllib »
+                             "User-Agent": "minpmeesa-prototype/5.1 (evaluation memoire ISSEA)"})
                 try:
                     self.appels_reseau += 1
                     with urllib.request.urlopen(req, timeout=self.delai) as r:
@@ -195,7 +198,11 @@ class ClientAPI(ClientLLM):
                     if 500 <= e.code < 600:
                         derniere = e
                     else:
-                        raise ErreurLLM(f"API {self.fournisseur} : HTTP {e.code}") from e
+                        try:
+                            detail = e.read().decode("utf-8", "replace")[:300]
+                        except Exception:
+                            detail = ""
+                        raise ErreurLLM(f"API {self.fournisseur} : HTTP {e.code} {detail}".strip()) from e
                 except (urllib.error.URLError, OSError, TimeoutError) as e:
                     derniere = e
                 except (KeyError, ValueError) as e:

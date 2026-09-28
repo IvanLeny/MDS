@@ -23,7 +23,14 @@ try:
     r = c.generer("Réponds uniquement en JSON.", 'Renvoie exactement {"ok": true, "langue": "français"}.')
 except ErreurLLM as e:
     print("ÉCHEC de l'appel :", e)
-    print("Vérifiez la connexion Internet, la validité de la clé (console.groq.com) et le pare-feu.")
+    m = str(e)
+    if "401" in m:
+        print("-> Clé refusée : vérifiez-la sur console.groq.com (ou créez-en une nouvelle).")
+    elif "403" in m:
+        print("-> Accès refusé par le service : pare-feu/proxy, VPN, ou pays non desservi par Groq.")
+        print("   Essayez un autre réseau (partage de connexion du téléphone) ou un VPN.")
+    else:
+        print("Vérifiez la connexion Internet, la validité de la clé (console.groq.com) et le pare-feu.")
     sys.exit(1)
 print("Réponse du service :", r)
 print("OK : le moteur api fonctionne. Vous pouvez lancer : python -m minpmeesa.evaluation.run_all --llm api")
