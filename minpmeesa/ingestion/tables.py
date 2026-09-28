@@ -313,7 +313,16 @@ def lineariser_mots(mots: list, unite_titre: str | None = None) -> list[Triplet]
         return chemin, annee, s
 
     # Libellés : texte à gauche des valeurs, rattaché à la ligne de valeurs la plus proche.
-    libs = [c for l in lignes[premiere:] for c in l if not c["num"] and c["x1"] <= x_premiere + 2]
+    # Un libellé sur deux lignes peut commencer au-dessus de la première ligne de valeurs.
+    hauteurs = sorted(c["y1"] - c["y0"] for l in lignes for c in l)
+    h_ligne = hauteurs[len(hauteurs) // 2] if hauteurs else 10.0
+    cy0 = min(c["cy"] for c in lignes[premiere] if c["num"])
+    debut_lib = premiere
+    while debut_lib > 0 and all(not _ANNEE.search(c["t"]) for c in lignes[debut_lib - 1]) \
+            and min(c["cy"] for c in lignes[debut_lib - 1]) >= cy0 - 1.6 * h_ligne \
+            and all(c["x1"] <= x_premiere + 2 for c in lignes[debut_lib - 1]):
+        debut_lib -= 1
+    libs = [c for l in lignes[debut_lib:] for c in l if not c["num"] and c["x1"] <= x_premiere + 2]
     libs += [c for l in lignes[premiere:] for c in l
              if c["num"] is False and est_millesime(c["t"]) and c["x1"] <= x_premiere + 2 and c not in libs]
     rangs = [(i, lignes[i]) for i in idx_val if i >= premiere]
@@ -366,6 +375,8 @@ def lineariser_mots(mots: list, unite_titre: str | None = None) -> list[Triplet]
             j = min(range(len(colonnes)), key=lambda j: abs(colonnes[j] - c["cx"]))
             chemin, annee, sous_col = entetes[j]
             unite = "%" if ("%" in sous_col or c["t"].endswith("%")) else unite_titre
+            if unite and unite != "%" and re.match(r"(stock|nombre|effectif)", lib, re.I):
+                unite = None           # ligne de dénombrement dans un tableau monétaire
             triplets.append(Triplet(lib, chemin or f"colonne {j + 1}", c["t"],
                                     annee if annee else annee_ligne, sous_col, unite))
     return triplets
