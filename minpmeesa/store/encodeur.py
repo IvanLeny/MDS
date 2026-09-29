@@ -42,7 +42,8 @@ class EncodeurST(Encodeur):
         from sentence_transformers import SentenceTransformer
         self.nom = nom
         self._m = SentenceTransformer(str(dossier_modele(nom)), device="cpu")
-        self.dim = self._m.get_sentence_embedding_dimension()
+        dim = getattr(self._m, "get_embedding_dimension", None) or self._m.get_sentence_embedding_dimension
+        self.dim = dim()
         self.lot = taille_lot
         e5 = "e5" in nom.lower()
         self._pp, self._pq = ("passage: ", "query: ") if e5 else ("", "")
