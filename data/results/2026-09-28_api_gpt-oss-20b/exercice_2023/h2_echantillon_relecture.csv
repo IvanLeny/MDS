@@ -1,0 +1,3 @@
+﻿code;valeur;type_enonce;action;texte_original;faux_rejet_auto;typologie;verdict_manuel (vrai_rejet|faux_rejet)
+stock-pme-region;4;constat;reformulé;Les régions Adamaoua, Centre hors Yaoundé, Est, Extrême-Nord, Littoral hors Douala, Nord et Sud affichent chacune une part inférieure à 4 % du stock total, avec des effectifs compris entre 11 402 et 13 761 entreprises.;1;arrondi;
+nombre-pme-creees-dans-cfce;78;perspective;reformulé;Il convient de surveiller la concentration des créations de PME dans les grandes villes, notamment Yaoundé et Douala, qui représentent plus de 78 % du total.;1;calcul;

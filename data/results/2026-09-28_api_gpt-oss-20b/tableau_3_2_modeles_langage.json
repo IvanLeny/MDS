@@ -1,0 +1,67 @@
+[
+  {
+    "moteur": "ollama",
+    "modele": "gpt-oss:20b",
+    "deployable": true,
+    "retenu": true,
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+  },
+  {
+    "moteur": "ollama",
+    "modele": "llama3.1:8b",
+    "deployable": true,
+    "retenu": false,
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+  },
+  {
+    "moteur": "ollama",
+    "modele": "qwen2.5:7b-instruct",
+    "deployable": true,
+    "retenu": false,
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+  },
+  {
+    "moteur": "ollama",
+    "modele": "mistral:7b-instruct",
+    "deployable": true,
+    "retenu": false,
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+  },
+  {
+    "moteur": "ollama",
+    "modele": "llama3.2:3b",
+    "deployable": true,
+    "retenu": false,
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+  },
+  {
+    "moteur": "api:groq",
+    "modele": "openai/gpt-oss-20b",
+    "deployable": false,
+    "borne_haute": false,
+    "retenu": false,
+    "statut": "mesuré",
+    "provisoire": true,
+    "n_indicateurs": 20,
+    "temps_median_s": 23.19,
+    "taux_json_valide": 1.0,
+    "taux_valeurs_ecartees": 0.0109,
+    "appels_en_echec": 2,
+    "remarque": "temps mesuré à distance (réseau inclus), non transposable au poste cible"
+  },
+  {
+    "moteur": "api:groq",
+    "modele": "openai/gpt-oss-120b",
+    "deployable": false,
+    "borne_haute": true,
+    "retenu": false,
+    "statut": "mesuré",
+    "provisoire": true,
+    "n_indicateurs": 20,
+    "temps_median_s": 26.22,
+    "taux_json_valide": 1.0,
+    "taux_valeurs_ecartees": 0.0325,
+    "appels_en_echec": 0,
+    "remarque": "temps mesuré à distance (réseau inclus), non transposable au poste cible"
+  }
+]

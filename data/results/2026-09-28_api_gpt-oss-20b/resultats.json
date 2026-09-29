@@ -1,0 +1,624 @@
+{
+  "llm": "api:groq:openai/gpt-oss-20b (moteur de développement, service distant)",
+  "moteur_llm": {
+    "moteur": "api",
+    "modele": "openai/gpt-oss-20b"
+  },
+  "encodeur": "repli-hors-ligne-tfidf-svd",
+  "h1_recuperation": {
+    "n_questions": 52,
+    "encodeur": "repli-hors-ligne-tfidf-svd",
+    "configuration_reference": "hybride_k60",
+    "resume": [
+      {
+        "configuration": "lexicale",
+        "n": 52,
+        "succes_1": 0.4038,
+        "succes_5": 0.7115,
+        "mrr": 0.5261,
+        "ndcg_5": 0.5867,
+        "duree_mediane_s": 0.009
+      },
+      {
+        "configuration": "dense",
+        "n": 52,
+        "succes_1": 0.4038,
+        "succes_5": 0.75,
+        "mrr": 0.5592,
+        "ndcg_5": 0.7051,
+        "duree_mediane_s": 0.169
+      },
+      {
+        "configuration": "hybride_k10",
+        "n": 52,
+        "succes_1": 0.4423,
+        "succes_5": 0.7692,
+        "mrr": 0.585,
+        "ndcg_5": 0.6981,
+        "duree_mediane_s": 0.18
+      },
+      {
+        "configuration": "hybride_k20",
+        "n": 52,
+        "succes_1": 0.4231,
+        "succes_5": 0.7692,
+        "mrr": 0.5743,
+        "ndcg_5": 0.7027,
+        "duree_mediane_s": 0.18
+      },
+      {
+        "configuration": "hybride_k60",
+        "n": 52,
+        "succes_1": 0.4231,
+        "succes_5": 0.7885,
+        "mrr": 0.581,
+        "ndcg_5": 0.7074,
+        "duree_mediane_s": 0.18
+      },
+      {
+        "configuration": "hybride_sans_lexique",
+        "n": 52,
+        "succes_1": 0.4231,
+        "succes_5": 0.7308,
+        "mrr": 0.566,
+        "ndcg_5": 0.7186,
+        "duree_mediane_s": 0.173
+      },
+      {
+        "configuration": "lexicale_sans_lexique",
+        "n": 52,
+        "succes_1": 0.3846,
+        "succes_5": 0.7115,
+        "mrr": 0.5188,
+        "ndcg_5": 0.6082,
+        "duree_mediane_s": 0.004
+      }
+    ],
+    "wilcoxon": {
+      "hybride_k60_vs_lexicale_rr": {
+        "n": 52,
+        "moyenne_a": 0.581,
+        "moyenne_b": 0.5261,
+        "delta_moyen": 0.0549,
+        "gagne": 17,
+        "perd": 8,
+        "egalite": 27,
+        "statistique": 105.5,
+        "p_value": 0.12464359323875111
+      },
+      "hybride_k60_vs_lexicale_s5": {
+        "n": 52,
+        "moyenne_a": 0.7885,
+        "moyenne_b": 0.7115,
+        "delta_moyen": 0.0769,
+        "gagne": 5,
+        "perd": 1,
+        "egalite": 46,
+        "statistique": 3.5,
+        "p_value": 0.10247043485974941
+      },
+      "hybride_k60_vs_dense_rr": {
+        "n": 52,
+        "moyenne_a": 0.581,
+        "moyenne_b": 0.5592,
+        "delta_moyen": 0.0218,
+        "gagne": 15,
+        "perd": 10,
+        "egalite": 27,
+        "statistique": 131.5,
+        "p_value": 0.4027653367530052
+      },
+      "hybride_k60_vs_dense_s5": {
+        "n": 52,
+        "moyenne_a": 0.7885,
+        "moyenne_b": 0.75,
+        "delta_moyen": 0.0385,
+        "gagne": 4,
+        "perd": 2,
+        "egalite": 46,
+        "statistique": 7.0,
+        "p_value": 0.4142161782425253
+      }
+    }
+  },
+  "h1_abstention": {
+    "bm25_max/refus_a_tort_max": {
+      "signal": "bm25_max",
+      "critere": "refus_a_tort_max",
+      "description_signal": "meilleur score BM25 de la question (sans expansion)",
+      "seuil_calibre": 8.744,
+      "plis": 5,
+      "taux_abstention_correcte_hors_corpus": 0.5,
+      "abstentions_a_tort_questions_du_corpus": 2,
+      "taux_abstention_a_tort": 0.0385,
+      "reponses_hors_corpus_non_abstenues": 5,
+      "n_hors_corpus": 10,
+      "n_corpus": 52
+    },
+    "bm25_max/equilibre": {
+      "signal": "bm25_max",
+      "critere": "equilibre",
+      "description_signal": "meilleur score BM25 de la question (sans expansion)",
+      "seuil_calibre": 12.416,
+      "plis": 5,
+      "taux_abstention_correcte_hors_corpus": 0.9,
+      "abstentions_a_tort_questions_du_corpus": 11,
+      "taux_abstention_a_tort": 0.2115,
+      "reponses_hors_corpus_non_abstenues": 1,
+      "n_hors_corpus": 10,
+      "n_corpus": 52
+    },
+    "dense_max/refus_a_tort_max": {
+      "signal": "dense_max",
+      "critere": "refus_a_tort_max",
+      "description_signal": "meilleur cosinus de la voie dense",
+      "seuil_calibre": 0.489,
+      "plis": 5,
+      "taux_abstention_correcte_hors_corpus": 0.9,
+      "abstentions_a_tort_questions_du_corpus": 3,
+      "taux_abstention_a_tort": 0.0577,
+      "reponses_hors_corpus_non_abstenues": 1,
+      "n_hors_corpus": 10,
+      "n_corpus": 52
+    },
+    "dense_max/equilibre": {
+      "signal": "dense_max",
+      "critere": "equilibre",
+      "description_signal": "meilleur cosinus de la voie dense",
+      "seuil_calibre": 0.489,
+      "plis": 5,
+      "taux_abstention_correcte_hors_corpus": 0.7,
+      "abstentions_a_tort_questions_du_corpus": 7,
+      "taux_abstention_a_tort": 0.1346,
+      "reponses_hors_corpus_non_abstenues": 3,
+      "n_hors_corpus": 10,
+      "n_corpus": 52
+    }
+  },
+  "h1_abstention_retenue": "dense_max/refus_a_tort_max",
+  "kappa_jeu_consultation": {
+    "statut": "non mesuré",
+    "raison": "seconde annotation (annotateur_2) non encore réalisée"
+  },
+  "choix_encodeur": [
+    {
+      "encodeur": "BAAI/bge-m3",
+      "statut": "non mesuré : modèle absent de models/embeddings (à télécharger avec scripts/telecharger_modeles.py sur un poste connecté)"
+    },
+    {
+      "encodeur": "intfloat/multilingual-e5-large",
+      "statut": "non mesuré : modèle absent de models/embeddings (à télécharger avec scripts/telecharger_modeles.py sur un poste connecté)"
+    },
+    {
+      "encodeur": "dangvantuan/sentence-camembert-base",
+      "statut": "non mesuré : modèle absent de models/embeddings (à télécharger avec scripts/telecharger_modeles.py sur un poste connecté)"
+    },
+    {
+      "encodeur": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "statut": "non mesuré : modèle absent de models/embeddings (à télécharger avec scripts/telecharger_modeles.py sur un poste connecté)"
+    },
+    {
+      "encodeur": "repli-hors-ligne-tfidf-svd",
+      "temps_indexation_s": 26.21,
+      "dimension": 256,
+      "dense_succes_5": 0.75,
+      "dense_mrr": 0.5592,
+      "hybride_succes_5": 0.7885,
+      "hybride_mrr": 0.581,
+      "statut": "mesuré"
+    }
+  ],
+  "choix_llm": [
+    {
+      "moteur": "ollama",
+      "modele": "gpt-oss:20b",
+      "deployable": true,
+      "retenu": true,
+      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+    },
+    {
+      "moteur": "ollama",
+      "modele": "llama3.1:8b",
+      "deployable": true,
+      "retenu": false,
+      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+    },
+    {
+      "moteur": "ollama",
+      "modele": "qwen2.5:7b-instruct",
+      "deployable": true,
+      "retenu": false,
+      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+    },
+    {
+      "moteur": "ollama",
+      "modele": "mistral:7b-instruct",
+      "deployable": true,
+      "retenu": false,
+      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+    },
+    {
+      "moteur": "ollama",
+      "modele": "llama3.2:3b",
+      "deployable": true,
+      "retenu": false,
+      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+    },
+    {
+      "moteur": "api:groq",
+      "modele": "openai/gpt-oss-20b",
+      "deployable": false,
+      "borne_haute": false,
+      "retenu": false,
+      "statut": "mesuré",
+      "provisoire": true,
+      "n_indicateurs": 20,
+      "temps_median_s": 23.19,
+      "taux_json_valide": 1.0,
+      "taux_valeurs_ecartees": 0.0109,
+      "appels_en_echec": 2,
+      "remarque": "temps mesuré à distance (réseau inclus), non transposable au poste cible"
+    },
+    {
+      "moteur": "api:groq",
+      "modele": "openai/gpt-oss-120b",
+      "deployable": false,
+      "borne_haute": true,
+      "retenu": false,
+      "statut": "mesuré",
+      "provisoire": true,
+      "n_indicateurs": 20,
+      "temps_median_s": 26.22,
+      "taux_json_valide": 1.0,
+      "taux_valeurs_ecartees": 0.0325,
+      "appels_en_echec": 0,
+      "remarque": "temps mesuré à distance (réseau inclus), non transposable au poste cible"
+    }
+  ],
+  "h1_ancrage_2024": {
+    "statut": "mesuré",
+    "provisoire": true,
+    "modele": "api:groq:openai/gpt-oss-20b",
+    "encodeur": "repli-hors-ligne-tfidf-svd",
+    "n": 13,
+    "rouge_l": {
+      "n": 13,
+      "moyenne_a": 0.1708,
+      "moyenne_b": 0.1927,
+      "delta_moyen": -0.0219,
+      "gagne": 4,
+      "perd": 9,
+      "egalite": 0,
+      "statistique": 35.0,
+      "p_value": 0.7725830078125
+    },
+    "similarite": {
+      "n": 13,
+      "moyenne_a": 0.4381,
+      "moyenne_b": 0.5155,
+      "delta_moyen": -0.0774,
+      "gagne": 5,
+      "perd": 8,
+      "egalite": 0,
+      "statistique": 34.0,
+      "p_value": 0.7928466796875
+    }
+  },
+  "h2_2024": {
+    "statut": "mesuré",
+    "provisoire": true,
+    "modele": "api:groq:openai/gpt-oss-20b",
+    "n_indicateurs": 13,
+    "ancrage_simple": {
+      "valeurs_citees": 120,
+      "valeurs_non_soutenues": 0,
+      "exactitude": 1.0,
+      "couv_ind": 0.9230769230769231
+    },
+    "ancrage_citation_litterale": {
+      "valeurs_retenues": 120,
+      "valeurs_non_soutenues": 0,
+      "exactitude": 1.0,
+      "couv": 1.0,
+      "couv_ind": 0.9230769230769231
+    },
+    "valeurs_ecartees": 0,
+    "tfr_automatique": null,
+    "typologie": {
+      "arrondi": 0,
+      "calcul": 0,
+      "chiffre d'un autre exercice": 0,
+      "invention": 0
+    }
+  },
+  "commentaires_publies_2024": {
+    "statut": "mesuré",
+    "provisoire": true,
+    "exercice": 2024,
+    "n_indicateurs": 13,
+    "valeurs_citees": 123,
+    "valeurs_retrouvees": 61,
+    "part_retrouvee": 0.4959,
+    "typologie_non_retrouvees": {
+      "arrondi": 1,
+      "calcul": 49,
+      "chiffre d'un autre exercice": 5,
+      "invention": 7
+    }
+  },
+  "h1_reference_gabarits_2024": {
+    "statut_gabarits": "mesuré",
+    "provisoire": true,
+    "n": 13,
+    "encodeur": "repli-hors-ligne-tfidf-svd",
+    "reference": "commentaires publiés du rapport d'analyse",
+    "gabarits": {
+      "rouge_l": 0.1385,
+      "similarite": 0.4004,
+      "couv_ind": 1.0,
+      "valeurs_retenues_moy": 3.6154,
+      "mots_moy": 61.3846
+    },
+    "llm_ancre": {
+      "statut": "mesuré",
+      "modele": "api:groq:openai/gpt-oss-20b",
+      "rouge_l": 0.1875,
+      "similarite": 0.4888,
+      "couv_ind": 1.0,
+      "valeurs_retenues_moy": 10.2308,
+      "mots_moy": 132.6154
+    },
+    "wilcoxon_rouge_l_llm_vs_gabarits": {
+      "n": 13,
+      "moyenne_a": 0.1875,
+      "moyenne_b": 0.1385,
+      "delta_moyen": 0.0489,
+      "gagne": 11,
+      "perd": 2,
+      "egalite": 0,
+      "statistique": 11.0,
+      "p_value": 0.013427734375
+    },
+    "wilcoxon_similarite_llm_vs_gabarits": {
+      "n": 13,
+      "moyenne_a": 0.4888,
+      "moyenne_b": 0.4004,
+      "delta_moyen": 0.0883,
+      "gagne": 10,
+      "perd": 3,
+      "egalite": 0,
+      "statistique": 9.0,
+      "p_value": 0.008056640625
+    }
+  },
+  "h1_ancrage_2023": {
+    "statut": "mesuré",
+    "provisoire": true,
+    "modele": "api:groq:openai/gpt-oss-20b",
+    "encodeur": "repli-hors-ligne-tfidf-svd",
+    "n": 14,
+    "rouge_l": {
+      "n": 14,
+      "moyenne_a": 0.1323,
+      "moyenne_b": 0.1629,
+      "delta_moyen": -0.0307,
+      "gagne": 5,
+      "perd": 8,
+      "egalite": 1,
+      "statistique": 23.0,
+      "p_value": 0.9420742512370349
+    },
+    "similarite": {
+      "n": 14,
+      "moyenne_a": 0.3711,
+      "moyenne_b": 0.4555,
+      "delta_moyen": -0.0844,
+      "gagne": 6,
+      "perd": 8,
+      "egalite": 0,
+      "statistique": 30.0,
+      "p_value": 0.9234619140625
+    }
+  },
+  "h2_2023": {
+    "statut": "mesuré",
+    "provisoire": true,
+    "modele": "api:groq:openai/gpt-oss-20b",
+    "n_indicateurs": 14,
+    "ancrage_simple": {
+      "valeurs_citees": 112,
+      "valeurs_non_soutenues": 2,
+      "exactitude": 0.9821428571428571,
+      "couv_ind": 0.8571428571428571
+    },
+    "ancrage_citation_litterale": {
+      "valeurs_retenues": 110,
+      "valeurs_non_soutenues": 0,
+      "exactitude": 1.0,
+      "couv": 0.9821428571428571,
+      "couv_ind": 0.8571428571428571
+    },
+    "valeurs_ecartees": 2,
+    "tfr_automatique": 1.0,
+    "typologie": {
+      "arrondi": 1,
+      "calcul": 1,
+      "chiffre d'un autre exercice": 0,
+      "invention": 0
+    }
+  },
+  "commentaires_publies_2023": {
+    "statut": "mesuré",
+    "provisoire": true,
+    "exercice": 2023,
+    "n_indicateurs": 14,
+    "valeurs_citees": 86,
+    "valeurs_retrouvees": 26,
+    "part_retrouvee": 0.3023,
+    "typologie_non_retrouvees": {
+      "arrondi": 6,
+      "calcul": 38,
+      "chiffre d'un autre exercice": 0,
+      "invention": 16
+    }
+  },
+  "h1_reference_gabarits_2023": {
+    "statut_gabarits": "mesuré",
+    "provisoire": true,
+    "n": 14,
+    "encodeur": "repli-hors-ligne-tfidf-svd",
+    "reference": "commentaires publiés du rapport d'analyse",
+    "gabarits": {
+      "rouge_l": 0.1166,
+      "similarite": 0.3805,
+      "couv_ind": 1.0,
+      "valeurs_retenues_moy": 3.0,
+      "mots_moy": 56.7143
+    },
+    "llm_ancre": {
+      "statut": "mesuré",
+      "modele": "api:groq:openai/gpt-oss-20b",
+      "rouge_l": 0.1323,
+      "similarite": 0.3711,
+      "couv_ind": 0.8571,
+      "valeurs_retenues_moy": 7.8571,
+      "mots_moy": 90.8571
+    },
+    "wilcoxon_rouge_l_llm_vs_gabarits": {
+      "n": 14,
+      "moyenne_a": 0.1323,
+      "moyenne_b": 0.1166,
+      "delta_moyen": 0.0157,
+      "gagne": 11,
+      "perd": 3,
+      "egalite": 0,
+      "statistique": 29.0,
+      "p_value": 0.153076171875
+    },
+    "wilcoxon_similarite_llm_vs_gabarits": {
+      "n": 14,
+      "moyenne_a": 0.3711,
+      "moyenne_b": 0.3805,
+      "delta_moyen": -0.0094,
+      "gagne": 8,
+      "perd": 6,
+      "egalite": 0,
+      "statistique": 45.0,
+      "p_value": 0.6697998046875
+    }
+  },
+  "h3_temps_systeme": {
+    "consultation": {
+      "n": 62,
+      "mediane": 0.345,
+      "p90": 0.38,
+      "max": 0.41
+    },
+    "commentaire": {
+      "n": 13,
+      "mediane": 0.045,
+      "p90": 30.999,
+      "max": 35.03
+    },
+    "note d'analyse": {
+      "n": 3,
+      "mediane": 3491.57,
+      "p90": 28651.244,
+      "max": 34941.162
+    },
+    "note stratégique": {
+      "n": 2,
+      "mediane": 150.456,
+      "p90": 216.888,
+      "max": 233.496
+    },
+    "poste": "poste de développement (Linux, CPU) — à refaire sur le poste cible Windows"
+  },
+  "h3_verification_automatique_notes": [
+    {
+      "titre": "Note d'analyse stratégique — exercice 2024 — modèle de langage",
+      "fichier": "note_strategique_2024_llm.docx",
+      "version": "llm",
+      "exercice": 2024,
+      "moteur": "api",
+      "modele": "api:groq:openai/gpt-oss-20b",
+      "redaction": "modèle de langage",
+      "verification": {
+        "BN4_toute_valeur_tracee": true,
+        "BN4_valeurs_non_tracees": [],
+        "BN5_rubriques": true,
+        "BN5_messages_cles_3": true,
+        "BN5_longueur_ok": true,
+        "nb_mots": 776
+      },
+      "provisoire": true,
+      "nb_evolutions": 7
+    },
+    {
+      "titre": "Note d'analyse stratégique — exercice 2024 — gabarits",
+      "fichier": "note_strategique_2024_gabarits.docx",
+      "version": "gabarits",
+      "exercice": 2024,
+      "moteur": "none",
+      "modele": "extractif (sans modèle de langage)",
+      "redaction": "gabarits",
+      "verification": {
+        "BN4_toute_valeur_tracee": true,
+        "BN4_valeurs_non_tracees": [],
+        "BN5_rubriques": true,
+        "BN5_messages_cles_3": true,
+        "BN5_longueur_ok": true,
+        "nb_mots": 689
+      },
+      "provisoire": true,
+      "nb_evolutions": 6
+    },
+    {
+      "titre": "Note d'analyse stratégique — exercice 2023 — modèle de langage",
+      "fichier": "note_strategique_2023_llm.docx",
+      "version": "llm",
+      "exercice": 2023,
+      "moteur": "api",
+      "modele": "api:groq:openai/gpt-oss-20b",
+      "redaction": "modèle de langage",
+      "verification": {
+        "BN4_toute_valeur_tracee": true,
+        "BN4_valeurs_non_tracees": [],
+        "BN5_rubriques": true,
+        "BN5_messages_cles_3": true,
+        "BN5_longueur_ok": true,
+        "nb_mots": 258
+      },
+      "provisoire": true,
+      "nb_evolutions": 2
+    },
+    {
+      "titre": "Note d'analyse stratégique — exercice 2023 — gabarits",
+      "fichier": "note_strategique_2023_gabarits.docx",
+      "version": "gabarits",
+      "exercice": 2023,
+      "moteur": "none",
+      "modele": "extractif (sans modèle de langage)",
+      "redaction": "gabarits",
+      "verification": {
+        "BN4_toute_valeur_tracee": true,
+        "BN4_valeurs_non_tracees": [],
+        "BN5_rubriques": true,
+        "BN5_messages_cles_3": false,
+        "BN5_longueur_ok": true,
+        "nb_mots": 255
+      },
+      "provisoire": true,
+      "nb_evolutions": 2
+    }
+  ],
+  "h3_chronometrage": {
+    "statut": "non mesuré",
+    "raison": "séance avec au moins 3 cadres à conduire ; saisir h3_saisie_temps.xlsx puis relancer avec --h3"
+  },
+  "h3_grille": {
+    "statut": "non mesuré",
+    "raison": "notes des deux lecteurs à saisir dans h3_grille_evaluation.xlsx"
+  },
+  "duree_totale_s": 40842.0
+}

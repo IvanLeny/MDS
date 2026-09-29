@@ -1,0 +1,15 @@
+﻿code;rouge_l_avec;rouge_l_sans;sim_avec;sim_sans
+stock-pme-region;0.064;0.1076;0.3273;0.4868
+stock-pme-secteur-activite;0.1433;0.1362;0.41;0.3989
+stock-pme-tranche-age-promoteur-dirigeant;0.0952;0.0928;0.2095;0.2669
+pme-creees-sur-periode;0.1709;0.2266;0.5944;0.5345
+nombre-pme-creees-dans-cfce;0.1429;0.1429;0.3737;0.3413
+pme-creees-secteur-activite;0.1844;0.1299;0.5588;0.4957
+nombre-oes-creees-hors-donnee-extreme;0.0;0.1336;0.0;0.5131
+oes-creees-secteur-activite-branche;0.1164;0.1333;0.3112;0.2941
+oes-branche-activite;0.1429;0.1577;0.4357;0.521
+upa-enregistrees-dans-bureaux-communaux-region;0.2367;0.2033;0.6891;0.6127
+upa-enregistrees-dans-bureaux-communaux-sexe;0.1834;0.2605;0.4486;0.4851
+upa-enregistrees-typologie-artisanat-region;0.2105;0.2179;0.4366;0.5744
+pib-dans-secteur-primaire-agriculture-vivriere;0.1611;0.1498;0.4012;0.44
+pib-dans-secteur-secondaire-eau;0.0;0.1888;0.0;0.4129
