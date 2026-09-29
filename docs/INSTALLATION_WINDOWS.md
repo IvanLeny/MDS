@@ -46,7 +46,41 @@ Poste visé : Windows 10/11, 8 à 16 Go de mémoire, sans carte graphique. Deux 
 - `config.yaml`, section `embeddings` : `modele` = l'encodeur retenu (Tableau 3.3). Après un changement
   d'encodeur, **reconstruire la base**.
 
-## 4. Erreurs fréquentes
+## 4. Mesurer les encodeurs (Tableau 3.3) sur un PC de développement
+
+Durée : téléchargements (≈ 5,5 Go en tout) puis 5 à 60 min de calcul par encodeur sur CPU. Aucun appel au
+modèle de langage : pas besoin de la clé Groq.
+
+1. Installer la bibliothèque (≈ 1 Go avec torch CPU) :
+   ```bat
+   pip install --timeout 120 --retries 10 sentence-transformers==6.1.0
+   ```
+2. Télécharger **un encodeur à la fois**, du plus léger au plus lourd. Un téléchargement interrompu reprend si
+   l'on relance la même commande ; le modèle n'est déclaré présent qu'une fois complet et vérifié :
+   ```bat
+   python scripts\telecharger_modeles.py --etat
+   python scripts\telecharger_modeles.py --modele sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+   python scripts\telecharger_modeles.py --modele dangvantuan/sentence-camembert-base
+   python scripts\telecharger_modeles.py --modele intfloat/multilingual-e5-large
+   python scripts\telecharger_modeles.py --modele BAAI/bge-m3
+   ```
+3. Comparer les encodeurs présents (la base existante suffit ; le repli est toujours mesuré comme référence) :
+   ```bat
+   python -m minpmeesa.evaluation.choix_encodeur
+   ```
+   Sortie : `data\results\<date>_encodeurs\` (`tableau_3_3_encodeurs.json`, `tableau_3_3_par_question.csv`,
+   avec le test de Wilcoxon de chaque encodeur contre le repli).
+4. Reporter l'encodeur retenu dans `config.yaml` (`embeddings.modele`), **reconstruire la base**, puis relancer
+   l'évaluation sans modèle de langage (rapide) dans un dossier nommé. Elle recalibre aussi le seuil
+   d'abstention, qui dépend de l'encodeur : ne pas utiliser l'interface entre la reconstruction et cette étape.
+   ```bat
+   python -m minpmeesa.ingestion.build
+   python -m minpmeesa.evaluation.run_all --llm none --sortie <date>_bge-m3_sans-llm
+   ```
+5. Déposer les dossiers de résultats sur GitHub (`git add data/results`, `git commit`, `git push`).
+   Le dossier `models\` n'est **pas** versionné (trop lourd) : le copier sur clé USB pour le poste de la Cellule.
+
+## 5. Erreurs fréquentes
 
 | Message ou symptôme | Cause | Solution |
 |---|---|---|
@@ -58,5 +92,7 @@ Poste visé : Windows 10/11, 8 à 16 Go de mémoire, sans carte graphique. Deux 
 | « HTTP 404 … model_not_found » (moteur api) | modèle retiré par Groq | `python scripts\tester_groq.py --lister`, puis adapter `llm.api.modele` |
 | « clé API absente : définir la variable d'environnement GROQ_API_KEY » | moteur `api` choisi sans clé | définir la clé, ou revenir à `backend: ollama` |
 | Appels `api` ralentis | limite du compte gratuit atteinte | normal : le client attend la réinitialisation et met les appels en file |
+| « sentence-transformers n'est pas installé » | étape 1 de la section 4 non faite | `pip install sentence-transformers==6.1.0` |
+| Téléchargement interrompu (réseau) | connexion instable | relancer la même commande `--modele` : elle reprend |
 | `MemoryError` à la construction | mémoire insuffisante avec bge-m3 | réduire `embeddings.taille_lot` à 4 |
 | « Aucune source suffisante » trop fréquent | seuil d'abstention trop strict | relancer `run_all` sur le poste pour recalibrer le seuil |

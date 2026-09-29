@@ -96,13 +96,13 @@ def verdict(criteres: list[tuple[str, bool | None]]) -> str:
     return "validée"
 
 
-def executer(llm: str | None = None, appliquer_seuil: bool = True) -> Path:
+def executer(llm: str | None = None, appliquer_seuil: bool = True, nom_sortie: str | None = None) -> Path:
     t0 = time.time()
     cfg = config.charger()
     config.fixer_graine()
     ev = cfg["evaluation"]
     crit = ev["criteres"]
-    sortie = config.chemin("resultats") / date.today().isoformat()
+    sortie = config.chemin("resultats") / (nom_sortie or date.today().isoformat())
     sortie.mkdir(parents=True, exist_ok=True)
     m = Moteur()
     con = m.con
@@ -123,7 +123,7 @@ def executer(llm: str | None = None, appliquer_seuil: bool = True) -> Path:
         m.cfg = config.charger()
     R["kappa_jeu_consultation"] = kappa_jeu(jeu)
     print("Choix de l'encodeur et du modèle de langage…", flush=True)
-    R["choix_encodeur"] = choix_encodeur.comparer(m, jeu)
+    R["choix_encodeur"] = choix_encodeur.comparer(m, jeu, sortie)
     R["choix_llm"] = choix_llm.comparer(con, cfg, ev["exercice"], ev["nb_indicateurs_llm"])
     _j(sortie / "tableau_3_3_encodeurs.json", R["choix_encodeur"])
     _j(sortie / "tableau_3_2_modeles_langage.json", R["choix_llm"])
@@ -354,7 +354,10 @@ def resume(R: dict, cfg: dict) -> str:
     L += ["", "## Choix des modèles (Tableaux 3.2 et 3.3)", ""]
     for e in R["choix_encodeur"]:
         L.append(f"- {e['encodeur']} : " + (f"Succès@5 (hybride) {_f(e['hybride_succes_5'])}, MRR {_f(e['hybride_mrr'])}, "
-                                            f"indexation {_f(e['temps_indexation_s'], 1)} s" if e["statut"] == "mesuré" else e["statut"]))
+                                            f"indexation {_f(e['temps_indexation_s'], 1)} s"
+                                            + (f", MRR contre repli : p = {_p(e['wilcoxon_mrr_hybride_vs_repli'])}"
+                                               if e.get("wilcoxon_mrr_hybride_vs_repli") else "")
+                                            if e["statut"] == "mesuré" else e["statut"]))
     for e in R["choix_llm"]:
         L.append(f"- {e['moteur']} / {e['modele']}{' (retenu)' if e.get('retenu') else ''}"
                  f"{' — borne haute, non déployable' if e.get('borne_haute') else ''} : " + (f"temps médian {e['temps_median_s']} s, JSON valide {e['taux_json_valide']}, "
@@ -376,6 +379,8 @@ def main():
     ap.add_argument("--sans-seuil", action="store_true", help="ne pas reporter le seuil calibré dans config.yaml")
     ap.add_argument("--h3", default=None, help="h3_saisie_temps.xlsx rempli")
     ap.add_argument("--grille", default=None, help="h3_grille_evaluation.xlsx rempli")
+    ap.add_argument("--sortie", default=None, metavar="NOM",
+                    help="nom du dossier de résultats dans data/results (défaut : la date du jour)")
     ap.add_argument("--resume", default=None, metavar="DOSSIER",
                     help="régénérer resume.md d'un dossier de résultats (sans refaire les mesures)")
     a = ap.parse_args()
@@ -400,7 +405,7 @@ def main():
         _j(dest, out)
         print(json.dumps(out, indent=2, ensure_ascii=False))
         return
-    executer(a.llm, not a.sans_seuil)
+    executer(a.llm, not a.sans_seuil, a.sortie)
 
 
 if __name__ == "__main__":

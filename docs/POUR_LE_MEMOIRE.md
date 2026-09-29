@@ -97,6 +97,9 @@ choix du 20b. Les lignes Ollama restent à mesurer sur le poste cible (`run_all 
 | MiniLM-L12 (repli léger) | non mesuré | — | — |
 | Repli hors ligne TF-IDF + SVD (256 d.) | 0,79 | 0,58 | 22,7 s (Linux) ; 26,2 s (Windows) — 904 passages |
 
+→ Encodeurs neuronaux à mesurer sur le PC (procédure : `docs/INSTALLATION_WINDOWS.md`, section 4) ; ajouter
+alors une colonne « p (MRR contre repli, Wilcoxon) ». Règle de choix et biais de sélection : `ECARTS_MEMOIRE.md` E18.
+
 ## 3.4.2 — Interface
 
 Quatre parcours et une page « Base documentaire » (`minpmeesa/app/streamlit_app.py`) ; captures dans

@@ -42,3 +42,31 @@ def test_metriques_recuperation():
     assert M.rr([False, False, True]) == 1 / 3
     assert M.rouge_l("les PME créées en 2024", "les PME créées en 2024") == 1.0
     assert M.est_pertinent({"doc_id": "d", "page": 3, "page_fin": 5}, [{"doc_id": "d", "pages": [4]}])
+
+
+def test_choix_encodeur_compare_au_repli(base_complete, tmp_path, monkeypatch):
+    """Un candidat présent est mesuré et comparé au repli, question par question."""
+    from minpmeesa.evaluation import choix_encodeur
+    from minpmeesa.evaluation.h1_recuperation import charger_jeu
+    from minpmeesa.retrieval.hybrid import Moteur
+    from minpmeesa.store import encodeur as encmod
+
+    class Faux(encmod.EncodeurLSA):          # se comporte comme un encodeur neuronal présent sur le disque
+        def __init__(self, nom, lot=16):
+            super().__init__(64, 42)
+            self.nom, self._ajuste = nom, False
+
+        def encoder_passages(self, textes):
+            self.ajuster(textes)
+            return super().encoder_passages(textes)
+
+    cible = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    monkeypatch.setattr(encmod, "EncodeurST", Faux)
+    monkeypatch.setattr(encmod, "dossier_modele", lambda n: tmp_path if n == cible else tmp_path / "absent")
+    res = choix_encodeur.comparer(Moteur(), charger_jeu(), tmp_path, [cible])
+    assert [e["encodeur"] for e in res] == [encmod.NOM_REPLI, cible]
+    assert all(e["statut"] == "mesuré" for e in res)
+    w = res[1]["wilcoxon_mrr_hybride_vs_repli"]
+    assert w["n"] == 52 and 0 <= res[1]["hybride_succes_5"] <= 1
+    lignes = (tmp_path / "tableau_3_3_par_question.csv").read_text(encoding="utf-8-sig").splitlines()
+    assert len(lignes) == 53 and f"{cible}|hybride|rr" in lignes[0]

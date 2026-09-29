@@ -176,3 +176,20 @@ et sur la borne haute gpt-oss-120b (3,3 % de valeurs écartées). H2 est donc d�
 de la règle fixée a priori. Le contrôle reste un garde-fou dont le coût mesuré est faible (couverture de 98 à
 100 %). » **À décider par l'étudiant** : conserver ce verdict strict, ou juger H2 sur les deux exercices
 réunis (2 valeurs non soutenues sur 232 avant contrôle, 0 après), en le déclarant comme un écart au protocole.
+
+## E18. Choix de l'encodeur et mesure de H1 sur le même jeu de questions
+
+**Constat.** L'encodeur est retenu d'après son Succès@5 et son MRR sur les 52 questions du corpus, et H1 est
+ensuite mesurée sur ces mêmes questions. Le score de l'encodeur retenu est donc légèrement **optimiste**
+(biais de sélection), d'autant plus que les candidats sont nombreux et les écarts faibles.
+
+**Parades mises en place.** (1) Le repli hors ligne est toujours mesuré comme référence, et chaque candidat lui
+est comparé question par question (Wilcoxon, `tableau_3_3_par_question.csv`) : un écart non significatif ne
+justifie pas de conclure à la supériorité d'un encodeur. (2) Le choix se fait **a priori** en faveur de bge-m3
+(Tableau 3.3 du mémoire), sauf si un autre candidat fait significativement mieux. (3) Les questions que
+poseront les cadres (tâche de l'étudiant) serviront de **jeu de test indépendant**, jamais utilisé pour choisir.
+
+**Texte proposé.** « L'encodeur a été choisi sur le jeu de développement de 52 questions. Pour limiter le biais
+de sélection, le choix par défaut (bge-m3) n'est remplacé que si un autre candidat l'améliore
+significativement (Wilcoxon apparié, 5 %), et H1 est confirmée sur les questions formulées par les cadres,
+qui n'ont servi à aucun réglage. »
