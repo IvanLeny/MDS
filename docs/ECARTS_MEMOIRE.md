@@ -146,3 +146,13 @@ licence Apache 2.0). Pendant le développement, il est appelé via le service Gr
 en exploitation, les mêmes poids sont exécutés localement par Ollama (`gpt-oss:20b`), sans connexion
 réseau. Ce choix remplace llama3.1:8b, retiré du catalogue du service de développement ; il exige un poste
 de 16 Go de mémoire vive. llama3.1:8b reste comparé comme candidat local plus léger. »
+
+## E16. Version de Python du poste de mesure
+
+**Écart.** Le mémoire prévoit Python 3.11. Le poste Windows de l'étudiant, qui a servi aux mesures
+avec le moteur `api`, utilise Python 3.12 (3.11 non installé). La reconstruction de la base y donne
+exactement les mêmes effectifs que sous Linux (904 passages, 16 211 valeurs, 572 variations,
+58 appariements dont 10 « a_verifier »). La construction est donc reproductible d'un système à l'autre.
+
+**Texte proposé.** « Le prototype a été développé pour Python 3.11 et exécuté sous Python 3.12 (Windows)
+et 3.11 (Linux). Les deux systèmes produisent une base identique. »
