@@ -43,12 +43,31 @@ def _versions() -> dict:
     return out
 
 
+def _ram_windows() -> float | None:
+    try:
+        import ctypes
+
+        class _Etat(ctypes.Structure):
+            _fields_ = [("dwLength", ctypes.c_ulong), ("dwMemoryLoad", ctypes.c_ulong),
+                        ("ullTotalPhys", ctypes.c_ulonglong), ("ullAvailPhys", ctypes.c_ulonglong),
+                        ("ullTotalPageFile", ctypes.c_ulonglong), ("ullAvailPageFile", ctypes.c_ulonglong),
+                        ("ullTotalVirtual", ctypes.c_ulonglong), ("ullAvailVirtual", ctypes.c_ulonglong),
+                        ("ullAvailExtendedVirtual", ctypes.c_ulonglong)]
+        e = _Etat()
+        e.dwLength = ctypes.sizeof(_Etat)
+        if ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(e)):
+            return round(e.ullTotalPhys / 2**30, 1)
+    except (AttributeError, OSError):
+        pass
+    return None
+
+
 def _machine() -> dict:
     ram = None
     try:
         ram = round(os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES") / 2**30, 1)
     except (ValueError, OSError, AttributeError):
-        pass
+        ram = _ram_windows()
     return {"systeme": platform.platform(), "processeur": platform.processor() or platform.machine(),
             "coeurs": os.cpu_count(), "ram_go": ram, "carte_graphique": "non utilisée (CPU seul)"}
 
@@ -148,7 +167,8 @@ def executer(llm: str | None = None, appliquer_seuil: bool = True) -> Path:
                              "verification": strategic_note.verifier_bn4_bn5(ns),
                              "provisoire": ns["provisoire"], "nb_evolutions": ns["nb_evolutions"]})
     R["h3_temps_systeme"] = {k: stats.mediane_p90(v) for k, v in durees.items()}
-    R["h3_temps_systeme"]["poste"] = "poste de développement (Linux, CPU) — à refaire sur le poste cible Windows"
+    R["h3_temps_systeme"]["poste"] = (f"poste de développement ({platform.system()}, CPU) — à refaire sur le poste "
+                                      "cible avec le moteur local")
     R["h3_verification_automatique_notes"] = notes_h3
     taches = h3.plan(inds)
     h3.protocole_docx(sortie / "h3_protocole_chronometrage.docx", taches)
@@ -213,6 +233,17 @@ def _p(t):
     return "n.m." if t.get("p_value") is None else f"{t['p_value']:.3f}".replace(".", ",")
 
 
+def _valeurs_h2(h2m: dict) -> list[str]:
+    if h2m.get("statut") != "mesuré":
+        return ["non mesuré"] * 3
+    s_, c_ = h2m["ancrage_simple"], h2m["ancrage_citation_litterale"]
+    tfr = h2m["tfr_automatique"]
+    return [f"après : {c_['valeurs_non_soutenues']} / {c_['valeurs_retenues']} ; sans : {s_['valeurs_non_soutenues']} / {s_['valeurs_citees']}",
+            "non mesuré (aucune valeur écartée)" if tfr is None
+            else f"{_f(100 * tfr, 0)} % automatique sur {h2m['valeurs_ecartees']} valeur(s) écartée(s)",
+            _f(c_["couv_ind"])]
+
+
 def resume(R: dict, cfg: dict) -> str:
     ev, crit = cfg["evaluation"], cfg["evaluation"]["criteres"]
     ex = ev["exercice"]
@@ -256,8 +287,8 @@ def resume(R: dict, cfg: dict) -> str:
          + (f"{_f(anc['rouge_l']['moyenne_a'])} vs {_f(anc['rouge_l']['moyenne_b'])} | {_p(anc['rouge_l'])} |" if anc.get("statut") == "mesuré"
             else "non mesuré | — |") + f" {'—' if c_h1[2][1] is None else ('oui' if c_h1[2][1] else 'non')} |",
          ]
-    for nom, ok in c_h2:
-        L.append(f"| H2 | {nom} | {'voir résultats' if ok is not None else 'non mesuré'} | — | {'—' if ok is None else ('oui' if ok else 'non')} |")
+    for (nom, ok), val in zip(c_h2, _valeurs_h2(h2m)):
+        L.append(f"| H2 | {nom} | {val} | — | {'—' if ok is None else ('oui' if ok else 'non')} |")
     for nom, ok in c_h3:
         L.append(f"| H3 | {nom} | non mesuré (séance humaine à conduire) | — | — |")
     L += ["", "| Hypothèse | Verdict |", "|---|---|",
@@ -274,7 +305,25 @@ def resume(R: dict, cfg: dict) -> str:
              f"questions hors sujet sont refusées ; {ab['abstentions_a_tort_questions_du_corpus']} question(s) du corpus "
              f"sur {ab['n_corpus']} sont refusées à tort. Seuil calibré : {_f(ab['seuil_calibre'], 3)} "
              f"(signal et critère : {R['h1_abstention_retenue']} ; les autres combinaisons figurent dans resultats.json).")
-    L.append(f"- **Rédaction avec modèle de langage (H1 ancrage, H2)** : {anc.get('raison') or 'voir resultats.json'}")
+    exs = [ex] + [e for e in [ev.get("exercice_secondaire")] if e and f"h2_{e}" in R]
+    if anc.get("statut") != "mesuré":
+        L.append(f"- **Rédaction avec modèle de langage (H1 ancrage, H2)** : non mesuré ({anc.get('raison')}).")
+    for e in exs:
+        a_, h_ = R[f"h1_ancrage_{e}"], R[f"h2_{e}"]
+        if a_.get("statut") == "mesuré":
+            L.append(f"- **H1 ancrage, exercice {e}** ({a_['n']} indicateurs) : ROUGE-L {_f(a_['rouge_l']['moyenne_a'])} avec "
+                     f"modèles de rédaction contre {_f(a_['rouge_l']['moyenne_b'])} sans (p = {_p(a_['rouge_l'])}) ; "
+                     f"similarité {_f(a_['similarite']['moyenne_a'])} contre {_f(a_['similarite']['moyenne_b'])}.")
+        if h_.get("statut") == "mesuré":
+            s_, c_ = h_["ancrage_simple"], h_["ancrage_citation_litterale"]
+            L.append(f"- **H2, exercice {e}** ({h_['n_indicateurs']} indicateurs) : sans contrôle, {s_['valeurs_non_soutenues']} "
+                     f"valeur(s) non soutenue(s) sur {s_['valeurs_citees']} citées (Exa {_f(s_['exactitude'], 3)}) ; après "
+                     f"contrôle, {c_['valeurs_non_soutenues']} sur {c_['valeurs_retenues']} retenues (Exa {_f(c_['exactitude'], 3)}, "
+                     f"Couv {_f(c_['couv'], 3)}, Couv_ind {_f(c_['couv_ind'], 3)}) ; {h_['valeurs_ecartees']} valeur(s) écartée(s)"
+                     + (f", TFR automatique {_f(h_['tfr_automatique'], 2)} (à confirmer par relecture)"
+                        if h_["tfr_automatique"] is not None else "")
+                     + ((" ; typologie : " + ", ".join(f"{k} : {v}" for k, v in h_["typologie"].items() if v))
+                        if h_["valeurs_ecartees"] else "") + ".")
     cp = R[f"commentaires_publies_{ex}"]
     L.append(f"- **Analyse complémentaire** (ce n'est pas H2) : dans les commentaires publiés de {ex}, "
              f"{cp['valeurs_retrouvees']} valeurs sur {cp['valeurs_citees']} ({_f(100 * cp['part_retrouvee'], 1)} %) se "
@@ -327,7 +376,15 @@ def main():
     ap.add_argument("--sans-seuil", action="store_true", help="ne pas reporter le seuil calibré dans config.yaml")
     ap.add_argument("--h3", default=None, help="h3_saisie_temps.xlsx rempli")
     ap.add_argument("--grille", default=None, help="h3_grille_evaluation.xlsx rempli")
+    ap.add_argument("--resume", default=None, metavar="DOSSIER",
+                    help="régénérer resume.md d'un dossier de résultats (sans refaire les mesures)")
     a = ap.parse_args()
+    if a.resume:
+        d = Path(a.resume)
+        (d / "resume.md").write_text(resume(json.loads((d / "resultats.json").read_text(encoding="utf-8")),
+                                            config.charger()), encoding="utf-8")
+        print(f"Résumé régénéré : {d / 'resume.md'}")
+        return
     if a.h3 or a.grille:
         cfg = config.charger()["evaluation"]["criteres"]
         out = {}

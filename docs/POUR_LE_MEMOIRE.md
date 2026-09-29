@@ -5,12 +5,18 @@ hybride à restitution contrôlée, appliqué aux publications statistiques du M
 assistée des commentaires à la note d'analyse stratégique »*.
 
 Toutes les valeurs ci-dessous sortent d'exécutions réelles, dont la source est indiquée.
-Résultats de référence : `data/results/2026-09-28/` (run du 28/09/2026, config `config.yaml`, graine 42).
+Deux exécutions de référence (config `config.yaml`, graine 42, même base de 904 passages) :
+- `data/results/2026-09-28/` : environnement cloud (Linux), **sans modèle de langage** (mode extractif) ;
+- `data/results/2026-09-28_api_gpt-oss-20b/` : PC de l'étudiant (Windows 10, Python 3.12, 4 cœurs), moteur
+  **`api` Groq `openai/gpt-oss-20b`** (`run_all --llm api`, 11 h 20 d'exécution, surtout de l'attente liée aux
+  limites du compte gratuit). **C'est la source des valeurs H1-ancrage, H2 et Tableau 3.2 ci-dessous.**
+  Les valeurs de H1-récupération y sont identiques à celles du cloud.
 
 > **Trois réserves à rappeler dans le chapitre 4, tant qu'elles tiennent :**
 > 1. résultats **PROVISOIRES** : appariements au statut « candidat », non encore validés par double lecture ;
 > 2. voie dense mesurée avec l'**encodeur de repli hors ligne** (TF-IDF + SVD), et non avec bge-m3 ;
-> 3. **aucun modèle de langage** disponible : rédaction en mode extractif ; H1 (ancrage) et H2 « non mesurés ».
+> 3. modèle de langage appelé via un **service distant de développement** (Groq, `openai/gpt-oss-20b`), et non
+>    par Ollama sur le poste cible : mêmes poids ouverts, mais temps de réponse non transposables.
 >
 > Après validation de l'appariement et installation des modèles sur le poste cible, relancer
 > `python -m minpmeesa.ingestion.build`, puis `python -m minpmeesa.evaluation.run_all`, et remplacer
@@ -71,12 +77,15 @@ ouverts). Borne haute non déployable : `openai/gpt-oss-120b`. Le couple initial
 | ollama / qwen2.5:7b-instruct | oui | non mesuré | — | — |
 | ollama / mistral:7b-instruct | oui | non mesuré | — | — |
 | ollama / llama3.2:3b | oui | non mesuré | — | — |
-| api Groq / openai/gpt-oss-20b | non (développement) | à mesurer (`run_all --llm api`) | — | — |
-| api Groq / openai/gpt-oss-120b | non (borne haute) | à mesurer | — | — |
+| api Groq / openai/gpt-oss-20b | non (développement) | 23,2 s (réseau inclus) | 100 % | 1,1 % |
+| api Groq / openai/gpt-oss-120b | non (borne haute) | 26,2 s (réseau inclus) | 100 % | 3,3 % |
 
-→ À remplir par `run_all --llm api` (avec `GROQ_API_KEY`), puis `run_all --llm ollama` sur le poste cible.
-Le choix du couple est **arrêté**, mais pas encore étayé par des mesures du prototype : le signaler dans le
-texte (voir `docs/ECARTS_MEMOIRE.md`, E12).
+Mesure sur 20 indicateurs (source : `data/results/2026-09-28_api_gpt-oss-20b/tableau_3_2_modeles_langage.json`) ;
+2 appels en échec sur 20 pour le 20b (coupures réseau), 0 pour le 120b. « Valeurs écartées » = part des valeurs
+citées par le modèle que le contrôle littéral a retirées.
+Lecture : le modèle 20b produit toujours un JSON valide et fait **moins** de citations non soutenues que la
+borne haute 120b (1,1 % contre 3,3 %) : le modèle plus gros n'apporte rien sur ce critère, ce qui conforte le
+choix du 20b. Les lignes Ollama restent à mesurer sur le poste cible (`run_all --llm ollama`).
 
 ## 3.1.5 / Tableau 3.3 — Choix de l'encodeur (source : `tableau_3_3_encodeurs.json`)
 
@@ -86,7 +95,7 @@ texte (voir `docs/ECARTS_MEMOIRE.md`, E12).
 | multilingual-e5-large | non mesuré | — | — |
 | sentence-camembert-base | non mesuré | — | — |
 | MiniLM-L12 (repli léger) | non mesuré | — | — |
-| Repli hors ligne TF-IDF + SVD (256 d.) | 0,79 | 0,58 | 22,7 s (904 passages) |
+| Repli hors ligne TF-IDF + SVD (256 d.) | 0,79 | 0,58 | 22,7 s (Linux) ; 26,2 s (Windows) — 904 passages |
 
 ## 3.4.2 — Interface
 
@@ -95,6 +104,10 @@ Quatre parcours et une page « Base documentaire » (`minpmeesa/app/streamlit_ap
 15,7 Go, sans GPU, mode extractif) : consultation, médiane **0,20 s** (P90 0,40 s) ; commentaire, médiane
 **0,01 s** (P90 0,11 s) ; note d'analyse d'un chapitre, **2,16 s** ; note stratégique, **1,88 s**.
 Ces temps n'incluent aucun appel à un modèle de langage : à refaire sur le poste cible avec `gpt-oss:20b`.
+Avec le moteur `api` (PC Windows) : note stratégique, médiane **150 s** ; note d'analyse d'un chapitre, médiane
+**58 min** (maximum 9 h 42). Ces durées mesurent surtout l'**attente imposée par le quota du compte gratuit
+Groq** (appels mis en file), et non le calcul : elles ne sont pas à reporter comme temps du système. Le temps
+« commentaire » (médiane 0,04 s) est lu dans le cache disque, les commentaires ayant déjà été générés pour H2.
 
 ## 3.5.4 / Tableau 3.8 / Annexe V — Note stratégique 2024
 
@@ -103,6 +116,8 @@ contrôles automatiques : BN4 (toute valeur tracée) satisfait ; BN5 (rubriques,
 satisfait. Un seul objectif documenté est rattaché : Note de perspective n°001/2024, p. 3.
 Attention : pour **2023**, seules **2 évolutions** sont retenues (minimum attendu : 5), faute de variations
 citées dans les commentaires. À signaler, ou à reprendre après validation.
+Version rédigée par le modèle de langage (`data/results/2026-09-28_api_gpt-oss-20b/note_strategique_2024_llm.docx`) :
+**7 évolutions, 776 mots**, BN4 et BN5 satisfaits (aucune valeur non tracée). 2023 : 2 évolutions, 258 mots.
 
 ## Tableau 3.7 — Chaîne de traçabilité (source : `data/outputs/tracabilite_exemple.csv`)
 
@@ -128,7 +143,47 @@ Abstention (validation croisée à 5 plis) : **90 %** des questions hors corpus 
 questions du corpus refusées à tort (5,8 %) ; seuil 0,489 (cosinus dense).
 Kappa du jeu de questions : **non mesuré** (seconde annotation à faire).
 
-## 4.3 — H1, ancrage : **non mesuré** (aucun modèle de langage). 4.4 — H2 : **non mesuré** (même raison).
+## 4.3 — H1, ancrage (source : `exercice_20XX/h1_ancrage_par_indicateur.csv`, moteur api gpt-oss-20b)
+
+Commentaires rédigés par le modèle **avec** les modèles de rédaction (commentaires antérieurs récupérés) contre
+**sans**, comparés aux commentaires publiés :
+
+| Exercice | n | ROUGE-L avec / sans | p (Wilcoxon) | Similarité avec / sans | p |
+|---|---|---|---|---|---|
+| 2024 | 13 | 0,17 / 0,19 | 0,773 | 0,44 / 0,52 | 0,793 |
+| 2023 | 14 | 0,13 / 0,16 | 0,942 | 0,37 / 0,46 | 0,923 |
+
+**Critère non atteint** : l'appui sur les rédactions antérieures ne rapproche pas le texte produit des
+commentaires publiés ; il l'en éloigne légèrement (4 indicateurs gagnent, 9 perdent en 2024). Texte proposé :
+« Contrairement à l'hypothèse, fournir au modèle les commentaires des éditions antérieures n'améliore pas la
+proximité avec le commentaire publié (ROUGE-L 0,17 contre 0,19, p = 0,77). Deux explications sont
+plausibles : le modèle reprend des formulations d'éditions passées, qui diffèrent de celles de l'édition
+évaluée ; les modèles de rédaction allongent le contexte au détriment des valeurs de l'exercice. L'effet
+propre de l'ancrage se lit plutôt dans la comparaison aux gabarits ci-dessous. »
+
+## 4.4 — H2, contrôle de citation littérale (source : `exercice_20XX/h2_par_indicateur.csv`)
+
+| Exercice | Valeurs non soutenues sans contrôle | Après contrôle | Exa après | Couv | Couv_ind | Valeurs écartées |
+|---|---|---|---|---|---|---|
+| 2024 | **0** / 120 | 0 / 120 | 1,000 | 1,000 | 0,92 | 0 |
+| 2023 | **2** / 112 | 0 / 110 | 1,000 | 0,982 | 0,86 | 2 (arrondi 1, calcul 1) |
+
+- **« 0 après contrôle »** : atteint pour les deux exercices.
+- **« ≥ 1 sans contrôle »** : non atteint en 2024 (le modèle ancré n'a cité aucune valeur non soutenue), atteint
+  en 2023. Le verdict du Tableau 4.1 porte sur 2024 : **critère non atteint**, donc H2 « non validée » selon la
+  règle. Voir `docs/ECARTS_MEMOIRE.md` E17 pour la discussion.
+- **TFR** : non mesurable en 2024 (aucune valeur écartée). En 2023, la vérification automatique classe les 2
+  valeurs écartées comme faux rejets (TFR 2/2), mais sur 2 valeurs seulement et par une heuristique
+  (le nombre apparaît sur la page source). À la relecture : « plus de 78 % » (part de Yaoundé et Douala) est
+  un **calcul du modèle**, écarté à juste titre ; « inférieure à 4 % » est un seuil, discutable. TFR définitif :
+  **à établir par relecture** (`h2_echantillon_relecture.csv`).
+- **Couv_ind ≥ 80 %** : atteint (0,92 en 2024 ; 0,86 en 2023).
+
+Texte proposé : « Ancré sur les valeurs autorisées, gpt-oss-20b n'a cité aucune valeur non soutenue en 2024
+(120 valeurs) et 2 sur 112 en 2023, retirées par le contrôle littéral. Le contrôle garantit une exactitude de
+100 % après filtrage, pour une couverture de 98 à 100 % des valeurs citées. La valeur ajoutée du contrôle est
+réelle mais rare avec un modèle bien ancré ; elle se manifeste davantage sur la borne haute 120b (3,3 % de
+valeurs écartées) et sur les commentaires publiés eux-mêmes (voir l'analyse complémentaire). »
 
 ### Référence « gabarits » (v5.1) — source : `exercice_20XX/h1_reference_gabarits_par_indicateur.csv`
 
@@ -137,13 +192,20 @@ Mêmes indicateurs rédigés en mode `--llm none`, comparés aux commentaires **
 
 | Exercice | n | ROUGE-L | Similarité | Indicateurs commentés | Valeurs citées (moy.) | Mots (moy.) |
 |---|---|---|---|---|---|---|
-| 2024 | 13 | 0,14 | 0,40 | 100 % | 3,6 | 61 |
-| 2023 | 14 | 0,12 | 0,38 | 100 % | 3,0 | 57 |
+| Gabarits 2024 | 13 | 0,14 | 0,40 | 100 % | 3,6 | 61 |
+| **LLM ancré 2024** (gpt-oss-20b) | 13 | **0,19** | **0,49** | 100 % | 10,2 | 133 |
+| Gabarits 2023 | 14 | 0,12 | 0,38 | 100 % | 3,0 | 57 |
+| **LLM ancré 2023** (gpt-oss-20b) | 14 | 0,13 | 0,37 | 86 % | 7,9 | 91 |
 
-Le côté « LLM ancré » est **non mesuré**. Texte possible une fois la mesure faite : « Face à une rédaction
-automatique par gabarits (ROUGE-L 0,14), le modèle ancré atteint ……… (p = ………) », à présenter
-honnêtement, que le résultat soit favorable ou non. La grille BN contient les deux versions de la note
-stratégique (gabarits : 2024, 6 évolutions, 689 mots ; 2023, 2 évolutions, 255 mots).
+Wilcoxon apparié, LLM contre gabarits :
+- 2024 : ROUGE-L Δ = +0,049, **p = 0,013** (11 indicateurs gagnent, 2 perdent) ; similarité Δ = +0,088, **p = 0,008** ;
+- 2023 : ROUGE-L Δ = +0,016, p = 0,153 (11 gagnent, 3 perdent) ; similarité Δ = −0,009, p = 0,670.
+
+Texte proposé : « Face à une rédaction automatique par gabarits (ROUGE-L 0,14), le modèle ancré atteint
+0,19 en 2024 (p = 0,013) et se rapproche significativement des commentaires publiés, en citant trois fois plus
+de valeurs, toutes contrôlées. Sur l'exercice 2023, l'écart va dans le même sens mais n'est pas significatif
+(p = 0,15). » La grille BN contient les deux versions de la note stratégique (gabarits : 2024, 6 évolutions,
+689 mots ; LLM : 2024, 7 évolutions, 776 mots ; 2023 : 2 évolutions dans les deux versions).
 
 Analyse complémentaire mesurée, **qui n'est pas H2** (source : `exercice_20XX/analyse_commentaires_publies*.csv`).
 Le contrôle littéral est appliqué aux commentaires **publiés** par le ministère.
@@ -159,15 +221,15 @@ provisoires. **Elle ne signifie pas une erreur du ministère.**
 
 ## 4.5 — H3 : temps humain et grille BN : **non mesurés** (séance et lecteurs à organiser)
 
-Fichiers prêts dans `data/results/2026-09-28/` : `h3_protocole_chronometrage.docx`, `h3_saisie_temps.xlsx`,
+Fichiers prêts dans `data/results/2026-09-28_api_gpt-oss-20b/` (avec les notes des deux versions) : `h3_protocole_chronometrage.docx`, `h3_saisie_temps.xlsx`,
 `h3_grille_evaluation.xlsx` (BN4 et BN5 pré-remplis par la vérification automatique).
 
 ## 4.6 / Tableau 4.1 — Confrontation (source : `resume.md`)
 
 | Hypothèse | Verdict (provisoire) |
 |---|---|
-| H1 | **non validée** : Succès@5 = 0,79 < 0,80 ; hybride ≥ meilleure voie seule (oui, non significatif) ; ancrage non mesuré |
-| H2 | **non concluante** : non mesurée |
+| H1 | **non validée** : Succès@5 = 0,79 < 0,80 ; hybride ≥ meilleure voie seule (oui, non significatif) ; ancrage par les rédactions antérieures sans effet (0,17 vs 0,19, p = 0,77). Mais LLM ancré > gabarits (p = 0,013, 2024) |
+| H2 | **non validée** (au sens strict de la règle) : 0 valeur non soutenue après contrôle (atteint), mais aucune avant contrôle en 2024 (le critère « ≥ 1 sans » n'est atteint qu'en 2023) ; TFR à établir par relecture ; Couv_ind 0,92 (atteint) |
 | H3 | **non concluante** : non mesurée (temps système mesurés seulement) |
 
 ## Résumé / abstract (« PH »)
@@ -177,8 +239,12 @@ Proposition de phrase de résultats, à ajuster après les mesures définitives 
 parmi les cinq premiers résultats pour 79 % des 52 questions de test, contre 71 % pour la recherche lexicale
 seule, et refuse 9 questions hors sujet sur 10. Le contrôle de citation littérale garantit que toute valeur
 d'un commentaire produit est rattachée à une cellule d'un tableau de l'Annuaire ou à une variation calculée
-par le programme. »
+par le programme. Ancré sur ces valeurs, le modèle gpt-oss-20b produit des commentaires plus proches des
+commentaires publiés que des gabarits déterministes (ROUGE-L 0,19 contre 0,14, p = 0,013), sans aucune valeur
+non soutenue après contrôle. »
 *Abstract* : "On a corpus of 18 MINPMEESA publications (661 pages), hybrid retrieval ranks a relevant page
 among the top five results for 79% of 52 test questions, versus 71% for lexical search alone, and declines
 9 out of 10 out-of-scope questions. Literal citation control guarantees that every value in a generated
-commentary is traced to an Annuaire table cell or to a variation computed by the program."
+commentary is traced to an Annuaire table cell or to a variation computed by the program. Grounded on these
+values, the gpt-oss-20b model produces commentaries closer to the published ones than deterministic templates
+(ROUGE-L 0.19 vs 0.14, p = 0.013), with no unsupported value left after control."

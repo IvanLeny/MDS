@@ -12,9 +12,9 @@
 | H1 | Succès@5 (hybride) ≥ 0,80 | 0,79 | — | non |
 | H1 | hybride ≥ meilleure voie seule (Succès@5 / MRR) | 0,79 vs 0,75 / 0,58 vs 0,56 | lexicale : 0,125 ; dense : 0,403 (MRR, Wilcoxon) | oui |
 | H1 | ROUGE-L avec appui > sans appui | 0,17 vs 0,19 | 0,773 | non |
-| H2 | 0 valeur non soutenue après contrôle, ≥ 1 sans | voir résultats | — | non |
-| H2 | TFR < 5 % | non mesuré | — | — |
-| H2 | Couv_ind ≥ 80 % | voir résultats | — | oui |
+| H2 | 0 valeur non soutenue après contrôle, ≥ 1 sans | après : 0 / 120 ; sans : 0 / 120 | — | non |
+| H2 | TFR < 5 % | non mesuré (aucune valeur écartée) | — | — |
+| H2 | Couv_ind ≥ 80 % | 0,92 | — | oui |
 | H3 | réduction du temps médian ≥ 50 % | non mesuré (séance humaine à conduire) | — | — |
 | H3 | ≥ 80 % des notes satisfont ≥ 4 critères sur 5 | non mesuré (séance humaine à conduire) | — | — |
 
@@ -30,7 +30,10 @@ Règle : « validée » si tous les critères sont mesurés et atteints ; « non
 
 - **Recherche dans les publications** : sur 52 questions, la bonne page figure parmi les 5 premiers résultats dans 79 % des cas avec la recherche hybride, contre 71 % (mots-clés seuls) et 75 % (recherche sémantique seule). Le seuil de 80 % n'est pas atteint.
 - **Abstention** (validation croisée) : 90 % des questions hors sujet sont refusées ; 3 question(s) du corpus sur 52 sont refusées à tort. Seuil calibré : 0,489 (signal et critère : dense_max/refus_a_tort_max ; les autres combinaisons figurent dans resultats.json).
-- **Rédaction avec modèle de langage (H1 ancrage, H2)** : voir resultats.json
+- **H1 ancrage, exercice 2024** (13 indicateurs) : ROUGE-L 0,17 avec modèles de rédaction contre 0,19 sans (p = 0,773) ; similarité 0,44 contre 0,52.
+- **H2, exercice 2024** (13 indicateurs) : sans contrôle, 0 valeur(s) non soutenue(s) sur 120 citées (Exa 1,000) ; après contrôle, 0 sur 120 retenues (Exa 1,000, Couv 1,000, Couv_ind 0,923) ; 0 valeur(s) écartée(s).
+- **H1 ancrage, exercice 2023** (14 indicateurs) : ROUGE-L 0,13 avec modèles de rédaction contre 0,16 sans (p = 0,942) ; similarité 0,37 contre 0,46.
+- **H2, exercice 2023** (14 indicateurs) : sans contrôle, 2 valeur(s) non soutenue(s) sur 112 citées (Exa 0,982) ; après contrôle, 0 sur 110 retenues (Exa 1,000, Couv 0,982, Couv_ind 0,857) ; 2 valeur(s) écartée(s), TFR automatique 1,00 (à confirmer par relecture) ; typologie : arrondi : 1, calcul : 1.
 - **Analyse complémentaire** (ce n'est pas H2) : dans les commentaires publiés de 2024, 61 valeurs sur 123 (49,6 %) se retrouvent telles quelles dans le tableau apparié ou les variations calculées ; les autres se répartissent en arrondi : 1, calcul : 49, chiffre d'un autre exercice : 5, invention : 7.
 - **Temps de réponse du système** (poste de développement) : consultation : médiane 0,34 s, P90 0,38 s ; commentaire : médiane 0,04 s, P90 31,00 s ; note d'analyse : médiane 3491,57 s, P90 28651,24 s ; note stratégique : médiane 150,46 s, P90 216,89 s.
 

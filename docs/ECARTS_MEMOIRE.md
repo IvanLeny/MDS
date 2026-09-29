@@ -112,6 +112,11 @@ Le côté « gabarits » est mesuré. Le couple initialement retenu (`llama3.1:8
 **choix arrêté par l'étudiant** (septembre 2026) : il n'est pas encore justifié par des mesures de ce
 prototype. Relancer `run_all --llm api` avec la clé, puis `--llm ollama` sur le poste cible.
 
+**Mise à jour (29/09/2026).** `run_all --llm api` a été exécuté sur le PC de l'étudiant (Groq
+`openai/gpt-oss-20b`, voir E15) : H1 ancrage, H2, le côté « LLM ancré » et les lignes Groq du Tableau 3.2
+sont désormais **mesurés** (`data/results/2026-09-28_api_gpt-oss-20b/`). Restent non mesurés : les lignes
+Ollama du Tableau 3.2 et les temps sur le poste cible.
+
 ## E13. (v5.1) Quantification Q4_K_M de `llama3.1:8b` (candidat secondaire depuis E15)
 
 Le nom `llama3.1:8b` dans Ollama désigne la variante quantifiée par défaut (Q4_K_M à la date de
@@ -156,3 +161,18 @@ exactement les mêmes effectifs que sous Linux (904 passages, 16 211 valeurs, 57
 
 **Texte proposé.** « Le prototype a été développé pour Python 3.11 et exécuté sous Python 3.12 (Windows)
 et 3.11 (Linux). Les deux systèmes produisent une base identique. »
+
+## E17. Critère H2 « ≥ 1 valeur non soutenue sans contrôle »
+
+**Constat.** Avec `openai/gpt-oss-20b` ancré sur les valeurs autorisées, l'exercice 2024 ne produit **aucune**
+valeur non soutenue avant contrôle (0 sur 120). Le critère, qui sert à montrer que le contrôle est
+nécessaire, n'est donc pas atteint en 2024. Il l'est en 2023 (2 sur 112, retirées par le contrôle). Appliquée
+à la lettre, la règle du Tableau 4.1 classe H2 « non validée ». Le résultat n'a pas été ajusté.
+
+**Texte proposé (4.4 / 4.6).** « Le critère de sûreté (aucune valeur non soutenue après contrôle) est atteint
+sur les deux exercices. En revanche, le modèle ancré ne commet aucune erreur de citation sur l'exercice 2024 :
+l'utilité du contrôle n'y est pas démontrée par l'échantillon, alors qu'elle l'est sur 2023 (2 valeurs sur 112)
+et sur la borne haute gpt-oss-120b (3,3 % de valeurs écartées). H2 est donc déclarée non validée au sens strict
+de la règle fixée a priori. Le contrôle reste un garde-fou dont le coût mesuré est faible (couverture de 98 à
+100 %). » **À décider par l'étudiant** : conserver ce verdict strict, ou juger H2 sur les deux exercices
+réunis (2 valeurs non soutenues sur 232 avant contrôle, 0 après), en le déclarant comme un écart au protocole.
