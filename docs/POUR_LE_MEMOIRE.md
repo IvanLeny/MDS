@@ -89,24 +89,38 @@ choix du 20b. Les lignes Ollama restent à mesurer sur le poste cible (`run_all 
 
 ## 3.1.5 / Tableau 3.3 — Choix de l'encodeur (source : `tableau_3_3_encodeurs.json`)
 
-Mesures du 30/09/2026 sur Google Colab (CPU), base reconstruite à l'identique (904 passages, 16 211 valeurs,
-572 variations) ; source : Drive `MDS_resultats/2026-09-30_encodeurs/` (à verser dans `data/results/`).
+Mesures du 30/09/2026 sur Google Colab (**CPU**, 2 cœurs virtuels, sans GPU), base reconstruite à l'identique
+(904 passages, 16 211 valeurs, 572 variations) ; 52 questions du corpus ; source :
+`data/results/2026-09-30_encodeurs/` (`tableau_3_3_encodeurs.json`, `tableau_3_3_par_question.csv`).
 
-| Encodeur | Succès@5 hybride | MRR hybride | Dense seul (S@5 / MRR) | p (MRR hybride vs repli) | Indexation (Colab CPU) |
-|---|---|---|---|---|---|
-| BAAI/bge-m3 | à mesurer (GPU) | | | | |
-| multilingual-e5-large | à mesurer (GPU) | | | | |
-| sentence-camembert-base | 0,71 | 0,475 | 0,42 / 0,302 | 0,109 | 448 s |
-| MiniLM-L12 (repli léger) | 0,81 | 0,512 | 0,46 / 0,394 | 0,348 | 136 s |
-| Repli hors ligne TF-IDF + SVD (256 d.) | 0,79 | **0,581** | **0,75 / 0,559** | — | 29 s |
+| Encodeur | Longueur max. (tokens) | Succès@5 hybride | MRR hybride | Dense seul (S@5 / MRR) | p (MRR hybride vs repli) | Indexation (Colab CPU) |
+|---|---|---|---|---|---|---|
+| **BAAI/bge-m3 (retenu)** | 8 192 | **0,88** (46/52) | **0,694** | **0,85 / 0,674** | **0,016** | 9 090 s (2 h 31) |
+| multilingual-e5-large | 512 | 0,87 (45/52) | 0,681 | 0,85 / 0,619 | 0,015 | 4 989 s (1 h 23) |
+| sentence-camembert-base | 128 | 0,71 (37/52) | 0,475 | 0,42 / 0,302 | 0,109 | 448 s |
+| MiniLM-L12 (repli léger) | 128 | 0,81 (42/52) | 0,512 | 0,46 / 0,394 | 0,348 | 136 s |
+| Repli hors ligne TF-IDF + SVD (256 d.) | sans limite | 0,79 (41/52) | 0,581 | 0,75 / 0,559 | — | 29 s |
 
-Lecture provisoire : aucun des deux petits encodeurs neuronaux ne fait significativement mieux que le repli.
-Le Succès@5 de 0,81 de MiniLM tient à une seule question (42/52 contre 41/52), avec un MRR plus faible ;
-en voie dense seule, les deux modèles sont nettement en dessous du repli. Explications probables : ils
-tronquent les passages longs (tableaux linéarisés) et ne sont pas entraînés pour la recherche documentaire,
-contrairement à bge-m3 et e5.
+**Choix : bge-m3**, conformément à la règle fixée a priori (E18) : c'est le choix par défaut du mémoire, et aucun
+autre candidat ne fait mieux (il est premier sur les cinq critères de qualité).
 
-→ bge-m3 et e5-large : à mesurer sur GPU (E19). Règle de choix et biais de sélection : `ECARTS_MEMOIRE.md` E18.
+Lecture :
+- les deux encodeurs conçus pour la **recherche documentaire** (bge-m3, e5) améliorent significativement le
+  repli (MRR hybride +0,11, p ≈ 0,015) ; les deux modèles de **similarité de phrases** (camembert, MiniLM) non ;
+- la **longueur lue** explique une grande part de l'écart : les modèles limités à 128 tokens ne voient que le
+  début des passages, alors que les tableaux linéarisés dépassent souvent 500 tokens ; bge-m3, qui lit les
+  passages en entier, obtient la meilleure voie dense (MRR 0,674 contre 0,619 pour e5, limité à 512) ;
+- **coût** : sur CPU, l'indexation par bge-m3 prend environ 2 h 30 (une seule fois, à la construction de la
+  base) ; une recherche n'encode que la question, en une fraction de seconde. Le poste de la Cellule devra donc
+  prévoir une reconstruction longue, sans effet sur l'usage quotidien ;
+- réserve (E18) : ces scores servent aussi au choix ; H1 est à confirmer sur les questions des cadres.
+
+Texte proposé (3.1.5) : « Cinq encodeurs ont été comparés sur les 52 questions du jeu de consultation. bge-m3,
+retenu, place une page pertinente parmi les cinq premiers résultats pour 88 % des questions en recherche
+hybride (MRR 0,69), contre 79 % (MRR 0,58) pour l'encodeur de référence hors ligne ; l'écart est significatif
+(Wilcoxon apparié, p = 0,016). Les modèles de similarité de phrases, limités à 128 tokens, ne font pas mieux que
+la référence. »
+
 
 ## 3.4.2 — Interface
 

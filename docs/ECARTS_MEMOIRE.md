@@ -196,16 +196,16 @@ qui n'ont servi à aucun réglage. »
 
 ## E19. Environnement de mesure des encodeurs (Tableau 3.3)
 
-**Constat.** Le PC de l'étudiant ne peut pas télécharger les encodeurs (connexion d'environ 7 ko/s). Sur les
-2 processeurs gratuits de Google Colab, l'encodage des 904 passages par bge-m3 (568 millions de paramètres,
-passages jusqu'à ~1 500 tokens) dépasse plusieurs heures, et la session a été coupée avant la fin.
+**Constat.** Le PC de l'étudiant ne peut pas télécharger les encodeurs (connexion d'environ 7 ko/s). La mesure
+a été faite sur **Google Colab, sur CPU** (2 cœurs virtuels) : aucun GPU n'a été attribué au compte gratuit. Le
+calcul a été lancé en arrière-plan, chaque encodeur étant enregistré dès sa fin (reprise possible après coupure).
+Une première tentative, lancée au premier plan, avait été interrompue par la fermeture de la session Colab.
 
-**Choix retenu.** Mesure sur Google Colab avec GPU (`--device cuda`), à partir de la même branche du dépôt et
-d'une base reconstruite à l'identique (904 passages, 16 211 valeurs, 572 variations, à vérifier dans
-`build_rapport.json`). Les scores (Succès@5, MRR) ne dépendent pas du matériel, aux arrondis de calcul
-flottant près ; les **temps d'indexation**, eux, ne sont pas transposables au poste de la Cellule (CPU).
-Contrôle proposé : mesurer aussi MiniLM sur CPU et vérifier que ses scores sont identiques à ceux obtenus sur GPU.
+**Garanties.** Même branche du dépôt ; base reconstruite à l'identique (904 passages, 16 211 valeurs,
+572 variations, 58 appariements, vérifiés dans `build_rapport.json`) ; les scores (Succès@5, MRR) ne dépendent
+pas de la machine. Seuls les **temps d'indexation** sont propres à Colab (CPU partagé) ; ils donnent un ordre de
+grandeur pour un poste sans GPU.
 
-**Texte proposé.** « Les encodeurs ont été comparés sur une machine Google Colab dotée d'un GPU, la base étant
+**Texte proposé.** « Les encodeurs ont été comparés sur une machine Google Colab (processeur seul), la base étant
 reconstruite à l'identique depuis le dépôt. Les métriques de récupération ne dépendent pas du matériel ; les
 temps d'indexation rapportés ne valent que pour cette machine. »

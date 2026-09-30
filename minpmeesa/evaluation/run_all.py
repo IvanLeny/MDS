@@ -96,7 +96,8 @@ def verdict(criteres: list[tuple[str, bool | None]]) -> str:
     return "validée"
 
 
-def executer(llm: str | None = None, appliquer_seuil: bool = True, nom_sortie: str | None = None) -> Path:
+def executer(llm: str | None = None, appliquer_seuil: bool = True, nom_sortie: str | None = None,
+             encodeurs_mesures: str | None = None) -> Path:
     t0 = time.time()
     cfg = config.charger()
     config.fixer_graine()
@@ -123,7 +124,16 @@ def executer(llm: str | None = None, appliquer_seuil: bool = True, nom_sortie: s
         m.cfg = config.charger()
     R["kappa_jeu_consultation"] = kappa_jeu(jeu)
     print("Choix de l'encodeur et du modèle de langage…", flush=True)
-    R["choix_encodeur"] = choix_encodeur.comparer(m, jeu, sortie)
+    if encodeurs_mesures:            # Tableau 3.3 déjà mesuré (plusieurs heures sur CPU) : repris tel quel
+        src = Path(encodeurs_mesures)
+        R["choix_encodeur"] = json.loads((src / "tableau_3_3_encodeurs.json").read_text(encoding="utf-8"))
+        for e in R["choix_encodeur"]:
+            e["source"] = str(src)
+        pq = src / "tableau_3_3_par_question.csv"
+        if pq.exists():
+            (sortie / pq.name).write_bytes(pq.read_bytes())
+    else:
+        R["choix_encodeur"] = choix_encodeur.comparer(m, jeu, sortie)
     R["choix_llm"] = choix_llm.comparer(con, cfg, ev["exercice"], ev["nb_indicateurs_llm"])
     _j(sortie / "tableau_3_3_encodeurs.json", R["choix_encodeur"])
     _j(sortie / "tableau_3_2_modeles_langage.json", R["choix_llm"])
@@ -381,6 +391,8 @@ def main():
     ap.add_argument("--grille", default=None, help="h3_grille_evaluation.xlsx rempli")
     ap.add_argument("--sortie", default=None, metavar="NOM",
                     help="nom du dossier de résultats dans data/results (défaut : la date du jour)")
+    ap.add_argument("--encodeurs-mesures", default=None, metavar="DOSSIER",
+                    help="reprendre le Tableau 3.3 d'une mesure antérieure (choix_encodeur) au lieu de le recalculer")
     ap.add_argument("--resume", default=None, metavar="DOSSIER",
                     help="régénérer resume.md d'un dossier de résultats (sans refaire les mesures)")
     a = ap.parse_args()
@@ -405,7 +417,7 @@ def main():
         _j(dest, out)
         print(json.dumps(out, indent=2, ensure_ascii=False))
         return
-    executer(a.llm, not a.sans_seuil, a.sortie)
+    executer(a.llm, not a.sans_seuil, a.sortie, a.encodeurs_mesures)
 
 
 if __name__ == "__main__":
