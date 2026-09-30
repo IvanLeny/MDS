@@ -89,16 +89,24 @@ choix du 20b. Les lignes Ollama restent à mesurer sur le poste cible (`run_all 
 
 ## 3.1.5 / Tableau 3.3 — Choix de l'encodeur (source : `tableau_3_3_encodeurs.json`)
 
-| Encodeur | Succès@5 (hybride) | MRR (hybride) | Indexation |
-|---|---|---|---|
-| BAAI/bge-m3 | non mesuré (modèle absent) | — | — |
-| multilingual-e5-large | non mesuré | — | — |
-| sentence-camembert-base | non mesuré | — | — |
-| MiniLM-L12 (repli léger) | non mesuré | — | — |
-| Repli hors ligne TF-IDF + SVD (256 d.) | 0,79 | 0,58 | 22,7 s (Linux) ; 26,2 s (Windows) — 904 passages |
+Mesures du 30/09/2026 sur Google Colab (CPU), base reconstruite à l'identique (904 passages, 16 211 valeurs,
+572 variations) ; source : Drive `MDS_resultats/2026-09-30_encodeurs/` (à verser dans `data/results/`).
 
-→ Encodeurs neuronaux à mesurer sur le PC (procédure : `docs/INSTALLATION_WINDOWS.md`, section 4) ; ajouter
-alors une colonne « p (MRR contre repli, Wilcoxon) ». Règle de choix et biais de sélection : `ECARTS_MEMOIRE.md` E18.
+| Encodeur | Succès@5 hybride | MRR hybride | Dense seul (S@5 / MRR) | p (MRR hybride vs repli) | Indexation (Colab CPU) |
+|---|---|---|---|---|---|
+| BAAI/bge-m3 | à mesurer (GPU) | | | | |
+| multilingual-e5-large | à mesurer (GPU) | | | | |
+| sentence-camembert-base | 0,71 | 0,475 | 0,42 / 0,302 | 0,109 | 448 s |
+| MiniLM-L12 (repli léger) | 0,81 | 0,512 | 0,46 / 0,394 | 0,348 | 136 s |
+| Repli hors ligne TF-IDF + SVD (256 d.) | 0,79 | **0,581** | **0,75 / 0,559** | — | 29 s |
+
+Lecture provisoire : aucun des deux petits encodeurs neuronaux ne fait significativement mieux que le repli.
+Le Succès@5 de 0,81 de MiniLM tient à une seule question (42/52 contre 41/52), avec un MRR plus faible ;
+en voie dense seule, les deux modèles sont nettement en dessous du repli. Explications probables : ils
+tronquent les passages longs (tableaux linéarisés) et ne sont pas entraînés pour la recherche documentaire,
+contrairement à bge-m3 et e5.
+
+→ bge-m3 et e5-large : à mesurer sur GPU (E19). Règle de choix et biais de sélection : `ECARTS_MEMOIRE.md` E18.
 
 ## 3.4.2 — Interface
 
