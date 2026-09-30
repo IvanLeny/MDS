@@ -44,6 +44,7 @@ class EncodeurST(Encodeur):
         self._m = SentenceTransformer(str(dossier_modele(nom)), device="cpu")
         dim = getattr(self._m, "get_embedding_dimension", None) or self._m.get_sentence_embedding_dimension
         self.dim = dim()
+        self.longueur_max = getattr(self._m, "max_seq_length", None)   # tokens au-delà tronqués
         self.lot = taille_lot
         e5 = "e5" in nom.lower()
         self._pp, self._pq = ("passage: ", "query: ") if e5 else ("", "")

@@ -72,6 +72,7 @@ def comparer(m: Moteur, jeu: list[dict], sortie: Path | None = None,
             index = faiss_index.construire(ids, vect)
             ligne["temps_indexation_s"] = round(time.time() - t0, 2)
             ligne["dimension"] = enc.dim
+            ligne["longueur_max_tokens"] = getattr(enc, "longueur_max", None)   # None : repli, sans troncature
             moy, detail = _eval(m, enc, index, jeu, autorises)
             ligne.update(moy)
             ligne["statut"] = "mesuré"
