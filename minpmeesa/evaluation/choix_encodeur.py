@@ -142,6 +142,15 @@ def main():
     ap.add_argument("--device", default="cpu", help="cpu (défaut) ou cuda (GPU, beaucoup plus rapide)")
     ap.add_argument("--recommencer", action="store_true", help="ignorer les encodeurs déjà mesurés dans partiel/")
     a = ap.parse_args()
+    if a.device.startswith("cuda"):
+        try:
+            import torch
+            ok, detail = torch.cuda.is_available(), f"torch {torch.__version__}"
+        except ImportError:
+            ok, detail = False, "torch absent"
+        if not ok:
+            raise SystemExit(f"GPU demandé (--device {a.device}) mais indisponible ({detail}) : activer un GPU "
+                             "(Colab : Exécution > Modifier le type d'exécution > T4 GPU) ou utiliser --device cpu.")
     config.fixer_graine()
     from .h1_recuperation import charger_jeu
     sortie = Path(a.sortie) if a.sortie else config.chemin("resultats") / f"{date.today().isoformat()}_encodeurs"
