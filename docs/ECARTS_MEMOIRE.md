@@ -193,3 +193,19 @@ poseront les cadres (tâche de l'étudiant) serviront de **jeu de test indépend
 de sélection, le choix par défaut (bge-m3) n'est remplacé que si un autre candidat l'améliore
 significativement (Wilcoxon apparié, 5 %), et H1 est confirmée sur les questions formulées par les cadres,
 qui n'ont servi à aucun réglage. »
+
+## E19. Environnement de mesure des encodeurs (Tableau 3.3)
+
+**Constat.** Le PC de l'étudiant ne peut pas télécharger les encodeurs (connexion d'environ 7 ko/s). Sur les
+2 processeurs gratuits de Google Colab, l'encodage des 904 passages par bge-m3 (568 millions de paramètres,
+passages jusqu'à ~1 500 tokens) dépasse plusieurs heures, et la session a été coupée avant la fin.
+
+**Choix retenu.** Mesure sur Google Colab avec GPU (`--device cuda`), à partir de la même branche du dépôt et
+d'une base reconstruite à l'identique (904 passages, 16 211 valeurs, 572 variations, à vérifier dans
+`build_rapport.json`). Les scores (Succès@5, MRR) ne dépendent pas du matériel, aux arrondis de calcul
+flottant près ; les **temps d'indexation**, eux, ne sont pas transposables au poste de la Cellule (CPU).
+Contrôle proposé : mesurer aussi MiniLM sur CPU et vérifier que ses scores sont identiques à ceux obtenus sur GPU.
+
+**Texte proposé.** « Les encodeurs ont été comparés sur une machine Google Colab dotée d'un GPU, la base étant
+reconstruite à l'identique depuis le dépôt. Les métriques de récupération ne dépendent pas du matériel ; les
+temps d'indexation rapportés ne valent que pour cette machine. »

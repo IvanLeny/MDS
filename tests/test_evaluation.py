@@ -52,7 +52,7 @@ def test_choix_encodeur_compare_au_repli(base_complete, tmp_path, monkeypatch):
     from minpmeesa.store import encodeur as encmod
 
     class Faux(encmod.EncodeurLSA):          # se comporte comme un encodeur neuronal présent sur le disque
-        def __init__(self, nom, lot=16):
+        def __init__(self, nom, *args, **kwargs):
             super().__init__(64, 42)
             self.nom, self._ajuste = nom, False
 
@@ -70,3 +70,15 @@ def test_choix_encodeur_compare_au_repli(base_complete, tmp_path, monkeypatch):
     assert w["n"] == 52 and 0 <= res[1]["hybride_succes_5"] <= 1
     lignes = (tmp_path / "tableau_3_3_par_question.csv").read_text(encoding="utf-8-sig").splitlines()
     assert len(lignes) == 53 and f"{cible}|hybride|rr" in lignes[0]
+
+
+def test_choix_encodeur_reprise(base_complete, tmp_path):
+    """Un encodeur déjà mesuré est repris de partiel/, à l'identique, sans être recalculé."""
+    from minpmeesa.evaluation import choix_encodeur
+    from minpmeesa.evaluation.h1_recuperation import charger_jeu
+    from minpmeesa.retrieval.hybrid import Moteur
+    m, jeu = Moteur(), charger_jeu()
+    r1 = choix_encodeur.comparer(m, jeu, tmp_path, [])
+    assert list((tmp_path / "partiel").glob("*.json"))
+    r2 = choix_encodeur.comparer(m, jeu, tmp_path, [])
+    assert r1 == r2

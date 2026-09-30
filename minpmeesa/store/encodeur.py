@@ -38,10 +38,10 @@ class Encodeur:
 class EncodeurST(Encodeur):
     """Modèle sentence-transformers chargé depuis le disque."""
 
-    def __init__(self, nom: str, taille_lot: int = 16):
+    def __init__(self, nom: str, taille_lot: int = 16, device: str = "cpu", progression: bool = False):
         from sentence_transformers import SentenceTransformer
-        self.nom = nom
-        self._m = SentenceTransformer(str(dossier_modele(nom)), device="cpu")
+        self.nom, self.device, self.progression = nom, device, progression
+        self._m = SentenceTransformer(str(dossier_modele(nom)), device=device)
         dim = getattr(self._m, "get_embedding_dimension", None) or self._m.get_sentence_embedding_dimension
         self.dim = dim()
         self.longueur_max = getattr(self._m, "max_seq_length", None)   # tokens au-delà tronqués
@@ -51,7 +51,7 @@ class EncodeurST(Encodeur):
 
     def encoder_passages(self, textes):
         v = self._m.encode([self._pp + t for t in textes], batch_size=self.lot,
-                           normalize_embeddings=True, show_progress_bar=False)
+                           normalize_embeddings=True, show_progress_bar=self.progression)
         return np.asarray(v, dtype="float32")
 
     def encoder_requete(self, texte):

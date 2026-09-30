@@ -6,15 +6,20 @@ n'est inventé.
 Chaque candidat est comparé à l'encodeur de repli, question par question
 (Wilcoxon apparié sur le rang réciproque de la voie hybride).
 
-Mesure seule, sans refaire toute l'évaluation (quelques minutes à ~1 h par
-encodeur sur CPU) :
+Mesure seule, sans refaire toute l'évaluation. Sur un CPU modeste, les grands
+encodeurs (bge-m3, e5-large) demandent PLUSIEURS HEURES chacun : utiliser un GPU
+si possible (--device cuda). Chaque encodeur mesuré est enregistré aussitôt
+(dossier partiel/) : une exécution interrompue reprend là où elle s'était
+arrêtée.
 
     python -m minpmeesa.evaluation.choix_encodeur
-    python -m minpmeesa.evaluation.choix_encodeur --encodeurs BAAI/bge-m3 --sortie data/results/encodeurs
+    python -m minpmeesa.evaluation.choix_encodeur --device cuda --sortie data/results/encodeurs
+    python -m minpmeesa.evaluation.choix_encodeur --encodeurs BAAI/bge-m3
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import time
 from datetime import date
@@ -44,8 +49,17 @@ def _eval(m: Moteur, enc, index, jeu, autorises) -> tuple[dict, dict]:
              for nom, v in r.items() for k, k2 in (("succes_5", "s5"), ("mrr", "rr"))}, r)
 
 
+def _signature(ids: list[int], textes: list[str], questions: list[str]) -> str:
+    """Empreinte de la base et du jeu : un résultat partiel n'est repris que si elle est identique."""
+    h = hashlib.sha256()
+    for x in (ids, textes, questions):
+        h.update(json.dumps(x, ensure_ascii=False).encode("utf-8"))
+    return h.hexdigest()[:16]
+
+
 def comparer(m: Moteur, jeu: list[dict], sortie: Path | None = None,
-             seulement: list[str] | None = None) -> list[dict]:
+             seulement: list[str] | None = None, device: str = "cpu", reprendre: bool = True,
+             bavard: bool = False) -> list[dict]:
     cfg = m.cfg
     rows = m.con.execute("SELECT passage_id, texte, section FROM passages ORDER BY passage_id").fetchall()
     ids = [r[0] for r in rows]
@@ -57,6 +71,15 @@ def comparer(m: Moteur, jeu: list[dict], sortie: Path | None = None,
         ordre = [encmod.NOM_REPLI] + [n for n in candidats if n in seulement]
     out, par_q = [], {}
     questions = [q["id"] for q in jeu if not q["hors_corpus"]]
+    sig = _signature(ids, textes, questions)
+    partiel = sortie / "partiel" if sortie else None
+    if partiel:
+        partiel.mkdir(parents=True, exist_ok=True)
+
+    def dire(msg):
+        if bavard:
+            print(msg, flush=True)
+
     for nom in ordre:
         ligne = {"encodeur": nom}
         if nom != encmod.NOM_REPLI and not encmod.dossier_modele(nom).exists():
@@ -64,25 +87,45 @@ def comparer(m: Moteur, jeu: list[dict], sortie: Path | None = None,
                                "(à télécharger avec scripts/telecharger_modeles.py sur un poste connecté)")
             out.append(ligne)
             continue
+        fp = partiel / f"{nom.replace('/', '__')}.json" if partiel else None
+        if reprendre and fp and fp.exists():
+            sauve = json.loads(fp.read_text(encoding="utf-8"))
+            if sauve.get("signature") == sig:
+                dire(f"{nom} : déjà mesuré (repris de {fp.name})")
+                out.append(sauve["ligne"])
+                par_q[nom] = sauve["detail"]
+                continue
+            dire(f"{nom} : résultat partiel ignoré (base ou jeu de questions différents)")
         try:
+            dire(f"{nom} : encodage de {len(textes)} passages sur {device if nom != encmod.NOM_REPLI else 'cpu'}…")
             t0 = time.time()
             enc = (encmod.EncodeurLSA(cfg["embeddings"]["repli_hors_ligne_dims"], cfg["graine"]).ajuster(textes)
-                   if nom == encmod.NOM_REPLI else encmod.EncodeurST(nom, cfg["embeddings"]["taille_lot"]))
+                   if nom == encmod.NOM_REPLI
+                   else encmod.EncodeurST(nom, cfg["embeddings"]["taille_lot"], device, progression=bavard))
             vect = enc.encoder_passages(textes)
             index = faiss_index.construire(ids, vect)
             ligne["temps_indexation_s"] = round(time.time() - t0, 2)
+            ligne["materiel"] = "cpu" if nom == encmod.NOM_REPLI else device
             ligne["dimension"] = enc.dim
             ligne["longueur_max_tokens"] = getattr(enc, "longueur_max", None)   # None : repli, sans troncature
             moy, detail = _eval(m, enc, index, jeu, autorises)
             ligne.update(moy)
             ligne["statut"] = "mesuré"
             par_q[nom] = detail
-            if nom != encmod.NOM_REPLI and encmod.NOM_REPLI in par_q:
-                w = stats.wilcoxon(detail["hybride"]["rr"], par_q[encmod.NOM_REPLI]["hybride"]["rr"])
-                ligne["wilcoxon_mrr_hybride_vs_repli"] = w
+            dire(f"{nom} : Succès@5 hybride {moy['hybride_succes_5']:.2f}, MRR {moy['hybride_mrr']:.3f} "
+                 f"({ligne['temps_indexation_s']:.0f} s)")
+            if fp:
+                fp.write_text(json.dumps({"signature": sig, "ligne": ligne, "detail": detail},
+                                         ensure_ascii=False), encoding="utf-8")
         except Exception as e:  # modèle illisible, dépendance absente…
             ligne["statut"] = f"non mesuré : {type(e).__name__}: {e}"
+            dire(f"{nom} : {ligne['statut']}")
         out.append(ligne)
+    ref = par_q.get(encmod.NOM_REPLI)
+    for ligne in out:
+        nom = ligne["encodeur"]
+        if ref and nom != encmod.NOM_REPLI and nom in par_q:
+            ligne["wilcoxon_mrr_hybride_vs_repli"] = stats.wilcoxon(par_q[nom]["hybride"]["rr"], ref["hybride"]["rr"])
     if sortie and par_q:
         from .h1_recuperation import _csv
         _csv(sortie / "tableau_3_3_par_question.csv",
@@ -96,6 +139,8 @@ def main():
     ap = argparse.ArgumentParser(description="Tableau 3.3 : comparaison des encodeurs présents dans models/embeddings")
     ap.add_argument("--encodeurs", nargs="*", default=None, help="limiter aux candidats nommés (le repli est toujours mesuré)")
     ap.add_argument("--sortie", default=None, help="dossier de sortie (défaut : data/results/<date>_encodeurs)")
+    ap.add_argument("--device", default="cpu", help="cpu (défaut) ou cuda (GPU, beaucoup plus rapide)")
+    ap.add_argument("--recommencer", action="store_true", help="ignorer les encodeurs déjà mesurés dans partiel/")
     a = ap.parse_args()
     config.fixer_graine()
     from .h1_recuperation import charger_jeu
@@ -103,7 +148,7 @@ def main():
     sortie.mkdir(parents=True, exist_ok=True)
     m = Moteur()
     t0 = time.time()
-    res = comparer(m, charger_jeu(), sortie, a.encodeurs)
+    res = comparer(m, charger_jeu(), sortie, a.encodeurs, a.device, not a.recommencer, bavard=True)
     (sortie / "tableau_3_3_encodeurs.json").write_text(json.dumps(res, indent=2, ensure_ascii=False), encoding="utf-8")
     for e in res:
         if e["statut"] == "mesuré":
