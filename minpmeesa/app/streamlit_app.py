@@ -23,9 +23,16 @@ from minpmeesa.generation import analysis_note, commentary, strategic_note  # no
 from minpmeesa.generation.llm import obtenir  # noqa: E402
 from minpmeesa.retrieval import consultation  # noqa: E402
 from minpmeesa.retrieval.hybrid import Moteur  # noqa: E402
+from minpmeesa.app import identite  # noqa: E402
 from minpmeesa.store import db  # noqa: E402
 
-st.set_page_config(page_title="Aide à la décision — MINPMEESA", page_icon="📊", layout="wide")
+ID = identite.charger()
+_LOGO = identite.logo(ID)
+st.set_page_config(page_title=f"{ID['nom']} — MINPMEESA", page_icon=str(_LOGO) if _LOGO else "📊", layout="wide")
+st.markdown(identite.css(ID), unsafe_allow_html=True)
+st.markdown(identite.bandeau(ID), unsafe_allow_html=True)
+if _LOGO:
+    st.logo(str(_LOGO), size="large")
 
 
 @st.cache_resource
@@ -76,8 +83,8 @@ def afficher_commentaire(res: dict):
 
 # ------------------------------------------------------------------ barre latérale
 cfg = config.charger()
-st.sidebar.title("📊 Aide à la décision")
-st.sidebar.caption("Publications statistiques du MINPMEESA")
+st.sidebar.title(ID["nom"])
+st.sidebar.caption(ID["structure"])
 choix_llm = st.sidebar.selectbox("Rédaction", ["ollama", "none", "api"],
                                  format_func=lambda x: {"ollama": "Modèle de langage local (Ollama)",
                                                         "none": "Sans modèle de langage (gabarits)",
@@ -213,3 +220,5 @@ if page == "Base documentaire":
         st.success(f"Base reconstruite : {r['nb_documents']} documents, {r['nb_passages']} passages.")
         for a in r["avertissements"]:
             st.caption("⚠ " + a)
+
+st.markdown(identite.pied(ID), unsafe_allow_html=True)

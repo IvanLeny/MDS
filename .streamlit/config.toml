@@ -1,0 +1,14 @@
+# Thème de l'interface (couleurs nationales ; voir config.yaml, section interface)
+[theme]
+base = "light"
+primaryColor = "#007A5E"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F2F7F5"
+textColor = "#1F2A2E"
+font = "sans serif"
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "viewer"

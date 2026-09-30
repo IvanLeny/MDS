@@ -157,3 +157,20 @@ evaluation:
     h3_part_notes_conformes: 0.80
     h3_criteres_min: 4
     h3_moyenne_bn: 1.5
+
+# ---------------------------------------------------------------------
+#  Identité visuelle de l'interface et des documents Word
+# ---------------------------------------------------------------------
+interface:
+  nom: "ANALYS'PME"
+  sous_titre: "Assistant d'analyse des publications statistiques des PMEESA"
+  structure: "MINPMEESA — Cellule des Statistiques"
+  # Logo officiel : fichier PNG fourni par la Cellule, déposé à cet emplacement.
+  # S'il est absent, l'interface affiche le nom seul (aucun logo n'est inventé).
+  logo: assets/logo.png
+  couleurs:                       # couleurs nationales du Cameroun
+    vert: "#007A5E"
+    rouge: "#CE1126"
+    jaune: "#FCD116"
+    fond_doux: "#F2F7F5"
+    texte: "#1F2A2E"

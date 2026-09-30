@@ -27,7 +27,7 @@ def main(url: str):
         nav = p.chromium.launch(executable_path=exe) if exe else p.chromium.launch()
         page = nav.new_page(viewport={"width": 1400, "height": 1100})
         page.goto(url)
-        page.wait_for_selector("text=Aide à la décision", timeout=180000)
+        page.wait_for_selector(".ap-nom", timeout=180000)
         attendre(page, 3000)
         # 1. Consulter
         page.get_by_placeholder("Ex. : Combien").fill("Combien de PME ont été créées dans les CFCE en 2024 ?")

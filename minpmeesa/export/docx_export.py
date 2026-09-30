@@ -5,7 +5,7 @@ from pathlib import Path
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.shared import Pt, RGBColor
+from docx.shared import Cm, Pt, RGBColor
 
 from ..generation.strategic_note import RUBRIQUES
 
@@ -13,13 +13,27 @@ GRIS = RGBColor(0x59, 0x59, 0x59)
 ROUGE = RGBColor(0xA0, 0x1E, 0x1E)
 
 
+def _rgb(hexa: str) -> RGBColor:
+    return RGBColor.from_string(hexa.lstrip("#").upper())
+
+
 def _doc(titre: str) -> Document:
+    from ..app import identite
+    i = identite.charger()
+    vert = _rgb(i["couleurs"]["vert"])
     d = Document()
     st = d.styles["Normal"]
     st.font.name, st.font.size = "Calibri", Pt(11)
-    p = d.add_paragraph("MINPMEESA — Cellule des Statistiques")
-    p.runs[0].font.color.rgb = GRIS
-    p.runs[0].font.size = Pt(9)
+    for niveau in ("Title", "Heading 1", "Heading 2", "Heading 3"):
+        d.styles[niveau].font.color.rgb = vert
+    # En-tête de page : logo (s'il est fourni) + nom de l'outil et de la structure
+    ent = d.sections[0].header.paragraphs[0]
+    lg = identite.logo(i)
+    if lg:
+        ent.add_run().add_picture(str(lg), height=Cm(1.2))
+        ent.add_run("   ")
+    r = ent.add_run(f"{i['nom']} — {i['structure']}")
+    r.font.size, r.font.color.rgb = Pt(9), GRIS
     d.add_heading(titre, level=0)
     return d
 
