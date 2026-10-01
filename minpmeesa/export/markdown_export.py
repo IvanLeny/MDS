@@ -41,6 +41,9 @@ def note_analyse(note: dict) -> str:
 
 def note_strategique(note: dict) -> str:
     l = [f"# {note['titre']}", *_drapeaux(note)]
+    if note.get("chiffres_cles"):
+        l.append("\n## Chiffres clés")
+        l += [f"- {b['texte']}" for b in note["chiffres_cles"]]
     for r in RUBRIQUES:
         l.append(f"\n## {r}")
         l += [f"- {b['texte']}" for b in note["rubriques"][r]]

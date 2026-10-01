@@ -128,3 +128,27 @@ def test_reformulation_consultation_controlee(m):
                                journaliser=False, rediger=True, client=f)
     assert "21 132" in r["reponse"]["texte"] and "55 555" not in r["reponse"]["texte"]
     assert r["reponse"]["valeurs_ecartees"][0]["valeur"] == "55 555"
+
+
+def test_lot_b_note_strategique(base_complete):
+    """B1 : messages clés de débuts différents, chacun chiffré ; B2 : >= 3 types de pistes ;
+    B3 : encadré chiffres clés ; note 2023 : >= 4 évolutions ; contrôles BN4/BN5 toujours satisfaits."""
+    from minpmeesa.generation import strategic_note as sn
+    from minpmeesa.guards import literal_check as lc
+    n = sn.rediger(base_complete, 2024, journaliser=False)
+    msgs = [b["texte"] for b in n["rubriques"]["Messages clés"]]
+    assert len(msgs) == 3 and len({m.split()[0] for m in msgs}) == 3
+    assert all(lc.nombres(m) for m in msgs)
+    types = {b["texte"].split(" :")[0] for b in n["rubriques"]["Pistes pour la décision"]}
+    assert len(types) >= 3
+    assert n["chiffres_cles"] and all(b.get("sources") for b in n["chiffres_cles"])
+    v = sn.verifier_bn4_bn5(n)
+    assert v["BN4_toute_valeur_tracee"] and v["BN5_longueur_ok"]
+    assert sn.rediger(base_complete, 2023, journaliser=False)["nb_evolutions"] >= 4
+
+
+def test_de_contraction():
+    from minpmeesa.generation.strategic_note import de
+    assert de("le stock de PME") == "du stock de PME"
+    assert de("les UPA enregistrées") == "des UPA enregistrées"
+    assert de("la valeur ajoutée des PME") == "de la valeur ajoutée des PME"

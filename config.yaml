@@ -91,6 +91,10 @@ commentaire:
   decimales_pct: 1                # convention : 1 décimale pour les %
   annees_exclues: [2010, 2035]    # bornes des millésimes non contrôlés
   longueur_min_enonce: 5          # mots, après retrait d'une valeur (R3)
+  # « Évolution la plus marquée » : une variation en % n'est retenue que si la valeur de
+  # référence est assez grande (sinon +300 % sur 7 unités) ; fixé a priori.
+  effectif_min_evolution: 50
+  part_min_evolution: 0.01        # et au moins 1 % du total de l'indicateur
 
 # ---------------------------------------------------------------------
 #  Modèle de langage (Tableau 3.2)

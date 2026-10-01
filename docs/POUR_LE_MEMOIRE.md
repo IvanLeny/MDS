@@ -55,7 +55,7 @@ dans le mémoire que chaque espace attend bien le contenu indiqué.
 | Note de perspective compétitivité | contexte | 2024 | 48 | 0 | 3 | 28 |
 
 Totaux : **18 publications, 661 pages** ; base : **903 passages** (hors document de test), **16 211 valeurs**
-(triplets), **572 variations calculées**, **8 fragments rejetés** (trop courts). Les « tableaux » des notes et
+(triplets), **4 242 variations calculées** (572 avant la correction du 01/10/2026, voir `ECARTS_MEMOIRE.md` E20), **8 fragments rejetés** (trop courts). Les « tableaux » des notes et
 des rapports sont ceux que détecte l'extracteur (source : `data/base/build_rapport.json`).
 Corpus manquant : notes de conjoncture **T4 2024** (et T1 à T3 2023).
 Les 18 documents sont au statut « publie », à confirmer auprès de la Cellule. Un document de test synthétique,
@@ -142,15 +142,25 @@ Avec le moteur `api` (PC Windows) : note stratégique, médiane **150 s** ; note
 Groq** (appels mis en file), et non le calcul : elles ne sont pas à reporter comme temps du système. Le temps
 « commentaire » (médiane 0,04 s) est lu dans le cache disque, les commentaires ayant déjà été générés pour H2.
 
-## 3.5.4 / Tableau 3.8 / Annexe V — Note stratégique 2024
+## 3.5.4 / Tableau 3.8 / Annexe V — Note stratégique 2024 (version du 01/10/2026, plan B)
 
-Fichier : `data/outputs/note_strategique_2024.docx` (et `.md`). **6 évolutions** retenues, **689 mots**,
-contrôles automatiques : BN4 (toute valeur tracée) satisfait ; BN5 (rubriques, 3 messages clés, ≤ 2 pages)
-satisfait. Un seul objectif documenté est rattaché : Note de perspective n°001/2024, p. 3.
-Attention : pour **2023**, seules **2 évolutions** sont retenues (minimum attendu : 5), faute de variations
-citées dans les commentaires. À signaler, ou à reprendre après validation.
-Version rédigée par le modèle de langage (`data/results/2026-09-28_api_gpt-oss-20b/note_strategique_2024_llm.docx`) :
-**7 évolutions, 776 mots**, BN4 et BN5 satisfaits (aucune valeur non tracée). 2023 : 2 évolutions, 258 mots.
+Fichier : `data/outputs/note_strategique_2024.docx` (et `.md`), mode gabarits. Structure : encadré **Chiffres
+clés** (5 grandeurs : stock de PME 443 524, +12,8 % ; créations dans les CFCE 21 132, +7,5 % ; OES 3 909,
++1,1 % ; UPA 3 602, +1,3 % ; valeur ajoutée 7 291 millions de FCFA, +11,8 %), puis les cinq rubriques BN5.
+**5 évolutions** retenues (une par grandeur), **550 mots** ; BN4 et BN5 satisfaits ; aucune valeur écartée.
+Messages clés de trois natures (fait principal, dynamique la plus forte, point de vigilance) ; pistes typées
+(Approfondir, Cibler, Suivre…), sans chiffre.
+**2023** : 4 évolutions (stock, créations, OES, UPA), sous le minimum de 5 ; la note le signale et explique
+pourquoi (seules 4 grandeurs ont une évolution calculable), plutôt que d'y faire figurer des évolutions non
+comparables.
+Version rédigée par le modèle de langage (`data/results/2026-09-28_api_gpt-oss-20b/note_strategique_2024_llm.docx`,
+version antérieure au plan) : 7 évolutions, 776 mots, BN4 et BN5 satisfaits.
+
+Texte proposé (3.5.4) : « La note retient une évolution par grandeur suivie (stock, créations, valeur ajoutée,
+organisations de l'économie sociale, unités de production artisanale), celle de son total, et la détaille par
+la sous-catégorie la plus dynamique, à condition que celle-ci repose sur un effectif d'au moins 50 unités et
+1 % du total. Une variation calculée sur un très petit effectif (par exemple +300 % sur 7 unités) n'est jamais
+présentée comme une tendance. »
 
 ## Tableau 3.7 — Chaîne de traçabilité (source : `data/outputs/tracabilite_exemple.csv`)
 

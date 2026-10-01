@@ -209,3 +209,23 @@ grandeur pour un poste sans GPU.
 **Texte proposé.** « Les encodeurs ont été comparés sur une machine Google Colab (processeur seul), la base étant
 reconstruite à l'identique depuis le dépôt. Les métriques de récupération ne dépendent pas du matériel ; les
 temps d'indexation rapportés ne valent que pour cette machine. »
+
+## E20. Variations calculées : 572 puis 4 242 (correction du 01/10/2026)
+
+**Constat.** Dans plusieurs tableaux, la colonne du dernier exercice est subdivisée (« 2023 · Effectif » /
+« 2023 · % ») alors que les années antérieures ne le sont pas. Le programme ne reliait pas « 2023 · Effectif »
+à la série « 2018 … 2022 » : aucune variation n'était calculée pour ces tableaux (d'où la note stratégique 2023
+réduite à 2 évolutions). Correction : une sous-colonne de niveau (Effectif, Nombre, Valeur, Montant) prolonge la
+série sans sous-colonne ; jamais une sous-colonne « % » ni une catégorie (Homme, Femme…). Vérification : aucune
+variation ne rapporte un effectif à un pourcentage ; les valeurs extrêmes portent sur de petits effectifs réels
+(ex. 8 -> 28 à Garoua entre 2020 et 2021). Second défaut corrigé : les valeurs écrites « 31,1% » dans l'Annuaire
+étaient rejetées par le contrôle littéral (signe % collé).
+
+**Conséquences pour les résultats.** H1-récupération : aucune (les variations ne sont pas indexées). Rédaction :
+les commentaires et notes citent davantage d'évolutions ; les mesures du chapitre 4 qui en dépendent (référence
+« gabarits », H1-ancrage, H2) ont été faites avant la correction et sont à refaire avant de figer le chapitre 4
+(`run_all --llm none`, puis `--llm api`). La base du PC et celle de Colab sont à reconstruire.
+
+**Seuil de « l'évolution la plus marquée ».** Fixé a priori : valeur de référence d'au moins 50 unités et 1 % du
+total ; lignes simples préférées aux croisements (région × secteur). Paramètres `commentaire.effectif_min_evolution`
+et `part_min_evolution`.

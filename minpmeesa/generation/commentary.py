@@ -79,6 +79,14 @@ def _suffixe(u: str | None) -> str:
     return f" {u}" if u else ""
 
 
+def _val(v: dict) -> str:
+    """Valeur telle qu'écrite dans l'Annuaire, suivie de son unité (sans doubler le signe %)."""
+    t = v["valeur_texte"].strip()
+    if v["unite"] == "%" or t.endswith("%"):
+        return t.rstrip("% ").strip() + " %"
+    return t + _suffixe(v["unite"])
+
+
 def _sans_signe(t: str) -> str:
     return t.lstrip("-−+")
 
@@ -172,12 +180,12 @@ def extractif(ctx: ic.Contexte) -> list[dict]:
         principal = cand[0] if len(cand) == 1 else None
     if tot:
         enonces.append({"type": "constat", "texte": f"En {ex}, pour « {tit} », le total s'établit à "
-                        f"{tot['valeur_texte']}{_suffixe(tot['unite'])}."})
+                        f"{_val(tot)}."})
         sujet_phrase = "ce total"
     elif principal:
         tot = principal
         enonces.append({"type": "constat", "texte": f"En {ex}, « {tot['ligne']} » s'établit à "
-                        f"{tot['valeur_texte']}{_suffixe(tot['unite'])}."})
+                        f"{_val(tot)}."})
         sujet_phrase = f"« {tot['ligne']} »"
     if tot:
         var = [d for d in ctx.variations if d["valeur_id"] == tot["valeur_id"] and d["var_rel_texte"]]
@@ -201,14 +209,20 @@ def extractif(ctx: ic.Contexte) -> list[dict]:
         quoi = "parts" if parts else "valeurs"
         enonces.append({"type": "constat", "texte":
                         f"{dans[:1].upper() + dans[1:] if dans else ''}Les {quoi} les plus élevées en {ex} reviennent "
-                        f"à « {a['ligne']} » ({a['valeur_texte']}{_suffixe(a['unite'])}) et à « {b['ligne']} » "
-                        f"({b['valeur_texte']}{_suffixe(b['unite'])})." if not dans else
+                        f"à « {a['ligne']} » ({_val(a)}) et à « {b['ligne']} » "
+                        f"({_val(b)})." if not dans else
                         f"{dans[:1].upper() + dans[1:]}les {quoi} les plus élevées en {ex} reviennent "
-                        f"à « {a['ligne']} » ({a['valeur_texte']}{_suffixe(a['unite'])}) et à « {b['ligne']} » "
-                        f"({b['valeur_texte']}{_suffixe(b['unite'])})."})
+                        f"à « {a['ligne']} » ({_val(a)}) et à « {b['ligne']} » "
+                        f"({_val(b)})."})
     ok = lambda d: (d["exercice_ref"] == ex - 1 and not _est_total(d["ligne"]) and d["ligne"] not in exclus
                     and d["ligne"] != "(sans libellé)" and not autre_grandeur(d["ligne"]))
-    mouv = [d for d in ctx.variations if ok(d) and d["var_rel_texte"] and d["unite"] != "%"]
+    cc = config.charger()["commentaire"]
+    plancher = max(cc.get("effectif_min_evolution", 0),
+                   cc.get("part_min_evolution", 0) * (tot["valeur_num"] if tot else 0))
+    mouv = [d for d in ctx.variations if ok(d) and d["var_rel_texte"] and d["unite"] != "%"
+            and abs(d["valeur_ref"] or 0) >= plancher]
+    simples = [d for d in mouv if "/" not in d["ligne"]]      # lignes simples avant les croisements
+    mouv = simples or mouv
     if mouv:
         d = max(mouv, key=lambda d: abs(d["var_rel_pct"]))
         enonces.append({"type": "constat", "texte":

@@ -120,6 +120,17 @@ def exporter_note_strategique(note: dict, chemin: Path) -> Path:
     _note_source(d, f"Établie le {note['date']} ; {note['nb_evolutions']} évolutions retenues ; "
                     f"{note['nb_mots']} mots ; modèle : {note['modele']}")
     _avertissements(d, note)
+    if note.get("chiffres_cles"):
+        from ..app import identite
+        i = identite.charger()
+        t = d.add_table(rows=1, cols=1)
+        t.style = "Table Grid"
+        cel = t.rows[0].cells[0]
+        titre = cel.paragraphs[0].add_run("Chiffres clés")
+        titre.bold, titre.font.color.rgb = True, _rgb(i["couleurs"]["vert"])
+        for b in note["chiffres_cles"]:
+            cel.add_paragraph(b["texte"], style="List Bullet")
+        d.add_paragraph()
     for r in RUBRIQUES:
         d.add_heading(r, level=1)
         for b in note["rubriques"][r]:

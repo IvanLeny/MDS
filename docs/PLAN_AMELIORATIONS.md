@@ -117,9 +117,9 @@ Règle constante : aucun chiffre inventé. Toute amélioration de forme conserve
 | A2 | **fait** (01/10/2026), tests ajoutés | voir journal git |
 | A3 | **fait** (01/10/2026), tests ajoutés | voir journal git |
 | A4 | **fait** (01/10/2026), tests ajoutés | voir journal git |
-| B1 | à faire | |
-| B2 | à faire | |
-| B3 | à faire | |
+| B1 | **fait** (01/10/2026), tests ajoutés | voir journal git |
+| B2 | **fait** (01/10/2026), tests ajoutés | voir journal git |
+| B3 | **fait** (01/10/2026), tests ajoutés | voir journal git |
 | C1 | à faire | |
 | C2 | à faire | |
 | C3 | à faire | |

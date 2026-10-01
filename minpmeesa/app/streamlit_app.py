@@ -5,6 +5,7 @@ Lancement : double-clic sur demarrer.bat (Windows) ou ./demarrer.sh
 """
 from __future__ import annotations
 
+import re
 import sys
 import tempfile
 from pathlib import Path
@@ -176,6 +177,16 @@ if page == "Parcours" and m:
         ns = st.session_state.get("ns")
         if ns:
             avertissements(ns)
+            if ns.get("chiffres_cles"):
+                st.markdown("### Chiffres clés")
+                cols = st.columns(min(3, len(ns["chiffres_cles"])))
+                for i, b in enumerate(ns["chiffres_cles"]):
+                    nom, _, reste = b["texte"].partition(" : ")
+                    valeur, _, evo = reste.rstrip(".").partition(" (")
+                    mu = re.match(r"([\d\s  ,.]+?)\s+([^\d].*)$", valeur)   # « 7 291 millions de … » -> unité au libellé
+                    if mu:
+                        valeur, nom = mu.group(1), f"{nom} ({mu.group(2)})"
+                    cols[i % len(cols)].metric(nom, valeur, evo.rstrip(")").replace("−", "-") or None)
             for r in strategic_note.RUBRIQUES:
                 st.markdown(f"### {r}")
                 for b in ns["rubriques"][r]:

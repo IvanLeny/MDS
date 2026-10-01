@@ -3,15 +3,15 @@
   "commentaire_enonces": 6,
   "note_analyse_tableaux_commentes": 17,
   "note_analyse_tableaux_a_commenter_manuellement": 3,
-  "note_strategique_evolutions": 6,
-  "note_strategique_mots": 754,
+  "note_strategique_evolutions": 5,
+  "note_strategique_mots": 549,
   "verification_bn4_bn5": {
     "BN4_toute_valeur_tracee": true,
     "BN4_valeurs_non_tracees": [],
     "BN5_rubriques": true,
     "BN5_messages_cles_3": true,
     "BN5_longueur_ok": true,
-    "nb_mots": 754
+    "nb_mots": 549
   },
   "provisoire": true,
   "mode_extractif": true

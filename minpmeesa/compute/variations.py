@@ -101,6 +101,12 @@ def variations_tableau(con: sqlite3.Connection, code: str, exercice: int, doc_an
             sans_annee.setdefault(k, v)
         elif v["annee_colonne"] <= exercice:          # BF6 : rien de postérieur
             series.setdefault(k, {}).setdefault(v["annee_colonne"], v)
+    # Colonne de l'exercice subdivisée (« 2023 · Effectif » / « 2023 · % ») alors que les années
+    # antérieures ne le sont pas : la sous-colonne de niveau (non %) prolonge la série sans sous-colonne.
+    for k in list(series):
+        if re.fullmatch(r"\s*(effectifs?|nombres?|valeurs?|montants?)\s*", k[1] or "", re.I) and (k[0], "") in series:
+            for a, v in series[(k[0], "")].items():
+                series[k].setdefault(a, v)
     out: list[Variation] = []
     # 1) séries millésimées de la même édition
     for k, par_annee in series.items():

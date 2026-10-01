@@ -26,6 +26,7 @@ def formes(n: str) -> set[Decimal]:
     t = n.strip()
     for e in ESPACES:
         t = t.replace(e, "")
+    t = t.rstrip("%")                       # « 31,1% » écrit avec son signe dans l'Annuaire
     out: set[Decimal] = set()
 
     def ajoute(s: str):

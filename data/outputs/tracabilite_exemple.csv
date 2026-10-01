@@ -1,13 +1,11 @@
 ﻿enonce;code_indicateur;commentaire_prod_id;commentaire_valide;variation;valeur;valeur_id;ligne;colonne;document;tableau;page
-Par rapport à 2023, dans la répartition par typologie, l'évolution la plus marquée concerne « TPE » (hausse de 12,1 % de la valeur ajoutée).;pme-typologie;1469;False;12,1;139;11847;TPE;2024 (e);annuaire_2024;16;27
-Par rapport à 2023, dans la répartition par typologie, l'évolution la plus marquée concerne « TPE » (hausse de 12,1 % de la valeur ajoutée).;pme-typologie;1469;False;12,1;124;11846;TPE;2023 (e);annuaire_2024;16;27
-Par rapport à 2023, dans la répartition par secteur d’activité, l'évolution la plus marquée concerne « Primaire » (hausse de 12,1 % de la valeur ajoutée).;pme-secteur-activite;1470;False;12,1;102;11875;Primaire;2024 (e);annuaire_2024;17;27
-Par rapport à 2023, dans la répartition par secteur d’activité, l'évolution la plus marquée concerne « Primaire » (hausse de 12,1 % de la valeur ajoutée).;pme-secteur-activite;1470;False;12,1;91;11874;Primaire;2023 (e);annuaire_2024;17;27
-Par rapport à 2023, dans la répartition par secteur, l'évolution la plus marquée concerne « Secondaire » (hausse de 26,1 % du stock).;stock-pme-secteur-activite;1459;False;26,1;100 680;10138;Secondaire;2024(e) · Effectif;annuaire_2024;2;17
-Par rapport à 2023, dans la répartition par secteur, l'évolution la plus marquée concerne « Secondaire » (hausse de 26,1 % du stock).;stock-pme-secteur-activite;1459;False;26,1;79 815;10136;Secondaire;2023 (e) · Effectif;annuaire_2024;2;17
-Par rapport à 2023, l'évolution la plus marquée concerne « Ebolowa » (hausse de 8,4 % de l'effectif).;pme-creees-sur-periode;1461;False;8,4;142;10408;Ebolowa;2024;annuaire_2024;7;19
-Par rapport à 2023, l'évolution la plus marquée concerne « Ebolowa » (hausse de 8,4 % de l'effectif).;pme-creees-sur-periode;1461;False;8,4;131;10407;Ebolowa;2023;annuaire_2024;7;19
-Par rapport à 2023, dans la répartition par sexe, l'évolution la plus marquée concerne « Masculin » (baisse de 3,9 % de l'effectif).;upa-enregistrees-dans-bureaux-communaux-region;1466;False;3,9;1668;12814;Masculin;2024 · Effectif;annuaire_2024;29;38
-Par rapport à 2023, dans la répartition par sexe, l'évolution la plus marquée concerne « Masculin » (baisse de 3,9 % de l'effectif).;upa-enregistrees-dans-bureaux-communaux-region;1466;False;3,9;1 735;12812;Masculin;2023 · Effectif;annuaire_2024;29;38
-Par rapport à 2023, dans la répartition par type d’artisanat, l'évolution la plus marquée concerne « Art » (baisse de 3,5 % de l'effectif).;upa-enregistrees-typologie-artisanat-region;1468;False;3,5;931;12855;Art;2024 · Effectif;annuaire_2024;30;38
-Par rapport à 2023, dans la répartition par type d’artisanat, l'évolution la plus marquée concerne « Art » (baisse de 3,5 % de l'effectif).;upa-enregistrees-typologie-artisanat-region;1468;False;3,5;965;12853;Art;2023 · Effectif;annuaire_2024;30;38
+Par rapport à 2023, ce total progresse de 12,8 %.;stock-pme-region;78;False;12,8;443 524;10295;Total;2024 (e) · Effectif;annuaire_2024;4;18
+Par rapport à 2023, ce total progresse de 12,8 %.;stock-pme-region;78;False;12,8;393 175;10294;Total;2023 (e);annuaire_2024;4;18
+Par rapport à 2023, ce total progresse de 7,5 %.;pme-creees-secteur-activite;82;False;7,5;9 858;10476;Yaoundé / Total;2024 · Effectif;annuaire_2024;8;19
+Par rapport à 2023, ce total progresse de 7,5 %.;pme-creees-secteur-activite;82;False;7,5;9 168;10475;Yaoundé / Total;2023;annuaire_2024;8;19
+Par rapport à 2023, « VA des PME » progresse de 11,8 %.;pme-typologie;89;False;11,8;7 291;11840;VA des PME;2024 (e);annuaire_2024;16;27
+Par rapport à 2023, « VA des PME » progresse de 11,8 %.;pme-typologie;89;False;11,8;6 524;11839;VA des PME;2023 (e);annuaire_2024;16;27
+Par rapport à 2023, ce total progresse de 1,1 %.;nombre-oes-creees;84;False;1,1;3 909;12004;Total (*);2024 · Effectif;annuaire_2024;21;30
+Par rapport à 2023, ce total progresse de 1,1 %.;nombre-oes-creees;84;False;1,1;3 865;12003;Total (*);2023;annuaire_2024;21;30
+Par rapport à 2023, ce total progresse de 1,3 %.;upa-enregistrees-dans-bureaux-communaux-region;86;False;1,3;3 602;12841;Total (*);2024 · Effectif;annuaire_2024;29;38
+Par rapport à 2023, ce total progresse de 1,3 %.;upa-enregistrees-dans-bureaux-communaux-region;86;False;1,3;3 557;12839;Total (*);2023 · Effectif;annuaire_2024;29;38

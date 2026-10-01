@@ -3,43 +3,44 @@
 > ⚠ PROVISOIRE : appariement non validé.
 > ⚠ Commentaires non validés : à relire.
 
+## Chiffres clés
+- Le stock de PME : 443 524 (+12,8 % par rapport à 2023).
+- Les créations de PME dans les CFCE : 21 132 (+7,5 % par rapport à 2023).
+- Les OES enregistrées : 3 909 (+1,1 % par rapport à 2023).
+- Les UPA enregistrées : 3 602 (+1,3 % par rapport à 2023).
+- La valeur ajoutée des PME : 7 291 millions de Francs CFA (+11,8 % par rapport à 2023).
+
 ## Messages clés
-- Par rapport à 2023, dans la répartition par typologie, l'évolution la plus marquée concerne « TPE » (hausse de 12,1 % de la valeur ajoutée).
-- Par rapport à 2023, dans la répartition par secteur d’activité, l'évolution la plus marquée concerne « Primaire » (hausse de 12,1 % de la valeur ajoutée).
-- Par rapport à 2023, dans la répartition par secteur, l'évolution la plus marquée concerne « Secondaire » (hausse de 26,1 % du stock).
+- En 2024, le stock de PME atteint 443 524, en hausse de 12,8 % par rapport à 2023.
+- La dynamique la plus forte concerne « Adamaoua » (répartition par Région) pour le stock de PME : +12,8 % du stock en un an.
+- Point de vigilance : les UPA enregistrées reculent pour « Masculin » (répartition par sexe), avec une baisse de 3,9 % de l'effectif par rapport à 2023.
 
 ## Évolutions marquantes
-- Évolution de la VA des PME entre 2018 et 2024 par typologie : Par rapport à 2023, dans la répartition par typologie, l'évolution la plus marquée concerne « TPE » (hausse de 12,1 % de la valeur ajoutée). Tendance à la hausse confirmée sur les trois derniers intervalles disponibles. Aucun objectif documenté dans le corpus.
-- Évolution de la VA des PME entre 2018 et 2024 selon le secteur d’activité : Par rapport à 2023, dans la répartition par secteur d’activité, l'évolution la plus marquée concerne « Primaire » (hausse de 12,1 % de la valeur ajoutée). Tendance à la hausse confirmée sur les trois derniers intervalles disponibles. Aucun objectif documenté dans le corpus.
-- Évolution du stock des PME selon le secteur d’activité de 2016 à 2024 (en %) : Par rapport à 2023, dans la répartition par secteur, l'évolution la plus marquée concerne « Secondaire » (hausse de 26,1 % du stock). Tendance à la hausse confirmée sur les trois derniers intervalles disponibles. Objectif documenté : « Ainsi, l’atteinte des objectifs fixés dans le cadre de l’implémentation du mix import/substitution et promotion des exportations demeure tributaire de la dynamique du secteur privé, majoritairement dominé par les PME qui représentent 99,8 % du stock des entreprises du pays. » (Note de perspective n°001/2024 : compétitivité des PME camerounaises, p. 3).
-- Évolution du nombre de PME crées dans les CFCE de 2019 à 2024 : Par rapport à 2023, l'évolution la plus marquée concerne « Ebolowa » (hausse de 8,4 % de l'effectif). Variation ponctuelle (pas de tendance de même sens sur trois intervalles). Aucun objectif documenté dans le corpus.
-- Évolution du nombre d’UPA enregistrées dans les BCA de 2019 à 2024 : Par rapport à 2023, dans la répartition par sexe, l'évolution la plus marquée concerne « Masculin » (baisse de 3,9 % de l'effectif). Tendance à la baisse confirmée sur les trois derniers intervalles disponibles. Aucun objectif documenté dans le corpus.
-- Répartition de la proportion d’UPA enregistrées par typologie d’artisanat et par région (en %) : Par rapport à 2023, dans la répartition par type d’artisanat, l'évolution la plus marquée concerne « Art » (baisse de 3,5 % de l'effectif). Variation ponctuelle (pas de tendance de même sens sur trois intervalles). Aucun objectif documenté dans le corpus.
+- Le stock de PME — Par rapport à 2023, ce total progresse de 12,8 %. Par rapport à 2023, dans la répartition par Région, l'évolution la plus marquée concerne « Adamaoua » (hausse de 12,8 % du stock). Historique trop court pour qualifier une tendance. Aucun objectif documenté dans le corpus.
+- Les créations de PME dans les CFCE — Par rapport à 2023, ce total progresse de 7,5 %. Par rapport à 2023, dans la répartition par secteur d’activité, l'évolution la plus marquée concerne « Bamenda / Tertiaire » (hausse de 7,9 % de l'effectif). Historique trop court pour qualifier une tendance. Aucun objectif documenté dans le corpus.
+- La valeur ajoutée des PME — Par rapport à 2023, « VA des PME » progresse de 11,8 %. Par rapport à 2023, dans la répartition par typologie, l'évolution la plus marquée concerne « TPE » (hausse de 12,1 % de la valeur ajoutée). Tendance à la hausse confirmée sur les trois derniers intervalles disponibles. Aucun objectif documenté dans le corpus.
+- Les OES enregistrées — Par rapport à 2023, ce total progresse de 1,1 %. Par rapport à 2023, dans la répartition par région, l'évolution la plus marquée concerne « Nord-Ouest » (hausse de 5,1 % de l'effectif). Historique trop court pour qualifier une tendance. Aucun objectif documenté dans le corpus.
+- Les UPA enregistrées — Par rapport à 2023, ce total progresse de 1,3 %. Par rapport à 2023, dans la répartition par sexe, l'évolution la plus marquée concerne « Masculin » (baisse de 3,9 % de l'effectif). Variation ponctuelle (pas de tendance de même sens sur trois intervalles). Aucun objectif documenté dans le corpus.
 
 ## Points d'attention
-- Recul observé pour « Évolution du nombre d’UPA enregistrées dans les BCA de 2019 à 2024 ».
-- Recul observé pour « Répartition de la proportion d’UPA enregistrées par typologie d’artisanat et par région (en %) ».
+- Malgré la progression d'ensemble des UPA enregistrées, recul pour « Masculin » (3,9 % de l'effectif).
 - 13 commentaire(s) mobilisé(s) n'ont pas encore été validés par la Cellule : la note est à relire.
 
 ## Pistes pour la décision
-- Poursuivre le suivi de « Évolution de la VA des PME entre 2018 et 2024 par typologie » et préciser, le cas échéant, un objectif de référence.
-- Poursuivre le suivi de « Évolution de la VA des PME entre 2018 et 2024 selon le secteur d’activité » et préciser, le cas échéant, un objectif de référence.
-- Consolider les actions qui soutiennent « Évolution du stock des PME selon le secteur d’activité de 2016 à 2024 (en %) », en cohérence avec l'objectif documenté.
-- Poursuivre le suivi de « Évolution du nombre de PME crées dans les CFCE de 2019 à 2024 » et préciser, le cas échéant, un objectif de référence.
-- Examiner les causes du recul de « Évolution du nombre d’UPA enregistrées dans les BCA de 2019 à 2024 » et envisager des mesures d'accompagnement ciblées.
-- Examiner les causes du recul de « Répartition de la proportion d’UPA enregistrées par typologie d’artisanat et par région (en %) » et envisager des mesures d'accompagnement ciblées.
+- Cibler : examiner la situation de « Adamaoua » pour le stock de PME, afin d'identifier les facteurs locaux de la dynamique observée.
+- Cibler : examiner la situation de « Bamenda / Tertiaire » pour les créations de PME dans les CFCE, afin d'identifier les facteurs locaux de la dynamique observée.
+- Approfondir : documenter les facteurs de la hausse durable observée pour la valeur ajoutée des PME, afin d'en tirer des enseignements pour l'action publique.
+- Cibler : examiner la situation de « Nord-Ouest » pour les OES enregistrées, afin d'identifier les facteurs locaux de la dynamique observée.
+- Suivre : fixer un objectif de référence pour les UPA enregistrées afin d'apprécier les prochaines évolutions.
 
 ## Sources
-- annuaire_2024, tableau 2, p. 17
-- annuaire_2024, tableau 7, p. 19
+- annuaire_2024, tableau 4, p. 18
+- annuaire_2024, tableau 8, p. 19
 - annuaire_2024, tableau 16, p. 27
-- annuaire_2024, tableau 17, p. 27
+- annuaire_2024, tableau 21, p. 30
 - annuaire_2024, tableau 29, p. 38
-- annuaire_2024, tableau 30, p. 38
-- Note de perspective n°001/2024 : compétitivité des PME camerounaises, p. 3 (objectif documenté)
-- Commentaire n° 1469 (pme-typologie) — non validé
-- Commentaire n° 1470 (pme-secteur-activite) — non validé
-- Commentaire n° 1459 (stock-pme-secteur-activite) — non validé
-- Commentaire n° 1461 (pme-creees-sur-periode) — non validé
-- Commentaire n° 1466 (upa-enregistrees-dans-bureaux-communaux-region) — non validé
-- Commentaire n° 1468 (upa-enregistrees-typologie-artisanat-region) — non validé
+- Commentaire n° 78 (stock-pme-region) — non validé
+- Commentaire n° 82 (pme-creees-secteur-activite) — non validé
+- Commentaire n° 89 (pme-typologie) — non validé
+- Commentaire n° 84 (nombre-oes-creees) — non validé
+- Commentaire n° 86 (upa-enregistrees-dans-bureaux-communaux-region) — non validé

@@ -10,6 +10,6 @@
 - **constat** : Les valeurs les plus élevées en 2024 reviennent à « Yaoundé » (9 858) et à « Douala » (6 815).
   - source : annuaire_2024, tableau 7, p. 19 (Yaoundé | 2024)
   - source : annuaire_2024, tableau 7, p. 19 (Douala | 2024)
-- **constat** : Par rapport à 2023, l'évolution la plus marquée concerne « Ebolowa » (hausse de 8,4 % de l'effectif).
-  - source : variation calculée (var_rel_pct) : Ebolowa, valeurs n° 10408 et n° 10407 (réf. 2023)
+- **constat** : Par rapport à 2023, l'évolution la plus marquée concerne « Bamenda » (hausse de 7,8 % de l'effectif).
+  - source : variation calculée (var_rel_pct) : Bamenda, valeurs n° 10401 et n° 10400 (réf. 2023)
 - **perspective** : Le suivi de cet indicateur lors du prochain exercice permettra de confirmer ou non cette orientation.
