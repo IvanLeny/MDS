@@ -53,7 +53,7 @@ Trois messages peuvent accompagner les textes :
 ## Base documentaire
 
 La base est locale : `data/base/minpmeesa.sqlite` (documents, passages, valeurs, variations, appariements,
-journal) et `data/base/minpmeesa.faiss` (index vectoriel des passages).
+journal) et `data/base/dense.faiss` (index vectoriel des passages).
 
 1. **Ajouter un PDF** : titre, type, exercice, trimestre, statut. Case « Intégrer tout de suite dans la base »
    cochée (par défaut) : le PDF est copié dans le corpus, inscrit au registre, puis la base SQLite + FAISS est
