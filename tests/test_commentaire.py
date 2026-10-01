@@ -178,3 +178,35 @@ def test_ollama_refuse_une_adresse_distante():
     from minpmeesa.generation.llm import ErreurLLM, Ollama
     with pytest.raises(ErreurLLM):
         Ollama("qwen", "http://exemple.org:11434")
+
+
+def test_a1_variation_tracee_vers_la_bonne_ligne(base_complete):
+    """A1 : 7,5 % est la variation de trois lignes (Total, Yaoundé, Douala) ; « ce total » -> Total."""
+    from minpmeesa.generation import commentary
+    r = commentary.commenter(base_complete, "pme-creees-sur-periode", 2024, journaliser=False)
+    e = next(e for e in r["enonces"] if "ce total" in e["texte"])
+    assert e["references"][0]["libelle"].startswith("variation calculée (var_rel_pct) : Total,")
+
+
+def test_a1_trouver_prefere_le_libelle_cite():
+    from minpmeesa.guards import literal_check as lc
+    aut = [{"texte": "7,5", "source": {"nature": "variation", "ligne": "Yaoundé", "exercice_ref": 2023}},
+           {"texte": "7,5", "source": {"nature": "variation", "ligne": "Douala", "exercice_ref": 2023}},
+           {"texte": "7,5", "source": {"nature": "variation", "ligne": "Total", "exercice_ref": 2023}}]
+    idx = lc.index_autorise(aut)
+    t = "Par rapport à 2023, « Douala » progresse de 7,5 %."
+    assert lc.trouver("7,5", idx, t, t.index("7,5"))["ligne"] == "Douala"
+    t = "Par rapport à 2023, ce total progresse de 7,5 %."
+    assert lc.trouver("7,5", idx, t, t.index("7,5"))["ligne"] == "Total"
+    assert lc.trouver("7,5", idx)["ligne"] == "Yaoundé"          # sans phrase : ordre de priorité
+
+
+def test_a2_a3_a4_grandeur_unite_dimension(base_complete):
+    """A2 : indicateur de VA -> on parle de la VA, pas du stock ; A3 : nature précisée ; A4 : dimension nommée."""
+    from minpmeesa.generation import commentary
+    r = commentary.commenter(base_complete, "pme-typologie", 2024, journaliser=False)
+    txt = commentary.texte(r)
+    assert "VA des PME" in txt and "Stock des PME" not in txt
+    assert "millions de Francs CFA" in txt and "de la valeur ajoutée" in txt
+    r = commentary.commenter(base_complete, "upa-enregistrees-dans-bureaux-communaux-region", 2024, journaliser=False)
+    assert "répartition par sexe" in commentary.texte(r)

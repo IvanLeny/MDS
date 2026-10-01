@@ -113,10 +113,10 @@ Règle constante : aucun chiffre inventé. Toute amélioration de forme conserve
 
 | Point | État | Commit |
 |---|---|---|
-| A1 | à faire | |
-| A2 | à faire | |
-| A3 | à faire | |
-| A4 | à faire | |
+| A1 | **fait** (01/10/2026), tests ajoutés | voir journal git |
+| A2 | **fait** (01/10/2026), tests ajoutés | voir journal git |
+| A3 | **fait** (01/10/2026), tests ajoutés | voir journal git |
+| A4 | **fait** (01/10/2026), tests ajoutés | voir journal git |
 | B1 | à faire | |
 | B2 | à faire | |
 | B3 | à faire | |

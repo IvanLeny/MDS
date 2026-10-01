@@ -81,20 +81,64 @@ class Controle:
                 "n_retenues": self.n_retenues}
 
 
-def index_autorise(autorisees: list[dict]) -> dict[Decimal, dict]:
-    """{valeur canonique -> source} à partir de [{texte, source}]."""
-    idx: dict[Decimal, dict] = {}
+def index_autorise(autorisees: list[dict]) -> dict[Decimal, list[dict]]:
+    """{valeur canonique -> sources candidates (ordre de priorité)} à partir de [{texte, source}].
+    Une même valeur peut avoir plusieurs sources (deux lignes avec la même variation) :
+    le choix se fait dans `trouver`, d'après la phrase qui la cite."""
+    idx: dict[Decimal, list[dict]] = {}
     for a in autorisees:
         for v in formes(a["texte"]):
-            idx.setdefault(v, a.get("source", {}))
+            liste = idx.setdefault(v, [])
+            src = a.get("source", {})
+            if src not in liste:
+                liste.append(src)
     return idx
 
 
-def trouver(occ: str, idx: dict[Decimal, dict]) -> dict | None:
+_GUILLEMETS = re.compile(r"«\s*([^»]+?)\s*»")
+_TOTAL = re.compile(r"(^|/\s*)total\b|^ensemble\b", re.I)
+
+
+def _norm(t: str) -> str:
+    return re.sub(r"\s+", " ", (t or "").strip().lower())
+
+
+def _score(src: dict, texte: str, debut: int | None) -> int:
+    """Adéquation d'une source à la phrase : ligne nommée, « total », année de référence."""
+    if not texte:
+        return 0
+    ligne = _norm(src.get("ligne", ""))
+    avant = texte if debut is None else texte[:debut]
+    noms = [_norm(m) for m in _GUILLEMETS.findall(avant)]
+    sc = 0
+    if noms and ligne:
+        dernier = noms[-1]                     # le libellé cité juste avant la valeur
+        if ligne == dernier:
+            sc += 8
+        elif ligne in noms:
+            sc += 4
+    if re.search(r"\btotal\b", avant[-80:], re.I) and _TOTAL.search(ligne):
+        sc += 6
+    ref = src.get("exercice_ref")
+    if ref is not None:
+        if re.search(rf"(rapport à|depuis|par rapport à l'année)\s+{ref}\b", texte, re.I):
+            sc += 3
+    return sc
+
+
+def trouver(occ: str, idx: dict[Decimal, list[dict]], texte: str = "", debut: int | None = None) -> dict | None:
+    """Source d'une valeur citée ; parmi plusieurs sources de même valeur, celle qui
+    correspond le mieux à la phrase (à égalité : l'ordre de priorité de l'index)."""
+    cands: list[dict] = []
     for v in formes(occ):
-        if v in idx:
-            return idx[v]
-    return None
+        for s in idx.get(v, []):
+            if s not in cands:
+                cands.append(s)
+    if not cands:
+        return None
+    if len(cands) == 1 or not texte:
+        return cands[0]
+    return max(enumerate(cands), key=lambda ic: (_score(ic[1], texte, debut), -ic[0]))[1]
 
 
 # Séparateurs de propositions (jamais la virgule décimale « 9,9 »).
@@ -140,7 +184,7 @@ def controler(enonces: list[dict], autorisees: list[dict], modeles: list[str] | 
         c.n_valeurs += len(occs)
         sources, mauvaises = [], []
         for o in occs:
-            s = trouver(o.texte, idx)
+            s = trouver(o.texte, idx, texte, o.debut)
             if s is None:
                 mauvaises.append(o)
             else:
@@ -163,7 +207,7 @@ def controler(enonces: list[dict], autorisees: list[dict], modeles: list[str] | 
             c.supprimes.append({**e, "motif": "valeur non soutenue"})
         else:
             c.n_retenues += len(ok_rest)
-            src = [{"valeur": o.texte, **trouver(o.texte, idx)} for o in ok_rest]
+            src = [{"valeur": o.texte, **trouver(o.texte, idx, nouveau, o.debut)} for o in ok_rest]
             c.enonces.append({**e, "texte": nouveau, "texte_avant_controle": texte, "sources": src})
     return c
 

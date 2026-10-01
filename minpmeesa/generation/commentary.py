@@ -97,29 +97,94 @@ def _une_colonne(vals: list[dict]) -> list[dict]:
     return [v for v in vals if v["colonne"] == tot[-1]] if tot else []
 
 
+# Grandeur mesurée par une ligne ou un indicateur (A2) : sert à ne pas commenter
+# le « Stock des PME » sous un indicateur de valeur ajoutée.
+_GRANDEURS = [("va", r"\bva\b|valeurs? ajout"), ("stock", r"\bstock"),
+              ("ca", r"chiffres? d.affaires"), ("emplois", r"\bemplois?\b")]
+
+
+def _grandeur(t: str) -> str | None:
+    for nom, motif in _GRANDEURS:
+        if re.search(motif, t or "", re.I):
+            return nom
+    return None
+
+
+def _dimension(t: str) -> str | None:
+    """« … par sexe », « … selon le secteur d’activité (en %) » -> « sexe », « secteur d’activité »."""
+    m = re.search(r"\b(?:par|selon)\s+(?:la |le |les |l['’])?(.+?)(?:\s+(?:de|en|entre|au|du)\s+\d{4}|\s*\(|\s*$)",
+                  t or "", re.I)
+    if not m:
+        return None
+    d = re.split(r"\s+(?:de|en|entre)\s+\d{4}", m.group(1))[0].strip(" .,")
+    return d or None
+
+
+def _sans_renvoi(ligne: str) -> str:
+    return re.sub(r"\(\*+\)|\*+", "", ligne).strip()
+
+
+def _est_total(ligne: str) -> bool:
+    return bool(re.search(r"(^|/\s*)total", _sans_renvoi(ligne), re.I))
+
+
+def _total_general(ligne: str) -> bool:
+    return bool(re.fullmatch(r"\s*total(\s+(g[ée]n[ée]ral|pme|national|ensemble))?(\s*/\s*total)?\s*",
+                             _sans_renvoi(ligne), re.I))
+
+
+_NOMS_GRANDEUR = {"va": "de la valeur ajoutée", "stock": "du stock", "ca": "du chiffre d'affaires",
+                  "emplois": "des emplois"}
+
+
+def _nature(u: str | None, sujet: str | None = None) -> str:
+    if sujet in _NOMS_GRANDEUR:
+        return _NOMS_GRANDEUR[sujet]
+    return "du montant" if u and u != "%" else "de l'effectif"
+
+
 def extractif(ctx: ic.Contexte) -> list[dict]:
-    """Gabarits déterministes à partir des seules valeurs et variations du contexte."""
+    """Gabarits déterministes à partir des seules valeurs et variations du contexte.
+
+    A2 : la ligne principale est le total, ou à défaut la ligne qui mesure la grandeur
+    annoncée par l'intitulé (VA, stock…) ; les lignes d'une autre grandeur sont écartées.
+    A3 : la nature de l'évolution est précisée (effectif, montant) ; une évolution de part
+    s'exprime en points de pourcentage. A4 : la dimension (sexe, secteur…) est nommée.
+    """
     ex = ctx.exercice
     vals = [v for v in ctx.valeurs if v["valeur_num"] is not None and v["ligne"] != "(sans libellé)"]
     courant = [v for v in vals if v["annee_colonne"] == ex] or [v for v in vals if v["annee_colonne"] is None]
     if not courant:
         return []
-    est_total = lambda l: bool(re.search(r"(^|/\s*)total", l, re.I))
+    tit = ctx.tableau_intitule or ctx.indicateur
+    sujet = _grandeur(ctx.indicateur) or _grandeur(tit)
+    dim = _dimension(tit) or _dimension(ctx.indicateur)
+    autre_grandeur = lambda l: bool(sujet and _grandeur(l) and _grandeur(l) != sujet)
     niveaux = _une_colonne([v for v in courant if v["unite"] != "%" and "%" not in (v["sous_colonne"] or "")])
     parts = _une_colonne([v for v in courant if v["unite"] == "%" or "%" in (v["sous_colonne"] or "")])
+    niveaux = [v for v in niveaux if not autre_grandeur(v["ligne"])]
+    parts = [v for v in parts if not autre_grandeur(v["ligne"])]
     enonces = []
-    tit = ctx.tableau_intitule or ctx.indicateur
-    # total général uniquement (pas un sous-total « Yaoundé / Total »)
-    tot = next((v for v in niveaux if re.fullmatch(
-        r"\s*total(\s+(g[ée]n[ée]ral|pme|national|ensemble))?(\s*/\s*total)?\s*", v["ligne"], re.I)), None)
+    tot = next((v for v in niveaux if _total_general(v["ligne"])), None)
+    principal = None
+    if tot is None and sujet:
+        cand = [v for v in niveaux if _grandeur(v["ligne"]) == sujet]
+        principal = cand[0] if len(cand) == 1 else None
     if tot:
         enonces.append({"type": "constat", "texte": f"En {ex}, pour « {tit} », le total s'établit à "
                         f"{tot['valeur_texte']}{_suffixe(tot['unite'])}."})
+        sujet_phrase = "ce total"
+    elif principal:
+        tot = principal
+        enonces.append({"type": "constat", "texte": f"En {ex}, « {tot['ligne']} » s'établit à "
+                        f"{tot['valeur_texte']}{_suffixe(tot['unite'])}."})
+        sujet_phrase = f"« {tot['ligne']} »"
+    if tot:
         var = [d for d in ctx.variations if d["valeur_id"] == tot["valeur_id"] and d["var_rel_texte"]]
         prec = next((d for d in var if d["exercice_ref"] == ex - 1), None)
         if prec:
             enonces.append({"type": "constat", "texte":
-                            f"Par rapport à {ex - 1}, ce total {_verbe(prec['var_rel_pct'], 'progresse', 'recule')} "
+                            f"Par rapport à {ex - 1}, {sujet_phrase} {_verbe(prec['var_rel_pct'], 'progresse', 'recule')} "
                             f"de {_sans_signe(prec['var_rel_texte'])} %."})
         if var:
             loin = min(var, key=lambda d: d["exercice_ref"])
@@ -127,22 +192,37 @@ def extractif(ctx: ic.Contexte) -> list[dict]:
                 enonces.append({"type": "constat", "texte":
                                 f"Depuis {loin['exercice_ref']}, la {_verbe(loin['var_rel_pct'], 'hausse', 'baisse', 'variation')} "
                                 f"cumulée atteint {_sans_signe(loin['var_rel_texte'])} %."})
-    base = [v for v in (parts or niveaux) if not est_total(v["ligne"])]
+    exclus = {tot["ligne"]} if tot else set()
+    base = [v for v in (parts or niveaux) if not _est_total(v["ligne"]) and v["ligne"] not in exclus]
     base = sorted(base, key=lambda v: -v["valeur_num"])
+    dans = f"dans la répartition par {dim}, " if dim else ""
     if len(base) >= 2:
         a, b = base[0], base[1]
         quoi = "parts" if parts else "valeurs"
         enonces.append({"type": "constat", "texte":
-                        f"Les {quoi} les plus élevées en {ex} reviennent à « {a['ligne']} » "
-                        f"({a['valeur_texte']}{_suffixe(a['unite'])}) et à « {b['ligne']} » "
+                        f"{dans[:1].upper() + dans[1:] if dans else ''}Les {quoi} les plus élevées en {ex} reviennent "
+                        f"à « {a['ligne']} » ({a['valeur_texte']}{_suffixe(a['unite'])}) et à « {b['ligne']} » "
+                        f"({b['valeur_texte']}{_suffixe(b['unite'])})." if not dans else
+                        f"{dans[:1].upper() + dans[1:]}les {quoi} les plus élevées en {ex} reviennent "
+                        f"à « {a['ligne']} » ({a['valeur_texte']}{_suffixe(a['unite'])}) et à « {b['ligne']} » "
                         f"({b['valeur_texte']}{_suffixe(b['unite'])})."})
-    mouv = [d for d in ctx.variations if d["exercice_ref"] == ex - 1 and d["var_rel_texte"]
-            and not est_total(d["ligne"]) and d["unite"] != "%" and d["ligne"] != "(sans libellé)"]
+    ok = lambda d: (d["exercice_ref"] == ex - 1 and not _est_total(d["ligne"]) and d["ligne"] not in exclus
+                    and d["ligne"] != "(sans libellé)" and not autre_grandeur(d["ligne"]))
+    mouv = [d for d in ctx.variations if ok(d) and d["var_rel_texte"] and d["unite"] != "%"]
     if mouv:
         d = max(mouv, key=lambda d: abs(d["var_rel_pct"]))
         enonces.append({"type": "constat", "texte":
-                        f"Par rapport à {ex - 1}, l'évolution la plus marquée concerne « {d['ligne']} » "
-                        f"({_verbe(d['var_rel_pct'], 'hausse', 'baisse')} de {_sans_signe(d['var_rel_texte'])} %)."})
+                        f"Par rapport à {ex - 1}, {dans}l'évolution la plus marquée concerne « {d['ligne']} » "
+                        f"({_verbe(d['var_rel_pct'], 'hausse', 'baisse')} de {_sans_signe(d['var_rel_texte'])} % "
+                        f"{_nature(d['unite'], sujet)})."})
+    else:
+        mouv_parts = [d for d in ctx.variations if ok(d) and d["unite"] == "%" and d["var_abs"]]
+        if mouv_parts:
+            d = max(mouv_parts, key=lambda d: abs(d["var_abs"]))
+            enonces.append({"type": "constat", "texte":
+                            f"Par rapport à {ex - 1}, {dans}la part de « {d['ligne']} » "
+                            f"{_verbe(d['var_abs'], 'gagne', 'perd')} {_sans_signe(d['var_abs_texte'])} point(s) "
+                            f"de pourcentage."})
     if enonces:
         enonces.append({"type": "perspective", "texte":
                         "Le suivi de cet indicateur lors du prochain exercice permettra de confirmer "
@@ -206,8 +286,9 @@ def commenter(con, code: str, exercice: int, client: ClientLLM | None = None,
         gardes, ecartees, supprimes = c.enonces, c.ecartees, c.supprimes
     else:
         idx = literal_check.index_autorise(ctx.autorisees())
-        gardes = [{**e, "sources": [{"valeur": o, **(literal_check.trouver(o, idx) or {"nature": "non soutenue"})}
-                                    for o in literal_check.nombres(e["texte"])]} for e in enonces]
+        gardes = [{**e, "sources": [{"valeur": o.texte, **(literal_check.trouver(o.texte, idx, e["texte"], o.debut)
+                                                           or {"nature": "non soutenue"})}
+                                    for o in literal_check.occurrences(e["texte"])]} for e in enonces]
         ecartees, supprimes = [], []
     if not gardes:
         return _fin(con, abst.resultat(code, exercice, "aucun énoncé soutenu après contrôle",
