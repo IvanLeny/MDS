@@ -52,5 +52,15 @@ Trois messages peuvent accompagner les textes :
 
 ## Base documentaire
 
-Liste des documents et de leur statut ; ajout d'un PDF (titre, type, exercice, trimestre, statut) ;
-bouton « Reconstruire la base ».
+La base est locale : `data/base/minpmeesa.sqlite` (documents, passages, valeurs, variations, appariements,
+journal) et `data/base/minpmeesa.faiss` (index vectoriel des passages).
+
+1. **Ajouter un PDF** : titre, type, exercice, trimestre, statut. Case « Intégrer tout de suite dans la base »
+   cochée (par défaut) : le PDF est copié dans le corpus, inscrit au registre, puis la base SQLite + FAISS est
+   reconstruite ; il est aussitôt interrogeable. Case décochée : il est seulement inscrit, et sera intégré au
+   prochain clic sur « Reconstruire la base ».
+2. **Explorer la base** : compteurs (documents, passages, vecteurs FAISS, valeurs, variations, appariements) et
+   onglets Documents, Passages (filtre par document, recherche de mots), Valeurs (par document et tableau),
+   Variations (par indicateur), Appariements, Journal des productions.
+3. Hors de l'interface, le fichier `minpmeesa.sqlite` s'ouvre avec DB Browser for SQLite (lecture seule
+   conseillée).

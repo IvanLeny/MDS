@@ -217,12 +217,20 @@ if page == "Parcours" and m:
 
 if page == "Base documentaire":
     st.subheader("Base documentaire")
-    if m:
-        docs = pd.DataFrame([dict(r) for r in db.documents(m.con)])
-        st.dataframe(docs[["titre", "type", "exercice", "trimestre", "statut_diffusion", "nb_pages", "fichier"]],
-                     hide_index=True)
+    st.caption(f"Base SQLite : `{db.chemin_base()}` · index vectoriel FAISS : `{config.chemin('base') / 'dense.faiss'}`")
+
+    def reconstruire():
+        from minpmeesa.ingestion.build import construire
+        with st.spinner("Intégration dans la base : extraction, découpage, valeurs, variations, index (quelques minutes)…"):
+            r = construire(verbeux=False)
+        st.cache_resource.clear()
+        st.success(f"Base à jour : {r['nb_documents']} documents, {r['nb_passages']} passages, "
+                   f"{r['nb_valeurs']} valeurs, {r['nb_variations']} variations.")
+        for a_ in r["avertissements"]:
+            st.caption("⚠ " + a_)
+
     with st.form("ajout"):
-        st.markdown("**Ajouter un PDF** (il sera inscrit au registre, puis pris en compte à la reconstruction)")
+        st.markdown("**Ajouter un PDF à la base**")
         f = st.file_uploader("Fichier PDF", type="pdf")
         c1, c2, c3 = st.columns(3)
         titre = c1.text_input("Titre")
@@ -230,24 +238,89 @@ if page == "Base documentaire":
         exercice = c3.number_input("Exercice", 2010, 2035, 2025)
         trimestre = c1.selectbox("Trimestre", ["", "T1", "T2", "T3", "T4"])
         statut = c2.selectbox("Statut de diffusion", ["publie", "interne"])
+        integrer = c3.checkbox("Intégrer tout de suite dans la base", value=True)
         if st.form_submit_button("Ajouter") and f and titre:
             import yaml
             dest = config.chemin("corpus") / Path(f.name).name
-            dest.write_bytes(f.getvalue())
             reg = yaml.safe_load(config.chemin("registre").read_text(encoding="utf-8"))
+            reg["documents"] = [d for d in reg["documents"] if d["doc_id"] != dest.stem]   # remplacement éventuel
+            dest.write_bytes(f.getvalue())
             reg["documents"].append({"doc_id": dest.stem, "fichier": dest.name, "titre": titre, "type": type_,
                                      "exercice": int(exercice), "trimestre": trimestre or None,
                                      "statut_diffusion": statut})
             config.chemin("registre").write_text(yaml.safe_dump(reg, allow_unicode=True, sort_keys=False),
                                                  encoding="utf-8")
-            st.success(f"{dest.name} ajouté au registre. Lancez la reconstruction.")
+            st.success(f"{dest.name} copié dans le corpus et inscrit au registre.")
+            if integrer:
+                reconstruire()
+                m = moteur()
+            else:
+                st.info("Le document sera intégré à la prochaine reconstruction de la base.")
     if st.button("Reconstruire la base"):
-        from minpmeesa.ingestion.build import construire
-        with st.spinner("Reconstruction en cours (quelques minutes)…"):
-            r = construire(verbeux=False)
-        st.cache_resource.clear()
-        st.success(f"Base reconstruite : {r['nb_documents']} documents, {r['nb_passages']} passages.")
-        for a in r["avertissements"]:
-            st.caption("⚠ " + a)
+        reconstruire()
+        m = moteur()
+
+    if m:
+        con = m.con
+        st.markdown("### Explorer la base")
+        n = lambda t: con.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0]
+        k = st.columns(6)
+        for col, (lib, t) in zip(k, [("Documents", "documents"), ("Passages", "passages"), ("Valeurs", "valeurs"),
+                                     ("Variations", "variations"), ("Appariements", "appariement"),
+                                     ("Productions", "productions")]):
+            col.metric(lib, f"{n(t):,}".replace(",", " "))
+        st.caption(f"Index vectoriel FAISS : {m.dense.ntotal:,} vecteurs".replace(",", " ")
+                   + f" · encodeur : {m.nom_encodeur}")
+        o1, o2, o3, o4, o5, o6 = st.tabs(["Documents", "Passages", "Valeurs", "Variations", "Appariements",
+                                          "Journal des productions"])
+        with o1:
+            docs = pd.read_sql_query(
+                "SELECT d.doc_id, d.titre, d.type, d.exercice, d.trimestre, d.statut_diffusion, d.nb_pages, "
+                "(SELECT COUNT(*) FROM passages p WHERE p.doc_id=d.doc_id) AS passages, "
+                "(SELECT COUNT(*) FROM valeurs v WHERE v.doc_id=d.doc_id) AS valeurs, d.fichier "
+                "FROM documents d ORDER BY d.type, d.exercice", con)
+            st.dataframe(docs, hide_index=True, width='stretch')
+        ids = [r[0] for r in con.execute("SELECT doc_id FROM documents ORDER BY type, exercice")]
+        with o2:
+            c1, c2 = st.columns([1, 2])
+            dsel = c1.selectbox("Document", ids, key="exp_doc")
+            mot = c2.text_input("Rechercher dans le texte", key="exp_mot")
+            q = ("SELECT passage_id, page, nature, chapitre, section, numero, substr(texte, 1, 300) AS extrait "
+                 "FROM passages WHERE doc_id=?")
+            args = [dsel]
+            if mot:
+                q += " AND texte LIKE ?"
+                args.append(f"%{mot}%")
+            st.dataframe(pd.read_sql_query(q + " ORDER BY page, passage_id LIMIT 500", con, params=args),
+                         hide_index=True, width='stretch')
+        with o3:
+            c1, c2 = st.columns(2)
+            dv = c1.selectbox("Document", ids, key="exp_doc_v")
+            tabs_ = [r[0] for r in con.execute("SELECT DISTINCT tableau_n FROM valeurs WHERE doc_id=? "
+                                               "ORDER BY tableau_n", (dv,))]
+            tn = c2.selectbox("Tableau", tabs_, key="exp_tab") if tabs_ else None
+            if tn is not None:
+                st.dataframe(pd.read_sql_query(
+                    "SELECT valeur_id, page, tableau_intitule, ligne, colonne, valeur_texte, unite FROM valeurs "
+                    "WHERE doc_id=? AND tableau_n=? ORDER BY valeur_id", con, params=[dv, tn]),
+                    hide_index=True, width='stretch')
+        with o4:
+            codes = [r[0] for r in con.execute("SELECT DISTINCT code_indicateur FROM variations ORDER BY 1")]
+            cv = st.selectbox("Indicateur", codes, key="exp_var")
+            st.dataframe(pd.read_sql_query(
+                "SELECT exercice, exercice_ref, ligne, sous_colonne, valeur, valeur_ref, var_abs_texte, "
+                "var_rel_texte, valeur_id, valeur_ref_id FROM variations WHERE code_indicateur=? "
+                "ORDER BY exercice DESC, exercice_ref DESC", con, params=[cv]), hide_index=True, width='stretch')
+        with o5:
+            st.dataframe(pd.read_sql_query(
+                "SELECT exercice, code_indicateur, graphique_n, graphique_intitule, tableau_n, tableau_intitule, "
+                "score, statut FROM appariement ORDER BY exercice DESC, graphique_n", con),
+                hide_index=True, width='stretch')
+        with o6:
+            cols = [r[1] for r in con.execute("PRAGMA table_info(productions)")]
+            garder = [c for c in ("prod_id", "type", "horodatage", "modele", "statut_validation", "valide_par", "duree_s")
+                      if c in cols]
+            st.dataframe(pd.read_sql_query(f"SELECT {', '.join(garder)} FROM productions ORDER BY 1 DESC LIMIT 300",
+                                           con), hide_index=True, width='stretch')
 
 st.markdown(identite.pied(ID), unsafe_allow_html=True)
