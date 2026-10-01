@@ -149,25 +149,43 @@ if page == "Parcours" and m:
                     st.success("Commentaire validé : il sera repris dans les notes.")
 
     with t3:
-        st.subheader("Note d'analyse")
-        ex3 = st.selectbox("Exercice", [r[0] for r in con.execute(
-            "SELECT DISTINCT exercice FROM documents WHERE type='annuaire' ORDER BY exercice DESC")], key="ex3")
-        chapitres = [r[0] for r in con.execute(
-            "SELECT DISTINCT p.chapitre FROM passages p JOIN documents d USING(doc_id) WHERE d.type='annuaire' "
-            "AND d.exercice=? AND p.nature='tableau' AND p.chapitre LIKE 'CHAPITRE%'", (ex3,))]
-        chap = st.selectbox("Chapitre de l'Annuaire", chapitres)
-        if st.button("Assembler la note", type="primary"):
-            import re
-            st.session_state["na"] = analysis_note.rediger(con, ex3, chapitre=re.escape(chap), client=client, moteur=m)
+        st.subheader("Note d'analyse d'un Annuaire statistique")
+        annuaires = [dict(r) for r in con.execute(
+            "SELECT doc_id, titre, exercice FROM documents WHERE type='annuaire' AND statut_diffusion='publie' "
+            "ORDER BY exercice DESC")]
+        ann = st.selectbox("Annuaire statistique", annuaires,
+                           format_func=lambda a: f"{a['titre']} (exercice {a['exercice']})", key="ann3")
+        etendue = st.radio("Étendue", ["Tout l'Annuaire", "Chapitres choisis"], horizontal=True, key="et3")
+        choix = []
+        if etendue == "Chapitres choisis":
+            chapitres = list(dict.fromkeys(r[0] for r in con.execute(
+                "SELECT chapitre FROM passages WHERE doc_id=? AND nature='tableau' AND chapitre LIKE 'CHAPITRE%' "
+                "ORDER BY page", (ann["doc_id"],))))
+            choix = st.multiselect("Chapitres de cet Annuaire", chapitres, key="ch3")
+        if client is not None and etendue == "Tout l'Annuaire":
+            st.caption("Avec un modèle de langage, la rédaction d'un Annuaire entier peut prendre longtemps.")
+        if st.button("Rédiger la note d'analyse", type="primary", disabled=etendue == "Chapitres choisis" and not choix):
+            titre = f"Note d'analyse — {ann['titre']}"
+            with st.spinner("Rédaction des commentaires de l'Annuaire…"):
+                if etendue == "Tout l'Annuaire":
+                    st.session_state["na"] = analysis_note.rediger(con, ann["exercice"], documents=[ann["doc_id"]],
+                                                                   client=client, moteur=m, titre=titre)
+                else:
+                    motif = "|".join(re.escape(c) for c in choix)
+                    st.session_state["na"] = analysis_note.rediger(con, ann["exercice"], chapitre=f"^({motif})$",
+                                                                   client=client, moteur=m,
+                                                                   titre=f"{titre} — {len(choix)} chapitre(s)")
         na = st.session_state.get("na")
         if na:
+            st.markdown(f"#### {na['titre']}")
+            st.caption(f"{len(na['sections'])} tableau(x) commenté(s) ; {len(na['abstentions'])} à commenter manuellement.")
             avertissements(na)
             for s in na["sections"]:
                 st.markdown(f"#### Tableau {s['tableau_n']} : {s['intitule']}")
                 afficher_commentaire(s["commentaire"])
             if na["abstentions"]:
                 st.warning("À commenter manuellement : " + ", ".join(f"tableau {a['tableau_n']}" for a in na["abstentions"]))
-            bouton_word("Exporter en Word", docx_export.exporter_note_analyse, na, f"note_analyse_{ex3}.docx")
+            bouton_word("Exporter en Word", docx_export.exporter_note_analyse, na, f"note_analyse_{na['exercice']}.docx")
 
     with t4:
         st.subheader("Note d'analyse stratégique")

@@ -34,7 +34,7 @@ Trois messages peuvent accompagner les textes :
 
 ![Note d'analyse](../data/outputs/captures/3_note_analyse.png)
 
-1. Choisissez l'exercice et un chapitre de l'Annuaire, puis « Assembler la note ».
+1. Choisissez l'Annuaire statistique (par exemple « Annuaire statistique 2024 »), puis l'étendue : l'Annuaire entier, ou seulement certains de ses chapitres ; cliquez sur « Rédiger la note d'analyse ».
 2. La note reprend les commentaires, tableau par tableau, dans l'ordre de l'Annuaire. Elle n'ajoute aucun chiffre.
 3. Les tableaux sans commentaire possible sont listés « à commenter manuellement ».
 4. « Exporter en Word ».

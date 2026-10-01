@@ -45,7 +45,7 @@ def main(url: str):
         # 3. Note d'analyse
         page.get_by_role("tab", name="Note d'analyse").click()
         attendre(page)
-        page.get_by_role("button", name="Assembler la note").click()
+        page.get_by_role("button", name="Rédiger la note d'analyse").click()
         page.wait_for_selector("text=Tableau 1 :", timeout=600000)
         attendre(page)
         page.screenshot(path=str(DEST / "3_note_analyse.png"), full_page=False)
