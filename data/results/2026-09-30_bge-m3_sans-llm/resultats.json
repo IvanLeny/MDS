@@ -1,0 +1,505 @@
+{
+  "llm": "mode sans modèle de langage (--llm none)",
+  "moteur_llm": {
+    "moteur": "none",
+    "modele": "aucun (mode extractif)"
+  },
+  "encodeur": "BAAI/bge-m3",
+  "h1_recuperation": {
+    "n_questions": 52,
+    "encodeur": "BAAI/bge-m3",
+    "configuration_reference": "hybride_k60",
+    "resume": [
+      {
+        "configuration": "lexicale",
+        "n": 52,
+        "succes_1": 0.4038,
+        "succes_5": 0.7115,
+        "mrr": 0.5261,
+        "ndcg_5": 0.5867,
+        "duree_mediane_s": 0.01
+      },
+      {
+        "configuration": "dense",
+        "n": 52,
+        "succes_1": 0.5385,
+        "succes_5": 0.8462,
+        "mrr": 0.6744,
+        "ndcg_5": 0.847,
+        "duree_mediane_s": 0.485
+      },
+      {
+        "configuration": "hybride_k10",
+        "n": 52,
+        "succes_1": 0.5962,
+        "succes_5": 0.8846,
+        "mrr": 0.7085,
+        "ndcg_5": 0.8347,
+        "duree_mediane_s": 0.474
+      },
+      {
+        "configuration": "hybride_k20",
+        "n": 52,
+        "succes_1": 0.5769,
+        "succes_5": 0.8654,
+        "mrr": 0.6922,
+        "ndcg_5": 0.8153,
+        "duree_mediane_s": 0.472
+      },
+      {
+        "configuration": "hybride_k60",
+        "n": 52,
+        "succes_1": 0.5769,
+        "succes_5": 0.8846,
+        "mrr": 0.6938,
+        "ndcg_5": 0.8178,
+        "duree_mediane_s": 0.499
+      },
+      {
+        "configuration": "hybride_sans_lexique",
+        "n": 52,
+        "succes_1": 0.5962,
+        "succes_5": 0.8462,
+        "mrr": 0.706,
+        "ndcg_5": 0.8362,
+        "duree_mediane_s": 0.493
+      },
+      {
+        "configuration": "lexicale_sans_lexique",
+        "n": 52,
+        "succes_1": 0.3846,
+        "succes_5": 0.7115,
+        "mrr": 0.5188,
+        "ndcg_5": 0.6082,
+        "duree_mediane_s": 0.004
+      }
+    ],
+    "wilcoxon": {
+      "hybride_k60_vs_lexicale_rr": {
+        "n": 52,
+        "moyenne_a": 0.6938,
+        "moyenne_b": 0.5261,
+        "delta_moyen": 0.1677,
+        "gagne": 25,
+        "perd": 6,
+        "egalite": 21,
+        "statistique": 73.5,
+        "p_value": 0.0006199784652448684
+      },
+      "hybride_k60_vs_lexicale_s5": {
+        "n": 52,
+        "moyenne_a": 0.8846,
+        "moyenne_b": 0.7115,
+        "delta_moyen": 0.1731,
+        "gagne": 10,
+        "perd": 1,
+        "egalite": 41,
+        "statistique": 6.0,
+        "p_value": 0.006655605482949377
+      },
+      "hybride_k60_vs_dense_rr": {
+        "n": 52,
+        "moyenne_a": 0.6938,
+        "moyenne_b": 0.6744,
+        "delta_moyen": 0.0194,
+        "gagne": 9,
+        "perd": 11,
+        "egalite": 32,
+        "statistique": 94.0,
+        "p_value": 0.6810333631478187
+      },
+      "hybride_k60_vs_dense_s5": {
+        "n": 52,
+        "moyenne_a": 0.8846,
+        "moyenne_b": 0.8462,
+        "delta_moyen": 0.0385,
+        "gagne": 4,
+        "perd": 2,
+        "egalite": 46,
+        "statistique": 7.0,
+        "p_value": 0.4142161782425253
+      }
+    }
+  },
+  "h1_abstention": {
+    "bm25_max/refus_a_tort_max": {
+      "signal": "bm25_max",
+      "critere": "refus_a_tort_max",
+      "description_signal": "meilleur score BM25 de la question (sans expansion)",
+      "seuil_calibre": 8.744,
+      "plis": 5,
+      "taux_abstention_correcte_hors_corpus": 0.5,
+      "abstentions_a_tort_questions_du_corpus": 2,
+      "taux_abstention_a_tort": 0.0385,
+      "reponses_hors_corpus_non_abstenues": 5,
+      "n_hors_corpus": 10,
+      "n_corpus": 52
+    },
+    "bm25_max/equilibre": {
+      "signal": "bm25_max",
+      "critere": "equilibre",
+      "description_signal": "meilleur score BM25 de la question (sans expansion)",
+      "seuil_calibre": 12.416,
+      "plis": 5,
+      "taux_abstention_correcte_hors_corpus": 0.9,
+      "abstentions_a_tort_questions_du_corpus": 11,
+      "taux_abstention_a_tort": 0.2115,
+      "reponses_hors_corpus_non_abstenues": 1,
+      "n_hors_corpus": 10,
+      "n_corpus": 52
+    },
+    "dense_max/refus_a_tort_max": {
+      "signal": "dense_max",
+      "critere": "refus_a_tort_max",
+      "description_signal": "meilleur cosinus de la voie dense",
+      "seuil_calibre": 0.621,
+      "plis": 5,
+      "taux_abstention_correcte_hors_corpus": 1.0,
+      "abstentions_a_tort_questions_du_corpus": 3,
+      "taux_abstention_a_tort": 0.0577,
+      "reponses_hors_corpus_non_abstenues": 0,
+      "n_hors_corpus": 10,
+      "n_corpus": 52
+    },
+    "dense_max/equilibre": {
+      "signal": "dense_max",
+      "critere": "equilibre",
+      "description_signal": "meilleur cosinus de la voie dense",
+      "seuil_calibre": 0.563,
+      "plis": 5,
+      "taux_abstention_correcte_hors_corpus": 1.0,
+      "abstentions_a_tort_questions_du_corpus": 1,
+      "taux_abstention_a_tort": 0.0192,
+      "reponses_hors_corpus_non_abstenues": 0,
+      "n_hors_corpus": 10,
+      "n_corpus": 52
+    }
+  },
+  "h1_abstention_retenue": "dense_max/refus_a_tort_max",
+  "kappa_jeu_consultation": {
+    "statut": "non mesuré",
+    "raison": "seconde annotation (annotateur_2) non encore réalisée"
+  },
+  "choix_encodeur": [
+    {
+      "encodeur": "repli-hors-ligne-tfidf-svd",
+      "temps_indexation_s": 29.08,
+      "materiel": "cpu",
+      "dimension": 256,
+      "longueur_max_tokens": null,
+      "dense_succes_5": 0.75,
+      "dense_mrr": 0.5592,
+      "hybride_succes_5": 0.7885,
+      "hybride_mrr": 0.581,
+      "statut": "mesuré",
+      "source": "/content/drive/MyDrive/MDS_resultats/2026-09-30_encodeurs"
+    },
+    {
+      "encodeur": "BAAI/bge-m3",
+      "temps_indexation_s": 9089.81,
+      "materiel": "cpu",
+      "dimension": 1024,
+      "longueur_max_tokens": 8192,
+      "dense_succes_5": 0.8462,
+      "dense_mrr": 0.6744,
+      "hybride_succes_5": 0.8846,
+      "hybride_mrr": 0.6938,
+      "statut": "mesuré",
+      "wilcoxon_mrr_hybride_vs_repli": {
+        "n": 52,
+        "moyenne_a": 0.6938,
+        "moyenne_b": 0.581,
+        "delta_moyen": 0.1128,
+        "gagne": 17,
+        "perd": 8,
+        "egalite": 27,
+        "statistique": 73.0,
+        "p_value": 0.015832314700013474
+      },
+      "source": "/content/drive/MyDrive/MDS_resultats/2026-09-30_encodeurs"
+    },
+    {
+      "encodeur": "intfloat/multilingual-e5-large",
+      "temps_indexation_s": 4989.31,
+      "materiel": "cpu",
+      "dimension": 1024,
+      "longueur_max_tokens": 512,
+      "dense_succes_5": 0.8462,
+      "dense_mrr": 0.6187,
+      "hybride_succes_5": 0.8654,
+      "hybride_mrr": 0.6811,
+      "statut": "mesuré",
+      "wilcoxon_mrr_hybride_vs_repli": {
+        "n": 52,
+        "moyenne_a": 0.6811,
+        "moyenne_b": 0.581,
+        "delta_moyen": 0.1002,
+        "gagne": 20,
+        "perd": 9,
+        "egalite": 23,
+        "statistique": 106.0,
+        "p_value": 0.015378505299502587
+      },
+      "source": "/content/drive/MyDrive/MDS_resultats/2026-09-30_encodeurs"
+    },
+    {
+      "encodeur": "dangvantuan/sentence-camembert-base",
+      "temps_indexation_s": 447.64,
+      "materiel": "cpu",
+      "dimension": 768,
+      "longueur_max_tokens": 128,
+      "dense_succes_5": 0.4231,
+      "dense_mrr": 0.3021,
+      "hybride_succes_5": 0.7115,
+      "hybride_mrr": 0.4752,
+      "statut": "mesuré",
+      "wilcoxon_mrr_hybride_vs_repli": {
+        "n": 52,
+        "moyenne_a": 0.4752,
+        "moyenne_b": 0.581,
+        "delta_moyen": -0.1058,
+        "gagne": 15,
+        "perd": 22,
+        "egalite": 15,
+        "statistique": 245.5,
+        "p_value": 0.10924722493133342
+      },
+      "source": "/content/drive/MyDrive/MDS_resultats/2026-09-30_encodeurs"
+    },
+    {
+      "encodeur": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "temps_indexation_s": 136.22,
+      "materiel": "cpu",
+      "dimension": 384,
+      "longueur_max_tokens": 128,
+      "dense_succes_5": 0.4615,
+      "dense_mrr": 0.3941,
+      "hybride_succes_5": 0.8077,
+      "hybride_mrr": 0.5125,
+      "statut": "mesuré",
+      "wilcoxon_mrr_hybride_vs_repli": {
+        "n": 52,
+        "moyenne_a": 0.5125,
+        "moyenne_b": 0.581,
+        "delta_moyen": -0.0685,
+        "gagne": 17,
+        "perd": 21,
+        "egalite": 14,
+        "statistique": 306.0,
+        "p_value": 0.3482242730128553
+      },
+      "source": "/content/drive/MyDrive/MDS_resultats/2026-09-30_encodeurs"
+    }
+  ],
+  "choix_llm": [
+    {
+      "moteur": "ollama",
+      "modele": "gpt-oss:20b",
+      "deployable": true,
+      "retenu": true,
+      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+    },
+    {
+      "moteur": "ollama",
+      "modele": "llama3.1:8b",
+      "deployable": true,
+      "retenu": false,
+      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+    },
+    {
+      "moteur": "ollama",
+      "modele": "qwen2.5:7b-instruct",
+      "deployable": true,
+      "retenu": false,
+      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+    },
+    {
+      "moteur": "ollama",
+      "modele": "mistral:7b-instruct",
+      "deployable": true,
+      "retenu": false,
+      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+    },
+    {
+      "moteur": "ollama",
+      "modele": "llama3.2:3b",
+      "deployable": true,
+      "retenu": false,
+      "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+    },
+    {
+      "moteur": "api:groq",
+      "modele": "openai/gpt-oss-20b",
+      "deployable": false,
+      "borne_haute": false,
+      "retenu": false,
+      "statut": "non mesuré : clé API absente : définir la variable d'environnement GROQ_API_KEY"
+    },
+    {
+      "moteur": "api:groq",
+      "modele": "openai/gpt-oss-120b",
+      "deployable": false,
+      "borne_haute": true,
+      "retenu": false,
+      "statut": "non mesuré : clé API absente : définir la variable d'environnement GROQ_API_KEY"
+    }
+  ],
+  "h1_ancrage_2024": {
+    "statut": "non mesuré",
+    "raison": "aucun modèle de langage disponible : la comparaison avec/sans appui porte sur des sorties de modèle."
+  },
+  "h2_2024": {
+    "statut": "non mesuré",
+    "raison": "aucun modèle de langage disponible (Ollama/llama-cpp) : H2 compare des sorties de modèle ; le mode extractif n'en produit pas."
+  },
+  "commentaires_publies_2024": {
+    "statut": "mesuré",
+    "provisoire": true,
+    "exercice": 2024,
+    "n_indicateurs": 13,
+    "valeurs_citees": 123,
+    "valeurs_retrouvees": 61,
+    "part_retrouvee": 0.4959,
+    "typologie_non_retrouvees": {
+      "arrondi": 1,
+      "calcul": 49,
+      "chiffre d'un autre exercice": 5,
+      "invention": 7
+    }
+  },
+  "h1_reference_gabarits_2024": {
+    "statut_gabarits": "mesuré",
+    "provisoire": true,
+    "n": 13,
+    "encodeur": "BAAI/bge-m3",
+    "reference": "commentaires publiés du rapport d'analyse",
+    "gabarits": {
+      "rouge_l": 0.1385,
+      "similarite": 0.6871,
+      "couv_ind": 1.0,
+      "valeurs_retenues_moy": 3.6154,
+      "mots_moy": 61.3846
+    },
+    "llm_ancre": {
+      "statut": "non mesuré",
+      "raison": "aucun modèle de langage disponible"
+    }
+  },
+  "h1_ancrage_2023": {
+    "statut": "non mesuré",
+    "raison": "aucun modèle de langage disponible : la comparaison avec/sans appui porte sur des sorties de modèle."
+  },
+  "h2_2023": {
+    "statut": "non mesuré",
+    "raison": "aucun modèle de langage disponible (Ollama/llama-cpp) : H2 compare des sorties de modèle ; le mode extractif n'en produit pas."
+  },
+  "commentaires_publies_2023": {
+    "statut": "mesuré",
+    "provisoire": true,
+    "exercice": 2023,
+    "n_indicateurs": 14,
+    "valeurs_citees": 86,
+    "valeurs_retrouvees": 26,
+    "part_retrouvee": 0.3023,
+    "typologie_non_retrouvees": {
+      "arrondi": 6,
+      "calcul": 38,
+      "chiffre d'un autre exercice": 0,
+      "invention": 16
+    }
+  },
+  "h1_reference_gabarits_2023": {
+    "statut_gabarits": "mesuré",
+    "provisoire": true,
+    "n": 14,
+    "encodeur": "BAAI/bge-m3",
+    "reference": "commentaires publiés du rapport d'analyse",
+    "gabarits": {
+      "rouge_l": 0.1166,
+      "similarite": 0.6439,
+      "couv_ind": 1.0,
+      "valeurs_retenues_moy": 3.0,
+      "mots_moy": 56.7143
+    },
+    "llm_ancre": {
+      "statut": "non mesuré",
+      "raison": "aucun modèle de langage disponible"
+    }
+  },
+  "h3_temps_systeme": {
+    "consultation": {
+      "n": 62,
+      "mediane": 0.934,
+      "p90": 1.308,
+      "max": 1.642
+    },
+    "commentaire": {
+      "n": 13,
+      "mediane": 0.011,
+      "p90": 0.491,
+      "max": 0.545
+    },
+    "note d'analyse": {
+      "n": 3,
+      "mediane": 8.05,
+      "p90": 8.304,
+      "max": 8.367
+    },
+    "note stratégique": {
+      "n": 2,
+      "mediane": 5.987,
+      "p90": 6.861,
+      "max": 7.08
+    },
+    "poste": "poste de développement (Linux, CPU) — à refaire sur le poste cible avec le moteur local"
+  },
+  "h3_verification_automatique_notes": [
+    {
+      "titre": "Note d'analyse stratégique — exercice 2024 — gabarits",
+      "fichier": "note_strategique_2024_gabarits.docx",
+      "version": "gabarits",
+      "exercice": 2024,
+      "moteur": "none",
+      "modele": "extractif (sans modèle de langage)",
+      "redaction": "gabarits",
+      "verification": {
+        "BN4_toute_valeur_tracee": true,
+        "BN4_valeurs_non_tracees": [],
+        "BN5_rubriques": true,
+        "BN5_messages_cles_3": true,
+        "BN5_longueur_ok": true,
+        "nb_mots": 629
+      },
+      "provisoire": true,
+      "nb_evolutions": 6
+    },
+    {
+      "titre": "Note d'analyse stratégique — exercice 2023 — gabarits",
+      "fichier": "note_strategique_2023_gabarits.docx",
+      "version": "gabarits",
+      "exercice": 2023,
+      "moteur": "none",
+      "modele": "extractif (sans modèle de langage)",
+      "redaction": "gabarits",
+      "verification": {
+        "BN4_toute_valeur_tracee": true,
+        "BN4_valeurs_non_tracees": [],
+        "BN5_rubriques": true,
+        "BN5_messages_cles_3": false,
+        "BN5_longueur_ok": true,
+        "nb_mots": 255
+      },
+      "provisoire": true,
+      "nb_evolutions": 2
+    }
+  ],
+  "h3_chronometrage": {
+    "statut": "non mesuré",
+    "raison": "séance avec au moins 3 cadres à conduire ; saisir h3_saisie_temps.xlsx puis relancer avec --h3"
+  },
+  "h3_grille": {
+    "statut": "non mesuré",
+    "raison": "notes des deux lecteurs à saisir dans h3_grille_evaluation.xlsx"
+  },
+  "duree_totale_s": 467.2
+}

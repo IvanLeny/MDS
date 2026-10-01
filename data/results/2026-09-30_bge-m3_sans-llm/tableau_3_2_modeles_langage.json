@@ -1,0 +1,53 @@
+[
+  {
+    "moteur": "ollama",
+    "modele": "gpt-oss:20b",
+    "deployable": true,
+    "retenu": true,
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+  },
+  {
+    "moteur": "ollama",
+    "modele": "llama3.1:8b",
+    "deployable": true,
+    "retenu": false,
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+  },
+  {
+    "moteur": "ollama",
+    "modele": "qwen2.5:7b-instruct",
+    "deployable": true,
+    "retenu": false,
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+  },
+  {
+    "moteur": "ollama",
+    "modele": "mistral:7b-instruct",
+    "deployable": true,
+    "retenu": false,
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+  },
+  {
+    "moteur": "ollama",
+    "modele": "llama3.2:3b",
+    "deployable": true,
+    "retenu": false,
+    "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"
+  },
+  {
+    "moteur": "api:groq",
+    "modele": "openai/gpt-oss-20b",
+    "deployable": false,
+    "borne_haute": false,
+    "retenu": false,
+    "statut": "non mesuré : clé API absente : définir la variable d'environnement GROQ_API_KEY"
+  },
+  {
+    "moteur": "api:groq",
+    "modele": "openai/gpt-oss-120b",
+    "deployable": false,
+    "borne_haute": true,
+    "retenu": false,
+    "statut": "non mesuré : clé API absente : définir la variable d'environnement GROQ_API_KEY"
+  }
+]

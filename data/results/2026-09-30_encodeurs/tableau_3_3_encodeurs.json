@@ -1,0 +1,106 @@
+[
+  {
+    "encodeur": "repli-hors-ligne-tfidf-svd",
+    "temps_indexation_s": 29.08,
+    "materiel": "cpu",
+    "dimension": 256,
+    "longueur_max_tokens": null,
+    "dense_succes_5": 0.75,
+    "dense_mrr": 0.5592,
+    "hybride_succes_5": 0.7885,
+    "hybride_mrr": 0.581,
+    "statut": "mesuré"
+  },
+  {
+    "encodeur": "BAAI/bge-m3",
+    "temps_indexation_s": 9089.81,
+    "materiel": "cpu",
+    "dimension": 1024,
+    "longueur_max_tokens": 8192,
+    "dense_succes_5": 0.8462,
+    "dense_mrr": 0.6744,
+    "hybride_succes_5": 0.8846,
+    "hybride_mrr": 0.6938,
+    "statut": "mesuré",
+    "wilcoxon_mrr_hybride_vs_repli": {
+      "n": 52,
+      "moyenne_a": 0.6938,
+      "moyenne_b": 0.581,
+      "delta_moyen": 0.1128,
+      "gagne": 17,
+      "perd": 8,
+      "egalite": 27,
+      "statistique": 73.0,
+      "p_value": 0.015832314700013474
+    }
+  },
+  {
+    "encodeur": "intfloat/multilingual-e5-large",
+    "temps_indexation_s": 4989.31,
+    "materiel": "cpu",
+    "dimension": 1024,
+    "longueur_max_tokens": 512,
+    "dense_succes_5": 0.8462,
+    "dense_mrr": 0.6187,
+    "hybride_succes_5": 0.8654,
+    "hybride_mrr": 0.6811,
+    "statut": "mesuré",
+    "wilcoxon_mrr_hybride_vs_repli": {
+      "n": 52,
+      "moyenne_a": 0.6811,
+      "moyenne_b": 0.581,
+      "delta_moyen": 0.1002,
+      "gagne": 20,
+      "perd": 9,
+      "egalite": 23,
+      "statistique": 106.0,
+      "p_value": 0.015378505299502587
+    }
+  },
+  {
+    "encodeur": "dangvantuan/sentence-camembert-base",
+    "temps_indexation_s": 447.64,
+    "materiel": "cpu",
+    "dimension": 768,
+    "longueur_max_tokens": 128,
+    "dense_succes_5": 0.4231,
+    "dense_mrr": 0.3021,
+    "hybride_succes_5": 0.7115,
+    "hybride_mrr": 0.4752,
+    "statut": "mesuré",
+    "wilcoxon_mrr_hybride_vs_repli": {
+      "n": 52,
+      "moyenne_a": 0.4752,
+      "moyenne_b": 0.581,
+      "delta_moyen": -0.1058,
+      "gagne": 15,
+      "perd": 22,
+      "egalite": 15,
+      "statistique": 245.5,
+      "p_value": 0.10924722493133342
+    }
+  },
+  {
+    "encodeur": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "temps_indexation_s": 136.22,
+    "materiel": "cpu",
+    "dimension": 384,
+    "longueur_max_tokens": 128,
+    "dense_succes_5": 0.4615,
+    "dense_mrr": 0.3941,
+    "hybride_succes_5": 0.8077,
+    "hybride_mrr": 0.5125,
+    "statut": "mesuré",
+    "wilcoxon_mrr_hybride_vs_repli": {
+      "n": 52,
+      "moyenne_a": 0.5125,
+      "moyenne_b": 0.581,
+      "delta_moyen": -0.0685,
+      "gagne": 17,
+      "perd": 21,
+      "egalite": 14,
+      "statistique": 306.0,
+      "p_value": 0.3482242730128553
+    }
+  }
+]

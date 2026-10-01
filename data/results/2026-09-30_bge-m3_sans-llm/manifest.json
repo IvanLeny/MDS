@@ -1,0 +1,286 @@
+{
+  "date": "2026-09-30",
+  "config": {
+    "graine": 42,
+    "chemins": {
+      "corpus": "data/corpus",
+      "registre": "data/corpus/registre.yaml",
+      "base": "data/base",
+      "lexique": "data/lexique/synonymes.yaml",
+      "appariement": "data/pairing",
+      "gold": "data/gold",
+      "resultats": "data/results",
+      "sorties": "data/outputs",
+      "modeles": "models"
+    },
+    "ingestion": {
+      "passage_tokens_min": 400,
+      "passage_tokens_max": 800,
+      "recouvrement": 0.15,
+      "passage_tokens_plancher": 20,
+      "lignes_courantes_ratio": 0.3
+    },
+    "embeddings": {
+      "modele": "BAAI/bge-m3",
+      "candidats": [
+        "BAAI/bge-m3",
+        "intfloat/multilingual-e5-large",
+        "dangvantuan/sentence-camembert-base"
+      ],
+      "repli_leger": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "repli_hors_ligne_dims": 256,
+      "taille_lot": 16
+    },
+    "consultation": {
+      "k_bm25": 50,
+      "k_dense": 50,
+      "rrf_k": 60,
+      "rrf_k_ablation": [
+        10,
+        20,
+        60
+      ],
+      "top_n": 5,
+      "expansion_lexique": true,
+      "max_synonymes_par_terme": 4,
+      "poids_expansion": 0.3,
+      "signal_abstention": "dense_max",
+      "seuil_abstention": 0.489,
+      "critere_calibration": "refus_a_tort_max",
+      "refus_a_tort_max": 0.05,
+      "reponse_redigee": false
+    },
+    "appariement": {
+      "poids_intitule": 0.5,
+      "poids_valeurs": 0.5,
+      "seuil_candidat": 0.35,
+      "seuil_code_stable": 0.55,
+      "statuts_utilisables": [
+        "valide",
+        "candidat"
+      ],
+      "statuts_evaluation": [
+        "valide"
+      ],
+      "repli_evaluation_candidats": true
+    },
+    "commentaire": {
+      "nb_modeles_redaction": 3,
+      "max_valeurs_contexte": 120,
+      "decimales_pct": 1,
+      "annees_exclues": [
+        2010,
+        2035
+      ],
+      "longueur_min_enonce": 5
+    },
+    "llm": {
+      "backend": "ollama",
+      "temperature": 0,
+      "nouvelles_tentatives_json": 1,
+      "ollama": {
+        "modele": "gpt-oss:20b",
+        "url": "http://127.0.0.1:11434",
+        "delai_max_s": 900,
+        "candidats": [
+          "gpt-oss:20b",
+          "llama3.1:8b",
+          "qwen2.5:7b-instruct",
+          "mistral:7b-instruct",
+          "llama3.2:3b"
+        ]
+      },
+      "api": {
+        "fournisseur": "groq",
+        "url": "https://api.groq.com/openai/v1",
+        "modele": "openai/gpt-oss-20b",
+        "modele_borne_haute": "openai/gpt-oss-120b",
+        "cle_env": "GROQ_API_KEY",
+        "delai_max_s": 120,
+        "essais_reseau": 3,
+        "attente_base_s": 2,
+        "intervalle_min_s": 2.1,
+        "cache": "data/cache/llm"
+      },
+      "gguf": "models/llm/modele.gguf"
+    },
+    "note_strategique": {
+      "nb_min": 5,
+      "nb_max": 7,
+      "historique_min": 3,
+      "bonus_objectif": 1.0,
+      "tendance_meme_signe": 3,
+      "max_mots": 900,
+      "seuil_objectif": 0.12
+    },
+    "note_analyse": {
+      "accepter_non_valides": true
+    },
+    "evaluation": {
+      "exercice": 2024,
+      "exercice_secondaire": 2023,
+      "k_succes": [
+        1,
+        5
+      ],
+      "plis_calibration": 5,
+      "nb_indicateurs_llm": 20,
+      "echantillon_relecture": 30,
+      "criteres": {
+        "h1_succes5": 0.8,
+        "h2_tfr_max": 0.05,
+        "h2_couv_ind_min": 0.8,
+        "h3_reduction_temps": 0.5,
+        "h3_part_notes_conformes": 0.8,
+        "h3_criteres_min": 4,
+        "h3_moyenne_bn": 1.5
+      }
+    }
+  },
+  "config_hash": "9c21fbaf958f",
+  "graine": 42,
+  "encodeur": "BAAI/bge-m3",
+  "modele_langage": "mode sans modèle de langage (--llm none)",
+  "moteur_llm": {
+    "moteur": "none",
+    "modele": "aucun (mode extractif)"
+  },
+  "versions": {
+    "python": "3.13.15",
+    "pymupdf": "1.28.2",
+    "rank-bm25": "0.2.2",
+    "faiss-cpu": "1.15.1",
+    "numpy": "2.1.3",
+    "scipy": "1.16.3",
+    "scikit-learn": "1.6.1",
+    "python-docx": "1.2.0",
+    "openpyxl": "3.1.5",
+    "matplotlib": "3.10.0",
+    "streamlit": "non installé",
+    "sentence-transformers": "6.1.0"
+  },
+  "machine": {
+    "systeme": "Linux-6.6.122+-x86_64-with-glibc2.39",
+    "processeur": "x86_64",
+    "coeurs": 2,
+    "ram_go": 12.7,
+    "carte_graphique": "non utilisée (CPU seul)"
+  },
+  "duree_s": 467.2,
+  "documents": [
+    {
+      "doc_id": "annuaire_2021",
+      "fichier": "annuaire_2021.pdf",
+      "sha256": "dba61a30a97a537f5a8762c6fe617ba7942c9f29f7edf1bcace5657fb2ca6b59",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "annuaire_2022",
+      "fichier": "annuaire_2022.pdf",
+      "sha256": "061e2f03c8e571cdfda0e5cdc943626bd45f685a5c4ae64b57542db40f8dcde4",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "annuaire_2023",
+      "fichier": "annuaire_2023.pdf",
+      "sha256": "e731932ee3bc5196512b88f2e44c363fb63ed94417c194f0a97f7add6d3e78fe",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "annuaire_2024",
+      "fichier": "annuaire_2024.pdf",
+      "sha256": "308ebfe2e1226693aaabe80dc927ebe76f0572c135fe1aeffbfa217f95196491",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "contexte_bulletin_2023_05",
+      "fichier": "contexte_bulletin_2023_05.pdf",
+      "sha256": "9704b9be12d26fd1fc176cd20f11a46ee6feaa581c2f6c9aaa1e9cdf9e916a13",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "contexte_bulletin_2024",
+      "fichier": "contexte_bulletin_2024.pdf",
+      "sha256": "3e977c2fb0fedcae86ef94f5de36e464bfd0a1265dbcb810be97ccbffe8b8fe0",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "contexte_perspective_competitivite_pme",
+      "fichier": "contexte_perspective_competitivite_pme.pdf",
+      "sha256": "aa864e8cf7bda2334ff2a6025039baf302f07021668c0fcf5b1a1aceb2421353",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "contexte_perspective_inflation_2023",
+      "fichier": "contexte_perspective_inflation_2023.pdf",
+      "sha256": "cc93c0d5939f1beec39219ca39b2854cb077b1acf1c96f87d97ee15c7ab5598d",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "note_conjoncture_T1_2024",
+      "fichier": "note_conjoncture_T1_2024.pdf",
+      "sha256": "ebcb30009f9f416e34dace6be8b8b26e668dadfb9b5d826a5fc484024e3ac3f6",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "note_conjoncture_T1_2025",
+      "fichier": "note_conjoncture_T1_2025.pdf",
+      "sha256": "edebcf68be09d71fb07cd75563a8449941b6679878b93c69b7b54fcbcba5b60d",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "note_conjoncture_T2_2024",
+      "fichier": "note_conjoncture_T2_2024.pdf",
+      "sha256": "ee2e64f2c61a830595ae5bde6a5fcc1c87ce94ea047519e436319be0571b5a3b",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "note_conjoncture_T3_2022",
+      "fichier": "note_conjoncture_T3_2022.pdf",
+      "sha256": "d79cf4d5ba27f29cba7ba32dd732a9aec4268d1ff2df6cf797a4494f18244fae",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "note_conjoncture_T3_2024",
+      "fichier": "note_conjoncture_T3_2024.pdf",
+      "sha256": "e2709da6258788f5496a56e419bcc917adc69349dd49289a31a9164c022b6a42",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "note_conjoncture_T4_2023",
+      "fichier": "note_conjoncture_T4_2023.pdf",
+      "sha256": "7f7657bf58d4dfea493ac7568cf7cf83972f1cf4d1612b47325fc2968a700899",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "rapport_analyse_2021",
+      "fichier": "rapport_analyse_2021.pdf",
+      "sha256": "38915948fe67127039f92e1ba5f671bb6e915cc137b51c212e01e3efe3cb0e87",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "rapport_analyse_2022",
+      "fichier": "rapport_analyse_2022.pdf",
+      "sha256": "9e22e2249f55ed95b027b370e0f0bf062057e5bb9eb853d92b5497d25c066f5a",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "rapport_analyse_2023",
+      "fichier": "rapport_analyse_2023.pdf",
+      "sha256": "ef908ae918c7ffec9acf1d1bf0368cf75babee711f9dbffe0368b892bf41e8bd",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "rapport_analyse_2024",
+      "fichier": "rapport_analyse_2024.pdf",
+      "sha256": "f1122c8f3dec6c82ad75fbe9fcaf031d0b03eceefe38cf3ef2408a22b8402ba1",
+      "statut_diffusion": "publie"
+    },
+    {
+      "doc_id": "test_interne_fictif",
+      "fichier": "test_interne_fictif.pdf",
+      "sha256": "37d36c455b070b64593b13f7cfd79d574e5e7d135cc2e53ea5d8f4d2348211f4",
+      "statut_diffusion": "interne"
+    }
+  ]
+}
