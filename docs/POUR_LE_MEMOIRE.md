@@ -118,6 +118,10 @@ Lecture :
   base) ; une recherche n'encode que la question, en une fraction de seconde. Le poste de la Cellule devra donc
   prévoir une reconstruction longue, sans effet sur l'usage quotidien ;
 - réserve (E18) : ces scores servent aussi au choix ; H1 est à confirmer sur les questions des cadres.
+- bge-m3 contre e5-large, question par question : MRR hybride 0,694 contre 0,681, p = 0,73 (12 gagnées,
+  12 perdues) ; voie dense 0,674 contre 0,619, p = 0,31. Les deux encodeurs sont **statistiquement
+  équivalents** sur ce jeu : le maintien de bge-m3 repose sur la règle a priori (E18) et sur sa lecture des
+  passages entiers, non sur une supériorité démontrée.
 
 Texte proposé (3.1.5) : « Cinq encodeurs ont été comparés sur les 52 questions du jeu de consultation. bge-m3,
 retenu, place une page pertinente parmi les cinq premiers résultats pour 88 % des questions en recherche
@@ -157,17 +161,24 @@ Version rédigée par le modèle de langage (`data/results/2026-09-28_api_gpt-os
 
 ## 4.1 / 4.2 — H1, récupération (source : `2026-09-30_bge-m3_sans-llm/`, 52 questions du corpus, encodeur bge-m3)
 
-| Configuration | Succès@5 | MRR |
-|---|---|---|
-| Lexicale seule (lexique pondéré) | 0,71 | n.c. |
-| Dense seule (bge-m3) | 0,85 | 0,67 |
-| **Hybride, RRF k = 60** | **0,88** | **0,69** |
+| Configuration | Succès@1 | Succès@5 | MRR | nDCG@5 |
+|---|---|---|---|---|
+| Lexicale seule (lexique pondéré) | 0,40 | 0,71 | 0,53 | 0,59 |
+| Lexicale sans lexique | 0,38 | 0,71 | 0,52 | 0,61 |
+| Dense seule (bge-m3) | 0,54 | 0,85 | 0,67 | **0,85** |
+| Hybride, RRF k = 10 | **0,60** | **0,88** | **0,71** | 0,83 |
+| Hybride, RRF k = 20 | 0,58 | 0,87 | 0,69 | 0,82 |
+| **Hybride, RRF k = 60 (retenu a priori)** | 0,58 | **0,88** | 0,69 | 0,82 |
+| Hybride sans lexique | **0,60** | 0,85 | **0,71** | 0,84 |
 
-(Succès@1, nDCG@5 et ablations k = 10, 20 et « sans lexique » : dans `h1_recuperation_configurations.csv` du
-dossier, à reporter une fois versé dans le dépôt ; « n.c. » = non communiqué dans le résumé.)
+Lecture des ablations : k = 60 a été fixé **a priori** (valeur usuelle de la littérature) et n'est pas réajusté
+sur ce jeu, même si k = 10 obtient un MRR un peu plus élevé (0,71 contre 0,69) : un réglage a posteriori serait
+du sur-ajustement. Le lexique métier fait gagner 2 questions au Succès@5 hybride (0,88 contre 0,85) mais pas au
+MRR ; son effet est faible.
 
-Wilcoxon apparié (hybride k = 60, sur le rang réciproque) : contre la voie lexicale, **p = 0,001** ; contre la
-voie dense, p = 0,681. L'hybride améliore nettement la recherche par mots-clés ; face à bge-m3 seul, le gain
+Wilcoxon apparié (hybride k = 60, sur le rang réciproque) : contre la voie lexicale, Δ = +0,168, **p < 0,001**
+(25 questions gagnées, 6 perdues) ; contre la voie dense, Δ = +0,019, p = 0,681 (9 gagnées, 11 perdues). Sur le
+Succès@5 : contre la lexicale, p = 0,007 ; contre la dense, p = 0,414. L'hybride améliore nettement la recherche par mots-clés ; face à bge-m3 seul, le gain
 (+0,03 de Succès@5, +0,02 de MRR) n'est pas significatif.
 Abstention (validation croisée à 5 plis, signal = cosinus dense maximal) : **100 %** des questions hors corpus
 refusées (10/10) ; **3/52** questions du corpus refusées à tort (5,8 %, légèrement au-dessus de la cible de 5 %
