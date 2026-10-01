@@ -11,10 +11,14 @@ Deux exécutions de référence (config `config.yaml`, graine 42, même base de 
   **`api` Groq `openai/gpt-oss-20b`** (`run_all --llm api`, 11 h 20 d'exécution, surtout de l'attente liée aux
   limites du compte gratuit). **C'est la source des valeurs H1-ancrage, H2 et Tableau 3.2 ci-dessous.**
   Les valeurs de H1-récupération y sont identiques à celles du cloud.
+- `MDS_resultats/2026-09-30_bge-m3_sans-llm/` (Google Colab, CPU) : base reconstruite avec l'**encodeur retenu
+  bge-m3**, `run_all --llm none --encodeurs-mesures …`. **C'est la source des valeurs H1-récupération et
+  abstention ci-dessous** (à verser dans `data/results/`).
 
 > **Trois réserves à rappeler dans le chapitre 4, tant qu'elles tiennent :**
 > 1. résultats **PROVISOIRES** : appariements au statut « candidat », non encore validés par double lecture ;
-> 2. voie dense mesurée avec l'**encodeur de repli hors ligne** (TF-IDF + SVD), et non avec bge-m3 ;
+> 2. H1-récupération mesurée avec bge-m3 sur le **jeu qui a servi à choisir l'encodeur** (biais de sélection,
+>    E18) : à confirmer sur les questions des cadres ;
 > 3. modèle de langage appelé via un **service distant de développement** (Groq, `openai/gpt-oss-20b`), et non
 >    par Ollama sur le poste cible : mêmes poids ouverts, mais temps de réponse non transposables.
 >
@@ -151,22 +155,32 @@ Version rédigée par le modèle de langage (`data/results/2026-09-28_api_gpt-os
 | « Par rapport à 2023, l'évolution la plus marquée concerne « Stock des PME » (hausse de 12,8 %). » | n° 74 (pme-typologie, non validé) | 12,8 % | 443 524 | Stock des PME / 2024 (e) | Annuaire 2024, tableau 16 | 27 |
 | (même énoncé) | n° 74 | 12,8 % | 393 166 | Stock des PME / 2023 (e) | Annuaire 2024, tableau 16 | 27 |
 
-## 4.1 / 4.2 — H1, récupération (source : `h1_recuperation_configurations.csv`, 52 questions du corpus)
+## 4.1 / 4.2 — H1, récupération (source : `2026-09-30_bge-m3_sans-llm/`, 52 questions du corpus, encodeur bge-m3)
 
-| Configuration | Succès@1 | Succès@5 | MRR | nDCG@5 |
-|---|---|---|---|---|
-| Lexicale seule (lexique pondéré) | 0,40 | 0,71 | 0,53 | 0,59 |
-| Dense seule (repli) | 0,40 | 0,75 | 0,56 | 0,71 |
-| Hybride, RRF k = 10 | 0,44 | 0,77 | 0,59 | 0,70 |
-| Hybride, RRF k = 20 | 0,42 | 0,77 | 0,57 | 0,70 |
-| **Hybride, RRF k = 60** | 0,42 | **0,79** | 0,58 | 0,71 |
-| Hybride sans lexique | 0,42 | 0,73 | 0,57 | 0,72 |
+| Configuration | Succès@5 | MRR |
+|---|---|---|
+| Lexicale seule (lexique pondéré) | 0,71 | n.c. |
+| Dense seule (bge-m3) | 0,85 | 0,67 |
+| **Hybride, RRF k = 60** | **0,88** | **0,69** |
 
-Wilcoxon apparié (hybride k = 60, sur le MRR) : contre la voie lexicale, Δ = +0,055, p = 0,125 ; contre la
-voie dense, Δ = +0,022, p = 0,403. Écarts non significatifs à 5 %.
-Abstention (validation croisée à 5 plis) : **90 %** des questions hors corpus refusées (9/10) ; **3/52**
-questions du corpus refusées à tort (5,8 %) ; seuil 0,489 (cosinus dense).
+(Succès@1, nDCG@5 et ablations k = 10, 20 et « sans lexique » : dans `h1_recuperation_configurations.csv` du
+dossier, à reporter une fois versé dans le dépôt ; « n.c. » = non communiqué dans le résumé.)
+
+Wilcoxon apparié (hybride k = 60, sur le rang réciproque) : contre la voie lexicale, **p = 0,001** ; contre la
+voie dense, p = 0,681. L'hybride améliore nettement la recherche par mots-clés ; face à bge-m3 seul, le gain
+(+0,03 de Succès@5, +0,02 de MRR) n'est pas significatif.
+Abstention (validation croisée à 5 plis, signal = cosinus dense maximal) : **100 %** des questions hors corpus
+refusées (10/10) ; **3/52** questions du corpus refusées à tort (5,8 %, légèrement au-dessus de la cible de 5 %
+fixée pour la calibration : la cible porte sur les plis d'apprentissage, le taux rapporté sur les plis de test) ;
+seuil 0,621.
+Pour mémoire, avec l'encodeur de repli (28/09) : Succès@5 0,79, MRR 0,58, 9/10 hors corpus refusées.
 Kappa du jeu de questions : **non mesuré** (seconde annotation à faire).
+
+Texte proposé (4.2) : « Avec l'encodeur bge-m3, la recherche hybride place une page pertinente parmi les cinq
+premiers résultats pour 88 % des 52 questions (MRR 0,69), au-dessus du seuil de 80 % fixé par H1. Elle fait
+significativement mieux que la recherche par mots-clés (p = 0,001), mais pas significativement mieux que la
+recherche sémantique seule (85 %, p = 0,68) : avec un encodeur performant, l'apport de la fusion est faible
+sur ce jeu. Toutes les questions hors sujet sont refusées. »
 
 ## 4.3 — H1, ancrage (source : `exercice_20XX/h1_ancrage_par_indicateur.csv`, moteur api gpt-oss-20b)
 
@@ -253,7 +267,7 @@ Fichiers prêts dans `data/results/2026-09-28_api_gpt-oss-20b/` (avec les notes 
 
 | Hypothèse | Verdict (provisoire) |
 |---|---|
-| H1 | **non validée** : Succès@5 = 0,79 < 0,80 ; hybride ≥ meilleure voie seule (oui, non significatif) ; ancrage par les rédactions antérieures sans effet (0,17 vs 0,19, p = 0,77). Mais LLM ancré > gabarits (p = 0,013, 2024) |
+| H1 | **non validée** (règle stricte), mais **volet récupération atteint** : Succès@5 = 0,88 ≥ 0,80 avec bge-m3 ; hybride ≥ meilleure voie seule (0,88 vs 0,85 ; significatif contre lexicale, p = 0,001, non contre dense, p = 0,68). Le critère qui échoue est l'ancrage par les rédactions antérieures (ROUGE-L 0,17 vs 0,19, p = 0,77) ; en revanche, LLM ancré > gabarits (p = 0,013, 2024) |
 | H2 | **non validée** (au sens strict de la règle) : 0 valeur non soutenue après contrôle (atteint), mais aucune avant contrôle en 2024 (le critère « ≥ 1 sans » n'est atteint qu'en 2023) ; TFR à établir par relecture ; Couv_ind 0,92 (atteint) |
 | H3 | **non concluante** : non mesurée (temps système mesurés seulement) |
 
@@ -261,15 +275,15 @@ Fichiers prêts dans `data/results/2026-09-28_api_gpt-oss-20b/` (avec les notes 
 
 Proposition de phrase de résultats, à ajuster après les mesures définitives :
 « Sur un corpus de 18 publications (661 pages) du MINPMEESA, la recherche hybride place une page pertinente
-parmi les cinq premiers résultats pour 79 % des 52 questions de test, contre 71 % pour la recherche lexicale
-seule, et refuse 9 questions hors sujet sur 10. Le contrôle de citation littérale garantit que toute valeur
+parmi les cinq premiers résultats pour 88 % des 52 questions de test, contre 71 % pour la recherche lexicale
+seule, et refuse toutes les questions hors sujet. Le contrôle de citation littérale garantit que toute valeur
 d'un commentaire produit est rattachée à une cellule d'un tableau de l'Annuaire ou à une variation calculée
 par le programme. Ancré sur ces valeurs, le modèle gpt-oss-20b produit des commentaires plus proches des
 commentaires publiés que des gabarits déterministes (ROUGE-L 0,19 contre 0,14, p = 0,013), sans aucune valeur
 non soutenue après contrôle. »
 *Abstract* : "On a corpus of 18 MINPMEESA publications (661 pages), hybrid retrieval ranks a relevant page
-among the top five results for 79% of 52 test questions, versus 71% for lexical search alone, and declines
-9 out of 10 out-of-scope questions. Literal citation control guarantees that every value in a generated
+among the top five results for 88% of 52 test questions, versus 71% for lexical search alone, and declines
+all out-of-scope questions. Literal citation control guarantees that every value in a generated
 commentary is traced to an Annuaire table cell or to a variation computed by the program. Grounded on these
 values, the gpt-oss-20b model produces commentaries closer to the published ones than deterministic templates
 (ROUGE-L 0.19 vs 0.14, p = 0.013), with no unsupported value left after control."

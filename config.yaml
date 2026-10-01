@@ -55,6 +55,11 @@ consultation:
   poids_expansion: 0.3            # poids des termes ajoutés par le lexique (fixé a priori)
   signal_abstention: dense_max    # bm25_max | dense_max : choisi sur le jeu H1 (4 combinaisons comparées, voir resultats.json)
   seuil_abstention: 0.489  # calibré (evaluation.h1_recuperation, validation croisée)
+  # Le signal (cosinus dense) dépend de l'encodeur : un seuil calibré par encodeur.
+  # `seuil_abstention` sert si l'encodeur de la base n'est pas listé ici.
+  seuils_par_encodeur:
+    "repli-hors-ligne-tfidf-svd": 0.489   # run du 28/09/2026
+    "BAAI/bge-m3": 0.621                  # run du 30/09/2026 (Colab), validation croisée 5 plis
   # Critère de calibration : « refus_a_tort_max » = seuil le plus haut qui refuse
   # au plus `refus_a_tort_max` des questions du corpus (un refus à tort prive
   # l'utilisateur d'une source ; une réponse hors sujet ne montre que des passages

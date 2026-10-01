@@ -120,7 +120,7 @@ def executer(llm: str | None = None, appliquer_seuil: bool = True, nom_sortie: s
     sig = f"{cfg['consultation']['signal_abstention']}/{cfg['consultation']['critere_calibration']}"
     R["h1_abstention_retenue"] = sig
     if appliquer_seuil:
-        h1.appliquer_seuil(R["h1_abstention"][sig]["seuil_calibre"])
+        h1.appliquer_seuil(R["h1_abstention"][sig]["seuil_calibre"], encodeur=m.nom_encodeur)
         m.cfg = config.charger()
     R["kappa_jeu_consultation"] = kappa_jeu(jeu)
     print("Choix de l'encodeur et du modèle de langage…", flush=True)

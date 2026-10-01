@@ -67,6 +67,11 @@ def reponse_llm(client, passages: list[dict], question: str) -> dict | None:
             "redaction": getattr(client, "nom", "modèle de langage")}
 
 
+def seuil_pour(cfg_consultation: dict, encodeur: str) -> float:
+    """Seuil d'abstention calibré pour l'encodeur de la base (le signal en dépend)."""
+    return (cfg_consultation.get("seuils_par_encodeur") or {}).get(encodeur, cfg_consultation["seuil_abstention"])
+
+
 def consulter(question: str, m: Moteur | None = None, mode: str = "hybride",
               journaliser: bool = True, rediger: bool | None = None, client=None) -> dict:
     t0 = time.time()
@@ -74,7 +79,7 @@ def consulter(question: str, m: Moteur | None = None, mode: str = "hybride",
     cfg = m.cfg["consultation"]
     autorises = m.autorises(statut="publie")               # filtre AVANT classement
     signal = m.signal_confiance(question, autorises)
-    seuil = cfg["seuil_abstention"]
+    seuil = seuil_pour(cfg, m.nom_encodeur)
     sortie = {"question": question, "mode": mode, "encodeur": m.nom_encodeur,
               "signal": round(signal, 3), "seuil": seuil, "abstention": False,
               "message": "", "passages": [], "reponse": None}

@@ -166,12 +166,21 @@ def _csv(chemin: Path, lignes: list[dict]):
         w.writerows(lignes)
 
 
-def appliquer_seuil(seuil: float, chemin_config: Path | None = None) -> None:
-    """Reporte le seuil calibré dans config.yaml (ligne seuil_abstention)."""
+def appliquer_seuil(seuil: float, chemin_config: Path | None = None, encodeur: str | None = None) -> None:
+    """Reporte le seuil calibré dans config.yaml : ligne seuil_abstention, et ligne de l'encodeur
+    dans seuils_par_encodeur (ajoutée si absente)."""
     import re
     p = chemin_config or (config.RACINE / "config.yaml")
     s = p.read_text(encoding="utf-8")
     s = re.sub(r"(seuil_abstention:\s*)[0-9.]+(\s*#.*)?",
                lambda m: f"{m.group(1)}{seuil}  # calibré (evaluation.h1_recuperation, validation croisée)", s)
+    if encodeur and "seuils_par_encodeur:" in s:
+        motif = re.compile(r'^(\s*)"' + re.escape(encodeur) + r'":\s*[0-9.]+.*$', re.M)
+        ligne = f'"{encodeur}": {seuil}   # calibré (validation croisée)'
+        if motif.search(s):
+            s = motif.sub(lambda m: m.group(1) + ligne, s)
+        else:
+            s = re.sub(r"^(\s*)seuils_par_encodeur:\s*$", lambda m: f"{m.group(0)}\n{m.group(1)}  {ligne}", s,
+                       count=1, flags=re.M)
     p.write_text(s, encoding="utf-8")
     config.charger.cache_clear()
