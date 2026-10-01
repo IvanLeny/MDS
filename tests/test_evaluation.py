@@ -82,3 +82,27 @@ def test_choix_encodeur_reprise(base_complete, tmp_path):
     assert list((tmp_path / "partiel").glob("*.json"))
     r2 = choix_encodeur.comparer(m, jeu, tmp_path, [])
     assert r1 == r2
+
+
+def test_cache_vecteurs_reprise(tmp_path, monkeypatch):
+    """Encodage par tranches sur disque : une relance relit les tranches déjà faites, à l'identique."""
+    import numpy as np
+    from minpmeesa.store import encodeur as encmod
+
+    appels = []
+
+    class FauxModele:
+        def encode(self, textes, **k):
+            appels.append(len(textes))
+            return np.array([[len(t), 1.0] for t in textes], dtype="float32")
+
+    enc = object.__new__(encmod.EncodeurST)
+    enc.nom, enc.lot, enc._pp, enc.progression, enc._m = "org/modele", 16, "", False, FauxModele()
+    monkeypatch.setenv("MINPMEESA_CACHE_VECTEURS", str(tmp_path))
+    textes = [f"passage {i}" * (i % 5 + 1) for i in range(70)]
+    v1 = enc.encoder_passages(textes)
+    assert v1.shape == (70, 2) and appels == [32, 32, 6]
+    appels.clear()
+    v2 = enc.encoder_passages(textes)
+    assert appels == [] and np.array_equal(v1, v2)
+    assert len(list((tmp_path / "org__modele").glob("*.npy"))) == 3

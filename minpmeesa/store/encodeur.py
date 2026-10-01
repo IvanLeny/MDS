@@ -10,6 +10,7 @@ Le nom de l'encodeur effectivement utilisé est tracé dans toutes les sorties.
 """
 from __future__ import annotations
 
+import os
 import pickle
 from pathlib import Path
 
@@ -50,9 +51,36 @@ class EncodeurST(Encodeur):
         self._pp, self._pq = ("passage: ", "query: ") if e5 else ("", "")
 
     def encoder_passages(self, textes):
-        v = self._m.encode([self._pp + t for t in textes], batch_size=self.lot,
-                           normalize_embeddings=True, show_progress_bar=self.progression)
-        return np.asarray(v, dtype="float32")
+        cache = os.environ.get("MINPMEESA_CACHE_VECTEURS")
+        if not cache:
+            v = self._m.encode([self._pp + t for t in textes], batch_size=self.lot,
+                               normalize_embeddings=True, show_progress_bar=self.progression)
+            return np.asarray(v, dtype="float32")
+        return self._encoder_avec_cache(textes, Path(cache) / self.nom.replace("/", "__"))
+
+    def _encoder_avec_cache(self, textes, dossier: Path, taille: int = 32):
+        """Encodage par tranches enregistrées sur disque : une exécution interrompue reprend
+        aux tranches manquantes. La clé d'une tranche est l'empreinte de son texte exact."""
+        import hashlib
+        import time
+        dossier.mkdir(parents=True, exist_ok=True)
+        morceaux, n = [], (len(textes) + taille - 1) // taille
+        t0 = time.time()
+        for k in range(n):
+            tranche = [self._pp + t for t in textes[k * taille:(k + 1) * taille]]
+            cle = hashlib.sha256("\x00".join(tranche).encode("utf-8")).hexdigest()[:24]
+            f = dossier / f"{cle}.npy"
+            if f.exists():
+                morceaux.append(np.load(f))
+                continue
+            v = np.asarray(self._m.encode(tranche, batch_size=self.lot, normalize_embeddings=True,
+                                          show_progress_bar=False), dtype="float32")
+            tmp = dossier / f"{cle}.tmp.npy"
+            np.save(tmp, v)
+            tmp.replace(f)                       # une tranche n'est « faite » qu'une fois écrite en entier
+            morceaux.append(v)
+            print(f"  encodage {self.nom} : tranche {k + 1}/{n} ({time.time() - t0:.0f} s)", flush=True)
+        return np.vstack(morceaux)
 
     def encoder_requete(self, texte):
         v = self._m.encode([self._pq + texte], normalize_embeddings=True, show_progress_bar=False)
