@@ -133,7 +133,7 @@
 - **constat** : En 2024, pour « Évolution du nombre de PME créées dans les CFCE entre 2018 et 2024 selon le secteur d’activité », le total s'établit à 21 132.
   - source : annuaire_2024, tableau 8, p. 20 (Total / Total | 2024 · Effectif)
 - **constat** : Par rapport à 2023, ce total progresse de 7,5 %.
-  - source : variation calculée (var_rel_pct) : Yaoundé / Total, valeurs n° 10476 et n° 10475 (réf. 2023)
+  - source : variation calculée (var_rel_pct) : Total / Total, valeurs n° 10808 et n° 10807 (réf. 2023)
 - **constat** : Depuis 2018, la hausse cumulée atteint 57,4 %.
   - source : variation calculée (var_rel_pct) : Total / Total, valeurs n° 10808 et n° 10802 (réf. 2018)
 - **constat** : Dans la répartition par secteur d’activité, les parts les plus élevées en 2024 reviennent à « Yaoundé / Tertiaire » (40,6 %) et à « Douala / Tertiaire » (30,5 %).
@@ -149,7 +149,7 @@
 - **constat** : En 2024, pour « Évolution du nombre de PME créées dans les CFCE entre 2018 et 2024 par type », le total s'établit à 21 132.
   - source : annuaire_2024, tableau 9, p. 22 (Total / Total | 2024 · Effectif)
 - **constat** : Par rapport à 2023, ce total progresse de 7,5 %.
-  - source : variation calculée (var_rel_pct) : Yaoundé / Total, valeurs n° 10834 et n° 10833 (réf. 2023)
+  - source : variation calculée (var_rel_pct) : Total / Total, valeurs n° 11110 et n° 11109 (réf. 2023)
 - **constat** : Depuis 2018, la hausse cumulée atteint 57,4 %.
   - source : variation calculée (var_rel_pct) : Total / Total, valeurs n° 11110 et n° 11104 (réf. 2018)
 - **constat** : Dans la répartition par type, les parts les plus élevées en 2024 reviennent à « Douala / TPE » (31,2 %) et à « Yaoundé / TPE » (30,1 %).
@@ -165,7 +165,7 @@
 - **constat** : En 2024, pour « Évolution du nombre de PME créées dans les CFCE entre 2018 et 2024 selon la forme juridique », le total s'établit à 21132.
   - source : annuaire_2024, tableau 10, p. 24 (Total / Total | 2024 · Effectif)
 - **constat** : Par rapport à 2023, ce total progresse de 7,5 %.
-  - source : variation calculée (var_rel_pct) : Yaoundé / Total, valeurs n° 11144 et n° 11143 (réf. 2023)
+  - source : variation calculée (var_rel_pct) : Total / Total, valeurs n° 11466 et n° 11465 (réf. 2023)
 - **constat** : Depuis 2018, la hausse cumulée atteint 57,4 %.
   - source : variation calculée (var_rel_pct) : Total / Total, valeurs n° 11466 et n° 11460 (réf. 2018)
 - **constat** : Dans la répartition par forme juridique, les parts les plus élevées en 2024 reviennent à « Yaoundé / ETS » (28 %) et à « Douala / SARL » (18,9 %).
@@ -182,7 +182,7 @@
 - **constat** : En 2024, pour « Évolution du nombre de PME créées dans les CFCE entre 2018 et 2024 selon le genre », le total s'établit à 21 132.
   - source : annuaire_2024, tableau 11, p. 25 (Total / Total | 2024 · Effectif)
 - **constat** : Par rapport à 2023, ce total progresse de 7,5 %.
-  - source : variation calculée (var_rel_pct) : Yaoundé / Total, valeurs n° 11490 et n° 11489 (réf. 2023)
+  - source : variation calculée (var_rel_pct) : Total / Total, valeurs n° 11739 et n° 11738 (réf. 2023)
 - **constat** : Depuis 2018, la hausse cumulée atteint 57,4 %.
   - source : variation calculée (var_rel_pct) : Total / Total, valeurs n° 11739 et n° 11733 (réf. 2018)
 - **constat** : Dans la répartition par genre, les parts les plus élevées en 2024 reviennent à « Yaoundé / Masculin » (31,7 %) et à « Douala / Masculin » (25,5 %).

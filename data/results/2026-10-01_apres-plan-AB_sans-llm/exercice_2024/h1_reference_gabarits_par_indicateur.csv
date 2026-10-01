@@ -1,0 +1,14 @@
+﻿code;rouge_l_gabarits;sim_gabarits;commente_gabarits;valeurs_retenues_gabarits;mots_gabarits
+stock-pme-region;0.1448;0.5259;1;6;101
+stock-pme-secteur-activite;0.1826;0.5837;1;6;101
+stock-pme-tranche-age-promoteur-dirigeant;0.1278;0.4317;1;11;114
+pme-creees-sur-periode;0.1655;0.5097;1;6;97
+pme-creees-secteur-activite;0.1724;0.4614;1;6;119
+proportion-pme-creees-dans-cfce-genre;0.1782;0.3401;1;6;116
+nombre-oes-creees;0.1504;0.349;1;6;105
+oes-creees-region;0.1478;0.3506;1;6;123
+upa-enregistrees-dans-bureaux-communaux-region;0.1705;0.3434;1;6;109
+proportion-upa-enregistrees-dans-bca-genre;0.1528;0.2948;1;6;109
+upa-enregistrees-typologie-artisanat-region;0.2;0.4602;1;6;113
+pme-typologie;0.1196;0.4562;1;6;111
+pme-secteur-activite;0.2036;0.4558;1;6;113

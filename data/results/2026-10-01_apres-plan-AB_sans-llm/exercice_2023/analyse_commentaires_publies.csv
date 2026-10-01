@@ -1,0 +1,15 @@
+﻿code;tableau_n;valeurs_citees;valeurs_retrouvees;part_retrouvee
+stock-pme-region;4;21;7;0.3333
+stock-pme-secteur-activite;1;2;0;0.0
+stock-pme-tranche-age-promoteur-dirigeant;6;1;0;0.0
+pme-creees-sur-periode;7;9;4;0.4444
+nombre-pme-creees-dans-cfce;7;4;0;0.0
+pme-creees-secteur-activite;8;6;2;0.3333
+nombre-oes-creees-hors-donnee-extreme;19;12;3;0.25
+oes-creees-secteur-activite-branche;20;2;0;0.0
+oes-branche-activite;22;4;2;0.5
+upa-enregistrees-dans-bureaux-communaux-region;26;6;4;0.6667
+upa-enregistrees-dans-bureaux-communaux-sexe;27;4;4;1.0
+upa-enregistrees-typologie-artisanat-region;29;2;2;1.0
+pib-dans-secteur-primaire-agriculture-vivriere;8;10;3;0.3
+pib-dans-secteur-secondaire-eau;8;3;1;0.3333

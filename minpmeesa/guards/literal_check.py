@@ -118,7 +118,9 @@ def _score(src: dict, texte: str, debut: int | None) -> int:
         elif ligne in noms:
             sc += 4
     if re.search(r"\btotal\b", avant[-80:], re.I) and _TOTAL.search(ligne):
-        sc += 6
+        # total général (« Total », « Total / Total ») avant un sous-total (« Yaoundé / Total »)
+        general = re.fullmatch(r"\s*(total|ensemble)[^/]*(/\s*(total|ensemble)[^/]*)?", re.sub(r"\(\*+\)|\*", "", ligne))
+        sc += 6 if general else 2
     ref = src.get("exercice_ref")
     if ref is not None:
         if re.search(rf"(rapport à|depuis|par rapport à l'année)\s+{ref}\b", texte, re.I):

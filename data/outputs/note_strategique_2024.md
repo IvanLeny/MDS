@@ -35,12 +35,12 @@
 
 ## Sources
 - annuaire_2024, tableau 4, p. 18
-- annuaire_2024, tableau 8, p. 19
+- annuaire_2024, tableau 8, p. 20
 - annuaire_2024, tableau 16, p. 27
 - annuaire_2024, tableau 21, p. 30
 - annuaire_2024, tableau 29, p. 38
-- Commentaire n° 78 (stock-pme-region) — non validé
-- Commentaire n° 82 (pme-creees-secteur-activite) — non validé
-- Commentaire n° 89 (pme-typologie) — non validé
-- Commentaire n° 84 (nombre-oes-creees) — non validé
-- Commentaire n° 86 (upa-enregistrees-dans-bureaux-communaux-region) — non validé
+- Commentaire n° 444 (stock-pme-region) — non validé
+- Commentaire n° 448 (pme-creees-secteur-activite) — non validé
+- Commentaire n° 455 (pme-typologie) — non validé
+- Commentaire n° 450 (nombre-oes-creees) — non validé
+- Commentaire n° 452 (upa-enregistrees-dans-bureaux-communaux-region) — non validé

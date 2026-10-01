@@ -210,3 +210,11 @@ def test_a2_a3_a4_grandeur_unite_dimension(base_complete):
     assert "millions de Francs CFA" in txt and "de la valeur ajoutée" in txt
     r = commentary.commenter(base_complete, "upa-enregistrees-dans-bureaux-communaux-region", 2024, journaliser=False)
     assert "répartition par sexe" in commentary.texte(r)
+
+
+def test_a1_total_general_avant_sous_total(base_complete):
+    """Tableau croisé : « ce total » -> « Total / Total », jamais « Yaoundé / Total »."""
+    from minpmeesa.generation import commentary
+    r = commentary.commenter(base_complete, "pme-creees-secteur-activite", 2024, journaliser=False)
+    e = next(e for e in r["enonces"] if "ce total" in e["texte"])
+    assert ": Total / Total," in e["references"][0]["libelle"]
