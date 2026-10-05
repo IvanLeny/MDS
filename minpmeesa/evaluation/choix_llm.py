@@ -23,7 +23,7 @@ def _mesurer(con, client, inds) -> dict:
     durees, json_ok, citees, ecartees, echecs = [], 0, 0, 0, 0
     for a in inds:
         t0 = time.time()
-        r = cm.commenter(con, a["code_indicateur"], a["exercice"], client)
+        r = cm.commenter(con, a["code_indicateur"], a["exercice"], client, repli=False)
         durees.append(time.time() - t0)
         motif = r.get("motif") or ""
         json_ok += int("JSON invalide" not in motif)

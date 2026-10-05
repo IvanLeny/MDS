@@ -156,7 +156,7 @@ def executer(llm: str | None = None, appliquer_seuil: bool = True, nom_sortie: s
     statuts, _ = h2.statuts_evaluation(con, ev["exercice"])
     inds = h2.indicateurs(con, ev["exercice"], statuts)
     for a in inds:
-        durees["commentaire"].append(commentary.commenter(con, a["code_indicateur"], ev["exercice"], client, moteur=m)["duree_s"])
+        durees["commentaire"].append(commentary.commenter(con, a["code_indicateur"], ev["exercice"], client, moteur=m, repli=False)["duree_s"])
     notes_h3 = []
     for k in range(3):
         durees["note d'analyse"].append(analysis_note.rediger(con, ev["exercice"], chapitre=r"CHAPITRE I\b",

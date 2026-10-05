@@ -71,6 +71,9 @@ def afficher_commentaire(res: dict):
     if res.get("abstention"):
         st.error(f"**{res.get('mention')}** — {res.get('motif')}")
         return
+    if res.get("repli_gabarits"):
+        st.info(f"Rédaction du modèle **{res.get('modele')}** non retenue ({res['repli_gabarits']}) : "
+                "commentaire rédigé par les **gabarits**, à partir des chiffres de l'Annuaire.")
     for e in res["enonces"]:
         icone = "🔎" if e.get("type") == "constat" else "➡️"
         st.markdown(f"{icone} {e['texte']}")

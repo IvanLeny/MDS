@@ -89,7 +89,7 @@ def evaluer_h2(con, client, exercice: int, sortie: Path | None, graine: int = 42
     lignes, ecarts = [], []
     cfg = config.charger()
     for a in indicateurs(con, exercice, statuts):
-        brut = cm.commenter(con, a["code_indicateur"], exercice, client, controle=False, journaliser=True)
+        brut = cm.commenter(con, a["code_indicateur"], exercice, client, controle=False, journaliser=True, repli=False)
         if brut.get("abstention"):
             lignes.append({"code": a["code_indicateur"], "abstention_sans": 1, "abstention_avec": 1,
                            "citees": 0, "non_soutenues_sans": 0, "retenues_avec": 0, "non_soutenues_avec": 0})
@@ -153,8 +153,8 @@ def evaluer_h1_ancrage(con, client, encodeur, exercice: int, sortie: Path | None
         ref = a.get("commentaire_publie")
         if not ref:
             continue
-        avec = cm.commenter(con, a["code_indicateur"], exercice, client, avec_appui=True)
-        sans = cm.commenter(con, a["code_indicateur"], exercice, client, avec_appui=False)
+        avec = cm.commenter(con, a["code_indicateur"], exercice, client, avec_appui=True, repli=False)
+        sans = cm.commenter(con, a["code_indicateur"], exercice, client, avec_appui=False, repli=False)
         ta, ts = cm.texte(avec), cm.texte(sans)
         vr = encodeur.encoder_requete(ref)
         lignes.append({"code": a["code_indicateur"],
@@ -234,7 +234,7 @@ def comparer_gabarits(con, client, encodeur, exercice: int, sortie: Path | None)
         ligne = {"code": a["code_indicateur"]}
         confs = [("gabarits", None)] + ([("llm_ancre", client)] if client is not None else [])
         for nom, cl in confs:
-            r = cm.commenter(con, a["code_indicateur"], exercice, cl)
+            r = cm.commenter(con, a["code_indicateur"], exercice, cl, repli=False)
             t = cm.texte(r)
             ligne[f"rouge_l_{nom}"] = round(M.rouge_l(t, ref), 4) if t else 0.0
             ligne[f"sim_{nom}"] = round(M.cosinus(encodeur.encoder_requete(t), vr), 4) if t else 0.0

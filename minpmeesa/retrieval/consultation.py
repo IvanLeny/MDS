@@ -45,6 +45,12 @@ def reponse_redigee(passages: list[dict], question: str) -> dict:
     return {"texte": " ".join(e["texte"] for e in ctrl.enonces), "valeurs_ecartees": ctrl.ecartees}
 
 
+# Le modèle déclare ne pas trouver la réponse alors que la recherche a restitué des extraits
+# pertinents (signal au-dessus du seuil) : on présente plutôt la réponse extractive.
+_NE_REPOND_PAS = re.compile(r"ne (r[ée]pondent|permettent|contiennent|fournissent|mentionnent) pas|"
+                            r"pas d'information|aucune information|ne sais pas|impossible de r[ée]pondre", re.I)
+
+
 def reponse_llm(client, passages: list[dict], question: str) -> dict | None:
     """Reformulation en français clair par le modèle de langage (facultative), à partir des
     seuls extraits restitués ; chaque chiffre est contrôlé contre ces extraits."""
@@ -57,12 +63,14 @@ def reponse_llm(client, passages: list[dict], question: str) -> dict | None:
         texte = json.loads(_re.sub(r"^```(?:json)?|```$", "", brut.strip(), flags=_re.M)).get("reponse", "")
     except Exception:
         return None
-    if not isinstance(texte, str) or not texte.strip():
-        return None
+    if not isinstance(texte, str) or not texte.strip() or _NE_REPOND_PAS.search(texte):
+        return None                      # repli sur la réponse extractive (signalé)
     autorisees = [{"texte": v, "source": {"passage_id": p["passage_id"], "doc_id": p["doc_id"], "page": p["page"]}}
                   for p in passages[:3] for v in literal_check.nombres(p["texte"])]
     ctrl = literal_check.controler([{"type": "constat", "texte": t} for t in _re.split(r"(?<=[.!?])\s+", texte) if t],
                                    autorisees, [])
+    if not ctrl.enonces:
+        return None
     return {"texte": " ".join(e["texte"] for e in ctrl.enonces), "valeurs_ecartees": ctrl.ecartees,
             "redaction": getattr(client, "nom", "modèle de langage")}
 
@@ -97,7 +105,9 @@ def consulter(question: str, m: Moteur | None = None, mode: str = "hybride",
                 "texte": p["texte"], "score": round(r.score, 5)})
         if (cfg["reponse_redigee"] if rediger is None else rediger) and sortie["passages"]:
             r = reponse_llm(client, sortie["passages"], question) if client is not None else None
-            sortie["reponse"] = r or {**reponse_redigee(sortie["passages"], question), "redaction": "extractive"}
+            sortie["reponse"] = r or {**reponse_redigee(sortie["passages"], question),
+                                      "redaction": "extractive" if client is None else
+                                      "extractive (repli : réponse du modèle inexploitable)"}
     sortie["duree_s"] = round(time.time() - t0, 3)
     if journaliser:
         db.journaliser(m.con, "consultation", {"question": question, "mode": mode},

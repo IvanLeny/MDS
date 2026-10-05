@@ -249,9 +249,14 @@ def extractif(ctx: ic.Contexte) -> list[dict]:
 # ------------------------------------------------------------ service
 def commenter(con, code: str, exercice: int, client: ClientLLM | None = None,
               controle: bool = True, avec_appui: bool = True, journaliser: bool = True,
-              moteur=None, statuts: list[str] | None = None) -> dict:
+              moteur=None, statuts: list[str] | None = None, repli: bool | None = None) -> dict:
     """Commentaire d'un indicateur. `controle=False` et `avec_appui=False` servent
-    uniquement aux configurations d'évaluation (H1 ancrage, H2)."""
+    uniquement aux configurations d'évaluation (H1 ancrage, H2).
+
+    `repli` (par défaut : config `commentaire.repli_gabarits`) : si la réponse du modèle est
+    inexploitable (JSON invalide, abstention du modèle, trop peu d'énoncés soutenus après
+    contrôle), le commentaire est rédigé par les gabarits, et ce repli est signalé. Les
+    évaluations du modèle (H1, H2, Tableau 3.2) passent `repli=False` pour mesurer le modèle seul."""
     t0 = time.time()
     cfg = config.charger()
     statuts = statuts or cfg["appariement"]["statuts_utilisables"]
@@ -280,18 +285,27 @@ def commenter(con, code: str, exercice: int, client: ClientLLM | None = None,
         else:
             vals = ctx.rendu(cfg["commentaire"]["max_valeurs_contexte"]).split(ic.RUBRIQUE_VARIATIONS)[0]
             sys_, usr = prompts.SYSTEME_SANS_APPUI, prompts.utilisateur_sans_appui(vals)
+        ccom = cfg["commentaire"]
+        repli = ccom.get("repli_gabarits", True) if repli is None else repli
+
+        def _repli(motif: str, **extra) -> dict:
+            if repli:
+                r = commenter(con, code, exercice, None, controle, avec_appui, False, moteur, statuts)
+                if not r.get("abstention"):
+                    r.update({"modele": modele, "moteur": base["moteur"], "mode_extractif": False,
+                              "repli_gabarits": motif, "reponses_brutes": bruts, "repli_details": extra})
+                    return _fin(con, r, t0, journaliser, modele)
+            return _fin(con, abst.resultat(code, exercice, motif, reponses_brutes=bruts, **extra, **base),
+                        t0, journaliser, modele)
+
         try:
             d, bruts = generer_llm(client, sys_, usr, cfg["llm"]["nouvelles_tentatives_json"])
         except ErreurLLM as e:
-            return _fin(con, abst.resultat(code, exercice, f"modèle de langage indisponible : {e}", **base),
-                        t0, journaliser, modele)
+            return _repli(f"modèle de langage indisponible : {e}")
         if d is None:
-            return _fin(con, abst.resultat(code, exercice, "réponse du modèle non conforme (JSON invalide "
-                                           "après une nouvelle tentative)", reponses_brutes=bruts, **base),
-                        t0, journaliser, modele)
+            return _repli("réponse du modèle non conforme (JSON invalide après une nouvelle tentative)")
         if "abstention" in d:
-            return _fin(con, abst.resultat(code, exercice, f"abstention du modèle : {d['abstention']}", **base),
-                        t0, journaliser, modele)
+            return _repli(f"abstention du modèle : {d['abstention']}")
         enonces = d["enonces"]
 
     avant = [dict(e) for e in enonces]
@@ -304,6 +318,12 @@ def commenter(con, code: str, exercice: int, client: ClientLLM | None = None,
                                                            or {"nature": "non soutenue"})}
                                     for o in literal_check.occurrences(e["texte"])]} for e in enonces]
         ecartees, supprimes = [], []
+    if client is not None and controle and repli:
+        n_min = cfg["commentaire"].get("repli_min_constats", 1)
+        if sum(e.get("type") == "constat" for e in gardes) < n_min:
+            return _repli("aucun énoncé soutenu après contrôle" if not gardes else
+                          f"moins de {n_min} constats soutenus après contrôle",
+                          valeurs_ecartees=ecartees, enonces_avant_controle=avant)
     if not gardes:
         return _fin(con, abst.resultat(code, exercice, "aucun énoncé soutenu après contrôle",
                                        valeurs_ecartees=ecartees, enonces_avant_controle=avant, **base),

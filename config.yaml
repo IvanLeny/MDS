@@ -95,6 +95,11 @@ commentaire:
   # référence est assez grande (sinon +300 % sur 7 unités) ; fixé a priori.
   effectif_min_evolution: 50
   part_min_evolution: 0.01        # et au moins 1 % du total de l'indicateur
+  # Repli (interface et notes) : si la réponse du modèle de langage est inexploitable, le
+  # commentaire est rédigé par les gabarits, et le repli est signalé. Les évaluations du modèle
+  # (H1, H2, Tableau 3.2) le désactivent pour mesurer le modèle seul.
+  repli_gabarits: true
+  repli_min_constats: 2           # en dessous, la rédaction du modèle est jugée trop pauvre
 
 # ---------------------------------------------------------------------
 #  Modèle de langage (Tableau 3.2)

@@ -72,3 +72,22 @@ def test_expansion_lexique_seulement_requete_lexicale(moteur):
     ajout = moteur.lexique.etendre("Quel est le nombre de PME ?")
     assert ajout, "le lexique doit étendre « PME »"
     assert moteur.requete_lexicale("Quel est le nombre de PME ?", expansion=False) == ["nombre", "pme"]
+
+
+class _Modele:
+    nom = "faux"
+
+    def __init__(self, rep):
+        self.rep = rep
+
+    def generer(self, systeme, utilisateur, json_attendu=True):
+        return self.rep
+
+
+def test_repli_extractif_si_le_modele_dit_ne_pas_savoir(moteur):
+    q = "Combien de PME ont été créées dans les CFCE en 2024 ?"
+    r = consultation.consulter(q, moteur, journaliser=False, rediger=True,
+                               client=_Modele('{"reponse": "Les extraits ne permettent pas de répondre."}'))
+    assert r["reponse"]["redaction"].startswith("extractive (repli")
+    r = consultation.consulter(q, moteur, journaliser=False, rediger=True, client=_Modele("pas du json"))
+    assert r["reponse"]["redaction"].startswith("extractive (repli")

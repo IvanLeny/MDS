@@ -91,7 +91,7 @@ def test_valeur_inventee_ecartee_valeur_calculee_acceptee(base_complete):
     rep = _json(("constat", "En 2024, les CFCE ont enregistré 21 132 PME, soit une hausse de 7,5 % par rapport à 2023."),
                 ("constat", "Ce total dépasserait 25 000 PME dans les régions."),
                 ("perspective", "Les créations pourraient atteindre 30 000 PME en 2025."))
-    r = cm.commenter(base_complete, CODE, 2024, Faux([rep]), journaliser=False)
+    r = cm.commenter(base_complete, CODE, 2024, Faux([rep]), journaliser=False, repli=False)
     assert not r["abstention"]
     textes = [e["texte"] for e in r["enonces"]]
     assert textes[0].startswith("En 2024, les CFCE ont enregistré 21 132 PME, soit une hausse de 7,5 %")
@@ -108,26 +108,27 @@ def test_valeur_d_un_modele_anterieur_ecartee(base_complete):
     # un chiffre des commentaires antérieurs absent des valeurs autorisées de 2024
     candidat = next(n for n in lc.nombres(modele) if not lc.trouver(n, lc.index_autorise(ctx.autorisees())))
     rep = _json(("constat", f"Le nombre de créations s'établit à {candidat} unités sur la période."))
-    r = cm.commenter(base_complete, CODE, 2024, Faux([rep]), journaliser=False)
+    r = cm.commenter(base_complete, CODE, 2024, Faux([rep]), journaliser=False, repli=False)
     assert candidat in {e["valeur"] for e in r["valeurs_ecartees"]}
     assert all(e["dans_modele"] for e in r["valeurs_ecartees"] if e["valeur"] == candidat)
 
 
 def test_json_invalide_une_nouvelle_tentative_puis_abstention(base_complete):
     f = Faux(["ceci n'est pas du JSON", "{toujours pas"])
-    r = cm.commenter(base_complete, CODE, 2024, f, journaliser=False)
+    r = cm.commenter(base_complete, CODE, 2024, f, journaliser=False, repli=False)
     assert f.appels == 2 and r["abstention"] and "JSON invalide" in r["motif"]
     assert r["mention"] == "sources insuffisantes, à commenter manuellement"
 
 
 def test_json_invalide_puis_valide(base_complete):
     f = Faux(["pas du json", _json(("constat", "En 2024, les CFCE ont enregistré 21 132 PME."))])
-    r = cm.commenter(base_complete, CODE, 2024, f, journaliser=False)
+    r = cm.commenter(base_complete, CODE, 2024, f, journaliser=False, repli=False)
     assert f.appels == 2 and not r["abstention"]
 
 
 def test_abstention_du_modele(base_complete):
-    r = cm.commenter(base_complete, CODE, 2024, Faux(['{"abstention": "données insuffisantes"}']), journaliser=False)
+    r = cm.commenter(base_complete, CODE, 2024, Faux(['{"abstention": "données insuffisantes"}']), journaliser=False,
+                     repli=False)
     assert r["abstention"] and "données insuffisantes" in r["motif"]
 
 
@@ -218,3 +219,27 @@ def test_a1_total_general_avant_sous_total(base_complete):
     r = commentary.commenter(base_complete, "pme-creees-secteur-activite", 2024, journaliser=False)
     e = next(e for e in r["enonces"] if "ce total" in e["texte"])
     assert ": Total / Total," in e["references"][0]["libelle"]
+
+
+# ------------------------------------------------------------ repli sur les gabarits (interface)
+def test_repli_gabarits_si_json_invalide(base_complete):
+    r = cm.commenter(base_complete, CODE, 2024, Faux(["pas du json", "toujours pas"]), journaliser=False)
+    assert not r["abstention"] and "JSON invalide" in r["repli_gabarits"]
+    assert r["modele"] == "faux" and not r["mode_extractif"]
+    gab = cm.commenter(base_complete, CODE, 2024, None, journaliser=False)
+    assert [e["texte"] for e in r["enonces"]] == [e["texte"] for e in gab["enonces"]]
+
+
+def test_repli_gabarits_si_abstention_ou_trop_pauvre(base_complete):
+    r = cm.commenter(base_complete, CODE, 2024, Faux(['{"abstention": "je ne sais pas"}']), journaliser=False)
+    assert not r["abstention"] and "abstention du modèle" in r["repli_gabarits"]
+    un = _json(("constat", "En 2024, les CFCE ont enregistré 21 132 PME."))
+    r = cm.commenter(base_complete, CODE, 2024, Faux([un]), journaliser=False)
+    assert "moins de 2 constats" in r["repli_gabarits"]
+
+
+def test_pas_de_repli_si_redaction_du_modele_suffisante(base_complete):
+    deux = _json(("constat", "En 2024, les CFCE ont enregistré 21 132 PME au total."),
+                 ("constat", "Par rapport à 2023, ce total progresse de 7,5 % selon l'Annuaire."))
+    r = cm.commenter(base_complete, CODE, 2024, Faux([deux]), journaliser=False)
+    assert not r.get("repli_gabarits") and len(r["enonces"]) == 2
