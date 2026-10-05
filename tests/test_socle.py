@@ -76,3 +76,20 @@ def test_reconstruction_complete_deterministe(tmp_path):
         con.close()
     assert empreintes[0] == empreintes[1]
     assert (corpus / "inventaire.csv").exists()
+
+
+def test_config_locale_completer_sans_ecraser(tmp_path, monkeypatch):
+    from minpmeesa import config
+    (tmp_path / "config.yaml").write_text("a: 1\nllm:\n  ollama:\n    modele: gros\n    url: u\n", encoding="utf-8")
+    (tmp_path / "config.local.yaml").write_text("llm:\n  ollama:\n    modele: leger\n", encoding="utf-8")
+    monkeypatch.setattr(config, "RACINE", tmp_path)
+    monkeypatch.delenv("MINPMEESA_CONFIG", raising=False)
+    config.charger.cache_clear()
+    try:
+        c = config.charger()
+        assert c["llm"]["ollama"] == {"modele": "leger", "url": "u"} and c["a"] == 1
+        assert c["config_locale"] == {"llm": {"ollama": {"modele": "leger"}}}
+        # chemin explicite : le fichier local est ignoré
+        assert config.charger(str(tmp_path / "config.yaml"))["llm"]["ollama"]["modele"] == "gros"
+    finally:
+        config.charger.cache_clear()

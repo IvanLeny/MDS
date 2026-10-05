@@ -46,6 +46,26 @@ Poste visé : Windows 10/11, 8 à 16 Go de mémoire, sans carte graphique. Deux 
 - `config.yaml`, section `embeddings` : `modele` = l'encodeur retenu (Tableau 3.3). Après un changement
   d'encodeur, **reconstruire la base**.
 
+- **Réglage propre à un poste : `config.local.yaml`** (à la racine du projet, non versionné). Il complète
+  `config.yaml` sans le modifier. Exemple pour un PC de 8 Go de RAM, où `gpt-oss:20b` ne tient pas :
+  ```yaml
+  llm:
+    ollama:
+      modele: llama3.2:3b
+  ```
+  Le modèle utilisé s'affiche dans la barre latérale de l'interface ; le réglage local est recopié dans les
+  résultats (`config_locale`). Supprimer le fichier pour revenir au réglage du dépôt.
+
+## 3 bis. Mesurer les modèles de langage installés (Tableau 3.2)
+
+Ollama lancé, modèle(s) installé(s) (`ollama list`) :
+```
+python -m minpmeesa.evaluation.choix_llm
+```
+Chaque candidat Ollama de `config.yaml` installé sur le poste rédige les commentaires de 20 indicateurs ; les
+autres sont déclarés « non mesuré ». Résultat : `data/results/AAAA-MM-JJ_choix_llm_poste/` (avec la machine :
+cœurs, RAM). Sur un processeur à 4 cœurs, compter de l'ordre de la minute par commentaire pour un modèle de 3B.
+
 ## 4. Mesurer les encodeurs (Tableau 3.3) sur un PC de développement
 
 Durée : téléchargements (≈ 5,5 Go en tout) puis 5 à 60 min de calcul par encodeur sur CPU. Aucun appel au

@@ -8,8 +8,11 @@ HAUTE, non déployable. Un candidat indisponible est déclaré « non mesuré »
 """
 from __future__ import annotations
 
+import argparse
+import json
 import statistics as st
 import time
+from datetime import date
 
 from ..generation import commentary as cm
 from ..generation.llm import ErreurLLM, Ollama, client_api
@@ -33,7 +36,7 @@ def _mesurer(con, client, inds) -> dict:
             "appels_en_echec": echecs}
 
 
-def comparer(con, cfg: dict, exercice: int, n: int = 20) -> list[dict]:
+def comparer(con, cfg: dict, exercice: int, n: int = 20, api: bool = True, bavard: bool = False) -> list[dict]:
     statuts, provisoire = h2_controle.statuts_evaluation(con, exercice)
     inds = h2_controle.indicateurs(con, exercice, statuts)
     if len(inds) < n:                       # complète avec l'exercice précédent
@@ -47,7 +50,13 @@ def comparer(con, cfg: dict, exercice: int, n: int = 20) -> list[dict]:
         if not c.disponible():
             out.append({**ligne, "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"})
             continue
+        if bavard:
+            print(f"  ollama / {nom} : {len(inds)} commentaires…", flush=True)
         out.append({**ligne, "statut": "mesuré", "provisoire": provisoire, **_mesurer(con, c, inds)})
+        if bavard:
+            print(f"    temps médian {out[-1]['temps_median_s']} s", flush=True)
+    if not api:
+        return out
     a = l["api"]
     for nom, borne in ((a["modele"], False), (a.get("modele_borne_haute"), True)):
         if not nom:
@@ -66,3 +75,39 @@ def comparer(con, cfg: dict, exercice: int, n: int = 20) -> list[dict]:
             out.append({**ligne, "statut": "mesuré", "provisoire": provisoire, **m,
                         "remarque": "temps mesuré à distance (réseau inclus), non transposable au poste cible"})
     return out
+
+
+def main():
+    """Mesure le Tableau 3.2 seul, sur le poste courant (modèles Ollama installés)."""
+    from .. import config
+    from ..store import db
+    from .run_all import _machine
+
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--exercice", type=int, default=None)
+    ap.add_argument("--n", type=int, default=None, help="nombre d'indicateurs (20 par défaut)")
+    ap.add_argument("--avec-api", action="store_true", help="mesurer aussi le moteur api (clé requise)")
+    a = ap.parse_args()
+    cfg = config.charger()
+    config.fixer_graine()
+    ev = cfg["evaluation"]
+    ex, n = a.exercice or ev["exercice"], a.n or ev["nb_indicateurs_llm"]
+    sortie = config.chemin("resultats") / f"{date.today().isoformat()}_choix_llm_poste"
+    sortie.mkdir(parents=True, exist_ok=True)
+    t0 = time.time()
+    lignes = comparer(db.connecter(), cfg, ex, n, api=a.avec_api, bavard=True)
+    res = {"exercice": ex, "n_indicateurs": n, "machine": _machine(), "duree_s": round(time.time() - t0, 1),
+           "config_hash": config.config_hash(cfg), "config_locale": cfg.get("config_locale"),
+           "tableau_3_2": lignes}
+    (sortie / "tableau_3_2_modeles_langage.json").write_text(
+        json.dumps(res, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
+    for l in lignes:
+        print(f"{l['moteur']} / {l['modele']} : " + (
+            f"temps médian {l['temps_median_s']} s, JSON valide {l['taux_json_valide']:.0%}, "
+            f"valeurs écartées {l['taux_valeurs_ecartees']}, échecs {l['appels_en_echec']}"
+            if l["statut"] == "mesuré" else l["statut"]))
+    print(f"Résultats : {sortie}")
+
+
+if __name__ == "__main__":
+    main()

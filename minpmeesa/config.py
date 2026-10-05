@@ -13,12 +13,34 @@ import yaml
 RACINE = Path(__file__).resolve().parent.parent
 
 
+LOCAL = "config.local.yaml"
+
+
+def _fusionner(base: dict, ajout: dict) -> dict:
+    out = dict(base)
+    for k, v in ajout.items():
+        out[k] = _fusionner(out[k], v) if isinstance(v, dict) and isinstance(out.get(k), dict) else v
+    return out
+
+
 @lru_cache(maxsize=4)
 def charger(chemin: str | None = None) -> dict:
-    """Renvoie la configuration sous forme de dictionnaire."""
-    chemin = chemin or os.environ.get("MINPMEESA_CONFIG") or str(RACINE / "config.yaml")
-    with open(chemin, encoding="utf-8") as f:
-        return yaml.safe_load(f)
+    """Renvoie la configuration sous forme de dictionnaire.
+
+    Sans chemin explicite, un fichier `config.local.yaml` (propre au poste, non versionné)
+    complète `config.yaml` : par exemple un modèle Ollama plus léger sur un poste de 8 Go.
+    Il est signalé dans la configuration chargée (clé `config_locale`) et change config_hash.
+    """
+    explicite = chemin or os.environ.get("MINPMEESA_CONFIG")
+    with open(explicite or RACINE / "config.yaml", encoding="utf-8") as f:
+        cfg = yaml.safe_load(f)
+    local = RACINE / LOCAL
+    if not explicite and local.is_file():
+        with open(local, encoding="utf-8") as f:
+            ajout = yaml.safe_load(f) or {}
+        cfg = _fusionner(cfg, ajout)
+        cfg["config_locale"] = ajout
+    return cfg
 
 
 def chemin(cle: str) -> Path:

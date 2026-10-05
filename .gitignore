@@ -7,3 +7,4 @@ data/base/
 .venv/
 *.egg-info/
 data/cache/
+config.local.yaml
