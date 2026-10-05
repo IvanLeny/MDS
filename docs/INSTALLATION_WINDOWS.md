@@ -52,7 +52,12 @@ Poste visé : Windows 10/11, 8 à 16 Go de mémoire, sans carte graphique. Deux 
   llm:
     ollama:
       modele: llama3.2:3b
+  commentaire:
+    max_valeurs_contexte: 60      # contexte plus court : rédaction environ deux fois plus rapide
+    nb_modeles_redaction: 1
   ```
+  Sur processeur seul, un commentaire rédigé par le modèle prend plusieurs minutes ; dans l'interface,
+  au-delà de `delai_interface_s` (240 s), le commentaire est rédigé par les gabarits (repli signalé).
   Le modèle utilisé s'affiche dans la barre latérale de l'interface ; le réglage local est recopié dans les
   résultats (`config_locale`). Supprimer le fichier pour revenir au réglage du dépôt.
 

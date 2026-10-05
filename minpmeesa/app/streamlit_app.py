@@ -43,7 +43,8 @@ def moteur() -> Moteur:
 
 @st.cache_resource
 def client_llm(choix: str):
-    return obtenir(config.charger(), choix)
+    c = config.charger()
+    return obtenir(c, choix, delai=c["llm"]["ollama"].get("delai_interface_s"))
 
 
 def page_pdf(fichier: str, page: int) -> bytes:
@@ -110,7 +111,10 @@ if page == "Parcours" and m:
 
     with t1:
         st.subheader("Poser une question aux publications")
-        q = st.text_input("Votre question", placeholder="Ex. : Combien de PME ont été créées dans les CFCE en 2024 ?")
+        if "q_suggeree" in st.session_state:
+            st.session_state["q"] = st.session_state.pop("q_suggeree")
+        q = st.text_input("Votre question", key="q",
+                          placeholder="Ex. : Combien de PME ont été créées dans les CFCE en 2024 ?")
         rep = st.checkbox("Ajouter une réponse rédigée courte (facultatif)")
         if q:
             r = consultation.consulter(q, m, rediger=rep, client=client)
@@ -118,7 +122,14 @@ if page == "Parcours" and m:
                 st.success(r["reponse"]["texte"])
                 st.caption(f"Réponse rédigée ({r['reponse'].get('redaction')}), chiffres contrôlés contre les extraits.")
             if r["abstention"]:
-                st.warning(r["message"])
+                st.warning(r["message"] + " La question est peut-être trop générale ou formulée avec d'autres "
+                           "mots que ceux des publications.")
+                if r.get("suggestions"):
+                    st.markdown("**Essayez plutôt, avec les intitulés de l'Annuaire :**")
+                    for i, s_ in enumerate(r["suggestions"]):
+                        if st.button(s_, key=f"sugg{i}"):
+                            st.session_state["q_suggeree"] = s_
+                            st.rerun()
             for i, p in enumerate(r["passages"], 1):
                 with st.container(border=True):
                     st.markdown(f"**{i}. {p['titre']}** — page {p['page']}")

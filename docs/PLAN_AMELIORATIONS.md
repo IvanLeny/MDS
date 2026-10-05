@@ -123,7 +123,7 @@ Règle constante : aucun chiffre inventé. Toute amélioration de forme conserve
 | C1 | à faire | |
 | C2 | à faire | |
 | C3 | à faire | |
-| C4 | à faire | |
+| C4 | **en partie** (05/10/2026) : suggestions de reformulation en cas de refus | voir journal git |
 | C5 | à faire | |
 | D1 | à faire | |
 | D2 | à faire | |

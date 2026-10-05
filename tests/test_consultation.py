@@ -91,3 +91,12 @@ def test_repli_extractif_si_le_modele_dit_ne_pas_savoir(moteur):
     assert r["reponse"]["redaction"].startswith("extractive (repli")
     r = consultation.consulter(q, moteur, journaliser=False, rediger=True, client=_Modele("pas du json"))
     assert r["reponse"]["redaction"].startswith("extractive (repli")
+
+
+def test_suggestions_de_reformulation_en_cas_de_refus(moteur):
+    r = consultation.consulter("combien de pme en 2024 ?", moteur, journaliser=False)
+    if r["abstention"]:                              # dépend de l'encodeur de la base
+        assert r["suggestions"] and all("PME" in s for s in r["suggestions"])
+        for s in r["suggestions"]:                   # chaque suggestion passe le seuil
+            assert not consultation.consulter(s, moteur, journaliser=False)["abstention"]
+    assert consultation.suggestions("quelle est la capitale du Japon ?", moteur) == []

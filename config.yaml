@@ -118,6 +118,9 @@ llm:
     modele: gpt-oss:20b           # retenu (option A) = mêmes poids ouverts que Groq openai/gpt-oss-20b
     url: http://127.0.0.1:11434   # Ollama local uniquement
     delai_max_s: 900              # modèle 20B sur CPU : plusieurs minutes par commentaire
+    delai_interface_s: 240        # dans l'interface : au-delà, repli signalé sur les gabarits
+    num_ctx: 8192                 # fenêtre de contexte demandée à Ollama (le contexte d'un indicateur
+                                  # atteint ~4 000 tokens : une fenêtre plus petite tronquerait les consignes)
     candidats:                    # Tableau 3.2, comparés si le temps et la connexion le permettent
       - gpt-oss:20b
       - llama3.1:8b

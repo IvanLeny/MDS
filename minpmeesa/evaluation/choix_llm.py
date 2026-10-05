@@ -45,7 +45,7 @@ def comparer(con, cfg: dict, exercice: int, n: int = 20, api: bool = True, bavar
     l, o = cfg["llm"], cfg["llm"]["ollama"]
     out = []
     for nom in o["candidats"]:
-        c = Ollama(nom, o["url"], l["temperature"], o["delai_max_s"], cfg["graine"])
+        c = Ollama(nom, o["url"], l["temperature"], o["delai_max_s"], cfg["graine"], o.get("num_ctx"))
         ligne = {"moteur": "ollama", "modele": nom, "deployable": True, "retenu": nom == o["modele"]}
         if not c.disponible():
             out.append({**ligne, "statut": "non mesuré : modèle non installé dans Ollama (ou Ollama non lancé)"})

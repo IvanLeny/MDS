@@ -44,11 +44,13 @@ class ClientLLM:
 class Ollama(ClientLLM):
     moteur = "ollama"
 
-    def __init__(self, modele: str, url: str, temperature: float = 0, delai: float = 180, graine: int = 42):
+    def __init__(self, modele: str, url: str, temperature: float = 0, delai: float = 180, graine: int = 42,
+                 num_ctx: int | None = None):
         hote = urlparse(url).hostname
         if hote not in LOCAUX:
             raise ErreurLLM(f"Ollama doit être local (adresse reçue : {hote})")
         self.modele, self.url, self.t, self.delai, self.graine = modele, url.rstrip("/"), temperature, delai, graine
+        self.num_ctx = num_ctx
         self.nom = f"ollama:{modele}"
 
     def disponible(self) -> bool:
@@ -64,6 +66,8 @@ class Ollama(ClientLLM):
         corps = {"model": self.modele, "stream": False,
                  "messages": [{"role": "system", "content": systeme}, {"role": "user", "content": utilisateur}],
                  "options": {"temperature": self.t, "seed": self.graine}}
+        if self.num_ctx:                 # fenêtre explicite : un contexte tronqué ferait perdre les consignes
+            corps["options"]["num_ctx"] = self.num_ctx
         if json_attendu:
             corps["format"] = "json"
         req = urllib.request.Request(f"{self.url}/api/chat", data=json.dumps(corps).encode(),
@@ -242,8 +246,11 @@ def client_api(cfg: dict, modele: str | None = None) -> ClientAPI:
                      a["attente_base_s"], a["intervalle_min_s"], cache)
 
 
-def obtenir(cfg: dict, backend: str | None = None, modele: str | None = None) -> tuple[ClientLLM | None, str]:
-    """(client, explication). Client None = mode extractif (sans modèle de langage)."""
+def obtenir(cfg: dict, backend: str | None = None, modele: str | None = None,
+            delai: float | None = None) -> tuple[ClientLLM | None, str]:
+    """(client, explication). Client None = mode extractif (sans modèle de langage).
+    `delai` : attente maximale d'une réponse Ollama (l'interface en fixe une plus courte ; au-delà,
+    le commentaire est rédigé par les gabarits, repli signalé)."""
     l = cfg["llm"]
     backend = backend or l["backend"]
     if backend == "none":
@@ -257,7 +264,8 @@ def obtenir(cfg: dict, backend: str | None = None, modele: str | None = None) ->
     raison = ""
     if backend == "ollama":
         o = l["ollama"]
-        c = Ollama(modele or o["modele"], o["url"], l["temperature"], o["delai_max_s"], cfg["graine"])
+        c = Ollama(modele or o["modele"], o["url"], l["temperature"], delai or o["delai_max_s"], cfg["graine"],
+                   o.get("num_ctx"))
         if c.disponible():
             return c, c.nom
         raison = f"Ollama indisponible ou modèle {modele or o['modele']} absent"

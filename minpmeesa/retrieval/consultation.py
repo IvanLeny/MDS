@@ -75,6 +75,33 @@ def reponse_llm(client, passages: list[dict], question: str) -> dict | None:
             "redaction": getattr(client, "nom", "modèle de langage")}
 
 
+def suggestions(question: str, m: Moteur, n: int = 3) -> list[str]:
+    """En cas de refus : intitulés d'indicateurs de l'Annuaire proches de la question (mots en
+    commun, même année de préférence), retenus seulement s'ils passent eux-mêmes le seuil
+    d'abstention. Le seuil n'est pas modifié : on aide l'utilisateur à reformuler (plan C4)."""
+    mots = ensemble(question)
+    annees = set(re.findall(r"\b20\d\d\b", question))
+    if not mots:
+        return []
+    cand = []
+    for (titre,) in m.con.execute("SELECT DISTINCT graphique_intitule FROM appariement "
+                                  "WHERE graphique_intitule IS NOT NULL ORDER BY exercice DESC"):
+        commun = len(mots & ensemble(titre))
+        if commun:
+            cand.append((commun + 0.5 * bool(annees & set(re.findall(r"\b20\d\d\b", titre))), titre))
+    cand.sort(key=lambda c: -c[0])
+    autorises = m.autorises(statut="publie")
+    seuil = seuil_pour(m.cfg["consultation"], m.nom_encodeur)
+    out = []
+    for _, titre in cand[:15]:
+        t = re.sub(r"\s*\(en ?%\)\s*", " ", titre).strip()
+        if t not in out and m.signal_confiance(t, autorises) >= seuil:
+            out.append(t)
+        if len(out) == n:
+            break
+    return out
+
+
 def seuil_pour(cfg_consultation: dict, encodeur: str) -> float:
     """Seuil d'abstention calibré pour l'encodeur de la base (le signal en dépend)."""
     return (cfg_consultation.get("seuils_par_encodeur") or {}).get(encodeur, cfg_consultation["seuil_abstention"])
@@ -94,6 +121,7 @@ def consulter(question: str, m: Moteur | None = None, mode: str = "hybride",
     if signal < seuil:
         sortie["abstention"] = True
         sortie["message"] = MESSAGE_ABSTENTION
+        sortie["suggestions"] = suggestions(question, m)
     else:
         for r in m.rechercher(question, autorises, mode=mode, k=cfg["top_n"]):
             p = db.passage(m.con, r.passage_id)

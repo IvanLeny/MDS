@@ -131,3 +131,19 @@ def test_moteur_livre_est_local():
     assert cfg["llm"]["backend"] in ("ollama", "llamacpp", "none")
     from urllib.parse import urlparse
     assert urlparse(cfg["llm"]["ollama"]["url"]).hostname in llm.LOCAUX
+
+
+def test_ollama_fenetre_de_contexte_et_delai(monkeypatch):
+    import io
+    import json as _json
+    import urllib.request
+    from minpmeesa.generation.llm import Ollama
+    vu = {}
+
+    def faux_urlopen(req, timeout=None):
+        vu["corps"], vu["delai"] = _json.loads(req.data), timeout
+        return io.BytesIO(_json.dumps({"message": {"content": "{}"}}).encode())
+
+    monkeypatch.setattr(urllib.request, "urlopen", faux_urlopen)
+    Ollama("llama3.2:3b", "http://127.0.0.1:11434", delai=240, num_ctx=8192).generer("s", "u")
+    assert vu["corps"]["options"]["num_ctx"] == 8192 and vu["delai"] == 240 and vu["corps"]["format"] == "json"
