@@ -1,10 +1,10 @@
 # Thème de l'interface (couleurs nationales ; voir config.yaml, section interface)
 [theme]
 base = "light"
-primaryColor = "#007A5E"
+primaryColor = "#00A35C"
 backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F2F7F5"
-textColor = "#1F2A2E"
+secondaryBackgroundColor = "#F3F7F5"
+textColor = "#13261F"
 font = "sans serif"
 
 [browser]

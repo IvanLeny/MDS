@@ -185,9 +185,10 @@ interface:
   # Logo officiel : fichier PNG fourni par la Cellule, déposé à cet emplacement.
   # S'il est absent, l'interface affiche le nom seul (aucun logo n'est inventé).
   logo: assets/logo.png
-  couleurs:                       # couleurs nationales du Cameroun
-    vert: "#007A5E"
-    rouge: "#CE1126"
-    jaune: "#FCD116"
-    fond_doux: "#F2F7F5"
-    texte: "#1F2A2E"
+  couleurs:                       # couleurs nationales du Cameroun, en version vive
+    vert: "#00A35C"
+    vert_fonce: "#00563B"
+    rouge: "#E2231A"
+    jaune: "#FFC20E"
+    fond_doux: "#F3F7F5"
+    texte: "#13261F"

@@ -29,7 +29,7 @@ from minpmeesa.store import db  # noqa: E402
 
 ID = identite.charger()
 _LOGO = identite.logo(ID)
-st.set_page_config(page_title=f"{ID['nom']} — MINPMEESA", page_icon=str(_LOGO) if _LOGO else "📊", layout="wide")
+st.set_page_config(page_title=f"{ID['nom']} — MINPMEESA", page_icon=str(_LOGO) if _LOGO else None, layout="wide")
 st.markdown(identite.css(ID), unsafe_allow_html=True)
 st.markdown(identite.bandeau(ID), unsafe_allow_html=True)
 if _LOGO:
@@ -76,11 +76,8 @@ def afficher_commentaire(res: dict):
         st.info(f"Rédaction du modèle **{res.get('modele')}** non retenue ({res['repli_gabarits']}) : "
                 "commentaire rédigé par les **gabarits**, à partir des chiffres de l'Annuaire.")
     for e in res["enonces"]:
-        icone = "🔎" if e.get("type") == "constat" else "➡️"
-        st.markdown(f"{icone} {e['texte']}")
-        refs = [r["libelle"] for r in e.get("references", [])]
-        if refs:
-            st.caption("Sources : " + " ; ".join(refs))
+        st.markdown(identite.enonce(e.get("type", "constat"), e["texte"],
+                                    [r["libelle"] for r in e.get("references", [])]), unsafe_allow_html=True)
     if res.get("valeurs_ecartees"):
         with st.expander(f"Valeurs écartées par le contrôle ({len(res['valeurs_ecartees'])})"):
             st.table(pd.DataFrame(res["valeurs_ecartees"])[["valeur", "type", "action", "texte_original"]])
@@ -88,14 +85,15 @@ def afficher_commentaire(res: dict):
 
 # ------------------------------------------------------------------ barre latérale
 cfg = config.charger()
-st.sidebar.title(ID["nom"])
-st.sidebar.caption(ID["structure"])
+st.sidebar.markdown(f'<div class="ap-side-titre">{ID["nom"]}</div><div class="ap-side-sous">{ID["structure"]}</div>',
+                    unsafe_allow_html=True)
 choix_llm = st.sidebar.selectbox("Rédaction", ["ollama", "none", "api"],
                                  format_func=lambda x: {"ollama": "Modèle de langage local (Ollama)",
                                                         "none": "Sans modèle de langage (gabarits)",
                                                         "api": "Service distant — développement seulement"}[x])
 client, explication = client_llm(choix_llm)
-st.sidebar.caption(f"Moteur de rédaction : {explication}")
+st.sidebar.markdown(f'<div class="ap-etat"><b>Moteur de rédaction</b><br>{explication}</div>',
+                    unsafe_allow_html=True)
 page = st.sidebar.radio("Page", ["Parcours", "Base documentaire"])
 
 try:
@@ -107,10 +105,13 @@ except FileNotFoundError:
 
 if page == "Parcours" and m:
     con = m.con
-    t1, t2, t3, t4 = st.tabs(["🔍 Consulter", "✍️ Commenter un indicateur", "📄 Note d'analyse", "🎯 Note stratégique"])
+    t1, t2, t3, t4 = st.tabs(["Consulter", "Commenter un indicateur", "Note d'analyse", "Note stratégique"])
 
     with t1:
-        st.subheader("Poser une question aux publications")
+        st.markdown(identite.entete_service(
+            1, "Poser une question aux publications",
+            "Recherche dans les Annuaires, rapports et notes publiés : chaque extrait renvoie à son document et à sa "
+            "page ; sans source suffisante, l'outil s'abstient."), unsafe_allow_html=True)
         if "q_suggeree" in st.session_state:
             st.session_state["q"] = st.session_state.pop("q_suggeree")
         q = st.text_input("Votre question", key="q",
@@ -139,7 +140,10 @@ if page == "Parcours" and m:
             st.caption(f"Temps de réponse : {r['duree_s']} s — encodeur : {r['encodeur']}")
 
     with t2:
-        st.subheader("Commenter un indicateur")
+        st.markdown(identite.entete_service(
+            2, "Commenter un indicateur",
+            "Commentaire d'un graphique du rapport d'analyse à partir du tableau apparié de l'Annuaire et des "
+            "variations calculées par le programme ; chaque chiffre est contrôlé."), unsafe_allow_html=True)
         exercices = [r[0] for r in con.execute("SELECT DISTINCT exercice FROM appariement ORDER BY exercice DESC")]
         ex = st.selectbox("Exercice", exercices, key="ex2")
         inds = con.execute("SELECT code_indicateur, graphique_intitule, statut FROM appariement WHERE exercice=? "
@@ -163,7 +167,10 @@ if page == "Parcours" and m:
                     st.success("Commentaire validé : il sera repris dans les notes.")
 
     with t3:
-        st.subheader("Note d'analyse d'un Annuaire statistique")
+        st.markdown(identite.entete_service(
+            3, "Note d'analyse d'un Annuaire statistique",
+            "Choisissez un Annuaire, puis l'Annuaire entier ou certains chapitres : chaque tableau apparié est commenté."),
+            unsafe_allow_html=True)
         annuaires = [dict(r) for r in con.execute(
             "SELECT doc_id, titre, exercice FROM documents WHERE type='annuaire' AND statut_diffusion='publie' "
             "ORDER BY exercice DESC")]
@@ -202,7 +209,10 @@ if page == "Parcours" and m:
             bouton_word("Exporter en Word", docx_export.exporter_note_analyse, na, f"note_analyse_{na['exercice']}.docx")
 
     with t4:
-        st.subheader("Note d'analyse stratégique")
+        st.markdown(identite.entete_service(
+            4, "Note d'analyse stratégique",
+            "Une à deux pages pour les décideurs : chiffres clés, messages, évolutions marquantes et pistes, tous tracés "
+            "jusqu'à la page de l'Annuaire."), unsafe_allow_html=True)
         ex4 = st.selectbox("Exercice", exercices, key="ex4")
         if st.button("Rédiger la note stratégique", type="primary"):
             st.session_state["ns"] = strategic_note.rediger(con, ex4, client, m)
@@ -230,7 +240,10 @@ if page == "Parcours" and m:
             bouton_word("Exporter en Word", docx_export.exporter_note_strategique, ns, f"note_strategique_{ex4}.docx")
 
 if page == "Base documentaire":
-    st.subheader("Base documentaire")
+    st.markdown(identite.entete_service(
+        5, "Base documentaire",
+        "Ajouter une publication, reconstruire la base et explorer son contenu (documents, passages, valeurs, "
+        "variations)."), unsafe_allow_html=True)
     st.caption(f"Base SQLite : `{db.chemin_base()}` · index vectoriel FAISS : `{config.chemin('base') / 'dense.faiss'}`")
 
     def reconstruire():
@@ -241,7 +254,7 @@ if page == "Base documentaire":
         st.success(f"Base à jour : {r['nb_documents']} documents, {r['nb_passages']} passages, "
                    f"{r['nb_valeurs']} valeurs, {r['nb_variations']} variations.")
         for a_ in r["avertissements"]:
-            st.caption("⚠ " + a_)
+            st.caption(a_)
 
     with st.form("ajout"):
         st.markdown("**Ajouter un PDF à la base**")

@@ -1,4 +1,4 @@
-"""Captures d'écran des 4 parcours (Annexe III), automatisées avec Playwright.
+"""Captures d'écran des 4 parcours et de la base documentaire (Annexe III), automatisées avec Playwright.
 
 Prérequis : l'interface tourne (./demarrer.sh ou streamlit run ...) sur le port 8501.
     python scripts/captures.py [--url http://127.0.0.1:8501]
@@ -56,6 +56,11 @@ def main(url: str):
         page.wait_for_selector("text=Pistes pour la décision", timeout=600000)
         attendre(page)
         page.screenshot(path=str(DEST / "4_note_strategique.png"), full_page=True)
+        # 5. Base documentaire
+        page.get_by_text("Base documentaire").last.click()
+        page.wait_for_selector("text=Explorer la base", timeout=180000)
+        attendre(page)
+        page.screenshot(path=str(DEST / "5_base_documentaire.png"), full_page=True)
         nav.close()
     print(sorted(str(x) for x in DEST.glob("*.png")))
 

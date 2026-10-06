@@ -20,7 +20,7 @@ def _rgb(hexa: str) -> RGBColor:
 def _doc(titre: str) -> Document:
     from ..app import identite
     i = identite.charger()
-    vert = _rgb(i["couleurs"]["vert"])
+    vert = _rgb(i["couleurs"].get("vert_fonce", i["couleurs"]["vert"]))
     d = Document()
     st = d.styles["Normal"]
     st.font.name, st.font.size = "Calibri", Pt(11)
@@ -127,7 +127,7 @@ def exporter_note_strategique(note: dict, chemin: Path) -> Path:
         t.style = "Table Grid"
         cel = t.rows[0].cells[0]
         titre = cel.paragraphs[0].add_run("Chiffres clés")
-        titre.bold, titre.font.color.rgb = True, _rgb(i["couleurs"]["vert"])
+        titre.bold, titre.font.color.rgb = True, _rgb(i["couleurs"].get("vert_fonce", i["couleurs"]["vert"]))
         for b in note["chiffres_cles"]:
             cel.add_paragraph(b["texte"], style="List Bullet")
         d.add_paragraph()
