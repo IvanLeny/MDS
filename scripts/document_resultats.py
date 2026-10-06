@@ -152,9 +152,14 @@ def saut() -> None:
 
 
 # ---------------------------------------------------------------- page de garde
+LOGO = RACINE / "assets/logo.png"
+if LOGO.is_file():
+    doc.add_paragraph()
+    doc.add_picture(str(LOGO), width=Cm(3.6))
+    doc.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
 p = doc.add_paragraph()
 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-r = p.add_run("\n\nANALYS'PME")
+r = p.add_run("ANALYS'PME")
 r.bold = True
 r.font.size = Pt(30)
 r.font.color.rgb = VERT
@@ -170,7 +175,7 @@ r.font.size = Pt(18)
 p = doc.add_paragraph()
 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 r = p.add_run("\nConception et évaluation d'un système RAG hybride à restitution contrôlée, appliqué aux "
-              "publications statistiques du MINPMEESA\n\nIvan Leny — Master 2, ISSEA\nVersion du 02/10/2026")
+              "publications statistiques du MINPMEESA\n\nIvan Leny — Master 2, ISSEA\nVersion du 06/10/2026")
 r.italic = True
 r.font.size = Pt(11)
 saut()
@@ -297,7 +302,15 @@ saut()
 # ---------------------------------------------------------------- 3. interface
 titre("4. Le prototype ANALYS'PME : interface (section 3.4.2, Annexe III)")
 para("Quatre parcours (Consulter, Commenter un indicateur, Note d'analyse, Note stratégique) et une page « Base "
-     "documentaire ». Identité visuelle : nom ANALYS'PME, couleurs vert, rouge et jaune, rappel du drapeau national.")
+     "documentaire ». Identité visuelle : logo du MINPMEESA placé avant le nom ANALYS'PME, couleurs nationales (vert, "
+     "rouge, jaune) en version vive, sans émoticônes ; chaque énoncé est présenté comme une carte étiquetée CONSTAT ou "
+     "PERSPECTIVE, suivie de ses sources. Aucune ressource externe n'est chargée : l'interface fonctionne hors ligne.")
+para("Deux garde-fous d'usage complètent l'interface : (1) en cas de refus d'une question, l'outil propose des "
+     "intitulés d'indicateurs de l'Annuaire proches de la question, chacun vérifié au-dessus du seuil d'abstention "
+     "(le seuil n'est pas modifié) ; (2) si la réponse du modèle de langage est inexploitable (format invalide, "
+     "refus, moins de deux constats sourcés après contrôle, ou attente supérieure à 240 s), le commentaire est rédigé "
+     "par les gabarits et ce repli est signalé. Les évaluations du modèle (H1, H2, Tableau 3.2) désactivent ce repli "
+     "pour mesurer le modèle seul.")
 tableau("Temps de réponse du système (sans modèle de langage)",
         ["Service", "Médiane", "P90", "Mesure du 28/09", "Remarque"],
         [["Consultation", "0,25 s", "0,51 s", "0,20 s (P90 0,40 s)", "recherche hybride + abstention"],
@@ -310,8 +323,8 @@ para("Poste de développement : Linux, 4 cœurs, 15,7 Go, sans GPU. Ces temps n'
      "de l'attente imposée par le quota du compte gratuit : ce n'est pas un temps du système, à ne pas reporter "
      "comme tel.", italique=True, taille=10)
 captures = [
-    ("1_consulter.png", "Parcours « Consulter » : réponse sourcée (document, page) ou refus motivé hors corpus"),
-    ("2_commenter.png", "Parcours « Commenter un indicateur » : commentaire et source de chaque valeur"),
+    ("1_consulter.png", "Parcours « Consulter » : extraits sourcés (document, page) ; refus motivé et suggestions sinon"),
+    ("2_commenter.png", "Parcours « Commenter un indicateur » : énoncés étiquetés CONSTAT / PERSPECTIVE et source de chaque valeur"),
     ("3_note_analyse.png", "Parcours « Note d'analyse » : choix de l'Annuaire, puis de l'étendue"),
     ("4_note_strategique.png", "Parcours « Note stratégique » : encadré des chiffres clés de l'exercice 2024"),
     ("5_base_documentaire.png", "Page « Base documentaire » : ajout d'un document et exploration de la base"),
