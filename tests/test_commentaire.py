@@ -261,6 +261,28 @@ def test_pas_d_evolution_la_plus_marquee_si_toutes_egales(base_complete):
     """Stock régional 2024 estimé au prorata : toutes les régions à +12,8 % -> aucune n'est « la plus marquée »."""
     r = cm.commenter(base_complete, "stock-pme-region", 2024, None, journaliser=False)
     t = cm.texte(r)
-    assert "la plus marquée" not in t and "aucune ne se distingue" in t
+    assert "la plus marquée" not in t and "aucune catégorie ne s'écarte de l'évolution d'ensemble" in t
     e = next(e for e in r["enonces"] if e["texte"].startswith("Depuis 2016"))
     assert e["references"][0]["libelle"].startswith("Variation calculée par le programme : Total,")
+
+
+def test_note_d_analyse_sans_absurdites(base_complete):
+    """Relecture de la note de l'Annuaire 2024 : pas de part > 100 %, pas de libellé fusionné, pas de
+    classement mêlant des grandeurs différentes, pas de tableau en double, perspectives variées."""
+    import re
+    from minpmeesa.generation import analysis_note as an
+    na = an.rediger(base_complete, 2024, documents=["annuaire_2024"], journaliser=False)
+    textes = [e["texte"] for s in na["sections"] for e in s["commentaire"]["enonces"]]
+    for t in textes:
+        for x in re.findall(r"([\d\s ]+(?:,\d+)?)\s?%", t):
+            assert float(x.replace(" ", "").replace(" ", "").replace(",", ".") or 0) <= 1000, t
+        assert not re.search(r"(à|concerne) « [^»]{90,} »", t), t
+    assert not any("994 739 %" in t for t in textes)
+    n = [s["tableau_n"] for s in na["sections"]] + [a["tableau_n"] for a in na["abstentions"]]
+    assert len(n) == len(set(n))
+    persp = {e["texte"] for s in na["sections"] for e in s["commentaire"]["enonces"] if e["type"] == "perspective"}
+    assert len(persp) >= 3
+
+    # contrôle de cohérence : l'Annuaire 2024 donne deux totaux OES 2023 différents (tableaux 21 et 23)
+    inc = {i["total"]: i["references"] for i in na["incoherences"]}
+    assert "3 909" in inc and {"3 865", "3 040"} <= set(inc["3 909"])

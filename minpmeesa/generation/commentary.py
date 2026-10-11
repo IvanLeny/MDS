@@ -133,7 +133,16 @@ def _sans_renvoi(ligne: str) -> str:
 
 
 def _est_total(ligne: str) -> bool:
-    return bool(re.search(r"(^|/\s*)total", _sans_renvoi(ligne), re.I))
+    return bool(re.search(r"(^|/\s*)(total|ensemble)", _sans_renvoi(ligne), re.I))
+
+
+# Lieux du Cameroun (régions et villes des CFCE) : une répartition dont les premières lignes sont des
+# lieux est géographique, quel que soit l'intitulé (« … selon la tranche d'âge » avec des villes en ligne).
+_LIEUX = re.compile(r"^(adamaoua|centre|est|extr[êe]me[\s–-]*(nord)?|littoral|nord|nord-ouest|ouest|sud|sud-ouest|"
+                    r"yaound[ée]|douala|garoua|bamenda|bafoussam|bertoua|ebolowa|maroua|ngaound[ée]r[ée]|buea|kribi|"
+                    r"limb[ée]|ed[ée]a|kumba)\b", re.I)
+# Le sujet de la publication n'est pas une dimension (« généré par les PME »).
+_PAS_UNE_DIMENSION = re.compile(r"^(les\s+|des\s+)?(PME|PMEESA|UPA|UPI|OES|entreprises?)$", re.I)
 
 
 def _total_general(ligne: str) -> bool:
@@ -149,6 +158,18 @@ def _nature(u: str | None, sujet: str | None = None) -> str:
     if sujet in _NOMS_GRANDEUR:
         return _NOMS_GRANDEUR[sujet]
     return "du montant" if u and u != "%" else "de l'effectif"
+
+
+def _perspective(prec: dict | None, loin: dict | None) -> str:
+    """Perspective sans chiffre, adaptée à ce que montrent les données (et non une phrase unique)."""
+    if prec is None:
+        return ("Disposer de cet indicateur sur plusieurs exercices permettrait d'en apprécier l'évolution.")
+    if prec["var_rel_pct"] < 0:
+        return "Les facteurs de ce recul mériteraient d'être documentés afin d'orienter l'accompagnement."
+    if loin is not None and loin["exercice_ref"] < prec["exercice_ref"] and loin["var_rel_pct"] < 0:
+        return ("Cette reprise reste à confirmer au regard du recul observé sur la période ; le prochain exercice "
+                "permettra d'en juger.")
+    return "Le prochain exercice permettra de vérifier si cette progression se poursuit."
 
 
 def extractif(ctx: ic.Contexte) -> list[dict]:
@@ -167,12 +188,20 @@ def extractif(ctx: ic.Contexte) -> list[dict]:
     tit = ctx.tableau_intitule or ctx.indicateur
     sujet = _grandeur(ctx.indicateur) or _grandeur(tit)
     dim = _dimension(tit) or _dimension(ctx.indicateur)
+    if dim and _PAS_UNE_DIMENSION.match(dim):
+        dim = None
     autre_grandeur = lambda l: bool(sujet and _grandeur(l) and _grandeur(l) != sujet)
     niveaux = _une_colonne([v for v in courant if v["unite"] != "%" and "%" not in (v["sous_colonne"] or "")])
     parts = _une_colonne([v for v in courant if v["unite"] == "%" or "%" in (v["sous_colonne"] or "")])
     niveaux = [v for v in niveaux if not autre_grandeur(v["ligne"])]
     parts = [v for v in parts if not autre_grandeur(v["ligne"])]
+    if any(len(v["ligne"]) > 90 for v in niveaux + parts):
+        return []          # libellés fusionnés à l'extraction (tableaux de programmes) : à commenter à la main
+    if any(v["valeur_num"] > 100.5 and not _est_total(v["ligne"]) for v in parts):
+        # « part » supérieure à 100 % : en-tête « (%) » erroné, ce sont des montants ou des effectifs
+        niveaux, parts = niveaux + [{**v, "unite": None} for v in parts], []
     enonces = []
+    prec = loin = None
     tot = next((v for v in niveaux if _total_general(v["ligne"])), None)
     principal = None
     if tot is None and sujet:
@@ -203,7 +232,13 @@ def extractif(ctx: ic.Contexte) -> list[dict]:
     exclus = {tot["ligne"]} if tot else set()
     base = [v for v in (parts or niveaux) if not _est_total(v["ligne"]) and v["ligne"] not in exclus]
     base = sorted(base, key=lambda v: -v["valeur_num"])
+    if len(base) >= 2 and all(_LIEUX.match(v["ligne"]) for v in base[:2]) and not re.search(
+            r"r[ée]gion|ville|localit|g[ée]ograph|commune|d[ée]partement", dim or "", re.I):
+        dim = "localisation géographique"
     dans = f"dans la répartition par {dim}, " if dim else ""
+    if len(base) >= 2 and None not in (_grandeur(base[0]["ligne"]), _grandeur(base[1]["ligne"])) and \
+            _grandeur(base[0]["ligne"]) != _grandeur(base[1]["ligne"]):
+        base = []          # lignes de grandeurs différentes (francs CFA, emplois) : pas de classement
     if len(base) >= 2:
         a, b = base[0], base[1]
         quoi = "parts" if parts else "valeurs"
@@ -224,12 +259,13 @@ def extractif(ctx: ic.Contexte) -> list[dict]:
     simples = [d for d in mouv if "/" not in d["ligne"]]      # lignes simples avant les croisements
     mouv = simples or mouv
     taux = [d["var_rel_pct"] for d in mouv]
-    if len(mouv) >= 3 and max(taux) - min(taux) < 0.2:
+    meme_que_total = (prec is not None and mouv and
+                      abs(max(mouv, key=lambda d: abs(d["var_rel_pct"]))["var_rel_pct"] - prec["var_rel_pct"]) < 0.15)
+    if (len(mouv) >= 3 and max(taux) - min(taux) < 0.2) or meme_que_total:
         # toutes les catégories évoluent au même rythme (ex. : stock régional estimé au prorata) :
         # désigner « la plus marquée » serait trompeur
         enonces.append({"type": "constat", "texte":
-                        f"Par rapport à {ex - 1}, {dans}toutes les catégories évoluent au même rythme : "
-                        "aucune ne se distingue."})
+                        f"Par rapport à {ex - 1}, {dans}aucune catégorie ne s'écarte de l'évolution d'ensemble."})
     elif mouv:
         d = max(mouv, key=lambda d: abs(d["var_rel_pct"]))
         enonces.append({"type": "constat", "texte":
@@ -245,9 +281,7 @@ def extractif(ctx: ic.Contexte) -> list[dict]:
                             f"{_verbe(d['var_abs'], 'gagne', 'perd')} {_sans_signe(d['var_abs_texte'])} point(s) "
                             f"de pourcentage."})
     if enonces:
-        enonces.append({"type": "perspective", "texte":
-                        "Le suivi de cet indicateur lors du prochain exercice permettra de confirmer "
-                        "ou non cette orientation."})
+        enonces.append({"type": "perspective", "texte": _perspective(prec, loin)})
     for e in enonces:
         e["valeurs"] = literal_check.nombres(e["texte"])
     return enonces

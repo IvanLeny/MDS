@@ -111,7 +111,7 @@ def afficher_commentaire(res: dict):
                 "commentaire rédigé par les **gabarits**, à partir des chiffres de l'Annuaire.")
     for e in res["enonces"]:
         st.markdown(identite.enonce(e.get("type", "constat"), e["texte"],
-                                    [r["libelle"] for r in e.get("references", [])]), unsafe_allow_html=True)
+                                    provenance.a_afficher(e.get("references", []))), unsafe_allow_html=True)
     if res.get("valeurs_ecartees"):
         with st.expander(f"Valeurs écartées par le contrôle ({len(res['valeurs_ecartees'])})"):
             st.table(pd.DataFrame(res["valeurs_ecartees"])[["valeur", "type", "action", "texte_original"]])
@@ -309,11 +309,18 @@ if page == "Services" and m:
             st.markdown(f"#### {na['titre']}")
             st.caption(f"{len(na['sections'])} tableau(x) commenté(s) ; {len(na['abstentions'])} à commenter manuellement.")
             avertissements(na)
+            for inc in na.get("incoherences", []):
+                det = " ; ".join(f"{ref} (tableau{'x' if len(n) > 1 else ''} {', '.join(map(str, n))})"
+                                 for ref, n in inc["references"].items())
+                st.warning(f"**Contrôle de cohérence de l'Annuaire** : pour un même total {inc['exercice']} "
+                           f"({inc['total']}), la valeur {inc['exercice'] - 1} diffère selon le tableau : {det}. "
+                           "Les évolutions calculées diffèrent donc ; à vérifier auprès de la Cellule.")
             for s in na["sections"]:
                 st.markdown(f"#### Tableau {s['tableau_n']} : {s['intitule']}")
                 afficher_commentaire(s["commentaire"])
             if na["abstentions"]:
-                st.warning("À commenter manuellement : " + ", ".join(f"tableau {a['tableau_n']}" for a in na["abstentions"]))
+                st.warning("À commenter manuellement : " + ", ".join(
+                    dict.fromkeys(f"tableau {a['tableau_n']}" for a in na["abstentions"])))
             bouton_word("Exporter en Word", docx_export.exporter_note_analyse, na, f"note_analyse_{na['exercice']}.docx")
 
     with t4:

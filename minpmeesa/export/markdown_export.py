@@ -21,8 +21,9 @@ def commentaire(res: dict) -> str:
         return "\n".join(l + [f"*{res.get('mention')} — {res.get('motif')}*"])
     for e in res["enonces"]:
         l.append(f"- **{e.get('type', '')}** : {e['texte']}")
-        for r in e.get("references", []):
-            l.append(f"  - source : {r['libelle']}")
+        from ..guards.provenance import a_afficher
+        for lib in a_afficher(e.get("references", [])):
+            l.append(f"  - source : {lib}")
     for v in res.get("valeurs_ecartees", []):
         l.append(f"- *valeur écartée* : {v['valeur']} ({v['action']})")
     return "\n".join(l)

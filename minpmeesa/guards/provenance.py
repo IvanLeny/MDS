@@ -51,6 +51,12 @@ def libelle_source(s: dict, v: dict | None = None) -> str:
             f"— {s.get('ligne')}, {s.get('colonne')}")
 
 
+def a_afficher(refs: list[dict]) -> list[str]:
+    """Libellés de sources à montrer au lecteur : sans doublon, et sans les nombres lus dans un libellé
+    de ligne ou de colonne (« 30-40 ans » -> 30, 40), qui restent dans la traçabilité complète."""
+    return list(dict.fromkeys(r["libelle"] for r in refs if r.get("nature") != "libellé"))
+
+
 def tracer(con: sqlite3.Connection, enonces: list[dict], modeles: list[dict]) -> list[dict]:
     """Complète chaque énoncé par ses références lisibles."""
     out = []

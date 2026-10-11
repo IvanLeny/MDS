@@ -62,6 +62,24 @@ def code_pour_tableau(con, exercice: int, tableau_n: int) -> str:
     return r[0] if r else f"tableau-{tableau_n}"
 
 
+def coherence(sections: list[dict], exercice: int) -> list[dict]:
+    """Contrôle de cohérence entre tableaux : un même total de l'exercice comparé à des valeurs de
+    l'exercice précédent différentes selon le tableau (ex. : OES 2023 = 3 865 au tableau 21, 3 040 au
+    tableau 23). Ces écarts viennent de l'Annuaire ; ils sont signalés, jamais corrigés."""
+    par_total: dict[str, dict[str, list[int]]] = {}
+    for s_ in sections:
+        for e in s_["commentaire"].get("enonces", []):
+            if not e["texte"].startswith(f"Par rapport à {exercice - 1},") or "ce total" not in e["texte"]:
+                continue
+            for r in e.get("references", []):
+                vs = [v for v in r.get("valeurs_sources", []) if v]
+                if r.get("nature") == "variation" and len(vs) == 2:
+                    par_total.setdefault(vs[0]["valeur_texte"].replace(" ", " ").strip(), {}) \
+                        .setdefault(vs[1]["valeur_texte"].strip(), []).append(s_["tableau_n"])
+    return [{"total": t, "exercice": exercice, "references": {ref: sorted(set(n)) for ref, n in refs.items()}}
+            for t, refs in par_total.items() if len(refs) > 1]
+
+
 def rediger(con, exercice: int, codes: list[str] | None = None, chapitre: str | None = None,
             documents: list[str] | None = None, client=None, titre: str | None = None,
             journaliser: bool = True, moteur=None) -> dict:
@@ -88,7 +106,11 @@ def rediger(con, exercice: int, codes: list[str] | None = None, chapitre: str | 
     plan.sort(key=lambda x: (x[3] is None, x[3] or 0))
     # 2) commentaires : validés, sinon (démonstration) produits et signalés « à relire »
     sections, non_valides, abstentions = [], [], []
+    vus = set()
     for code, ch, se, n in dict.fromkeys(plan):
+        if n is not None and n in vus:      # deux indicateurs appariés au même tableau : un seul commentaire
+            continue
+        vus.add(n)
         res = commentaire_valide(con, code, exercice)
         if res is None:
             if not accepter:
@@ -105,6 +127,7 @@ def rediger(con, exercice: int, codes: list[str] | None = None, chapitre: str | 
         sections.append({"chapitre": ch, "section": se, "tableau_n": n, "code": code,
                          "intitule": res.get("tableau_intitule") or res.get("indicateur"),
                          "commentaire": res, "valide": res["valide"]})
+    incoherences = coherence(sections, exercice)
     # 3) transitions sans chiffre (modèle de langage seulement), contrôlées
     for i in range(1, len(sections)):
         if client is None or sections[i]["chapitre"] == sections[i - 1]["chapitre"] and \
@@ -123,7 +146,7 @@ def rediger(con, exercice: int, codes: list[str] | None = None, chapitre: str | 
         "type": "note_analyse", "exercice": exercice,
         "titre": titre or f"Note d'analyse — exercice {exercice}" + (f" — {chapitre}" if chapitre else ""),
         "date": datetime.now().strftime("%d/%m/%Y"), "sections": sections, "abstentions": abstentions,
-        "commentaires_non_valides": non_valides, "mode_extractif": client is None,
+        "commentaires_non_valides": non_valides, "incoherences": incoherences, "mode_extractif": client is None,
         "modele": client.nom if client else cm.MODE_EXTRACTIF,
         "provisoire": any(s["commentaire"].get("provisoire") for s in sections),
     }

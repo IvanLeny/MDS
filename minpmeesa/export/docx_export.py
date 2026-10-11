@@ -67,7 +67,8 @@ def _commentaire(d: Document, res: dict, niveau: int = 1):
         return
     for e in res.get("enonces", []):
         p = d.add_paragraph(e["texte"], style="List Bullet" if e.get("type") == "perspective" else None)
-        refs = "; ".join(r["libelle"] for r in e.get("references", []))
+        from ..guards.provenance import a_afficher
+        refs = "; ".join(a_afficher(e.get("references", [])))
         if refs:
             _note_source(d, "Sources : " + refs)
     if res.get("valeurs_ecartees"):
@@ -106,6 +107,13 @@ def exporter_note_analyse(note: dict, chemin: Path) -> Path:
         if not s["valide"]:
             _note_source(d, "Commentaire non validé — à relire.")
         _commentaire(d, s["commentaire"])
+    if note.get("incoherences"):
+        d.add_heading("Contrôle de cohérence de l'Annuaire", level=1)
+        for inc in note["incoherences"]:
+            det = " ; ".join(f"{ref} (tableau(x) {', '.join(map(str, n))})" for ref, n in inc["references"].items())
+            d.add_paragraph(f"Pour un même total {inc['exercice']} ({inc['total']}), la valeur {inc['exercice'] - 1} "
+                            f"diffère selon le tableau : {det}. Les évolutions calculées diffèrent donc ; "
+                            "à vérifier auprès de la Cellule.", style="List Bullet")
     if note["abstentions"]:
         d.add_heading("Tableaux à commenter manuellement", level=1)
         for a in note["abstentions"]:
