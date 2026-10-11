@@ -52,7 +52,7 @@ def main(url: str):
         page.get_by_role("tab", name="Note d'analyse").click()
         attendre(page)
         page.get_by_role("button", name="Rédiger la note d'analyse").click()
-        page.wait_for_selector(".ap-doc", timeout=600000)
+        page.wait_for_selector(".ap-doc-titre", state="visible", timeout=600000)
         attendre(page)
         page.screenshot(path=str(DEST / "3_note_analyse.png"), full_page=False)
         # 4. Note stratégique
