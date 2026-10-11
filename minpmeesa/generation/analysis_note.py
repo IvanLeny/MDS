@@ -120,7 +120,8 @@ def rediger(con, exercice: int, codes: list[str] | None = None, chapitre: str | 
             res["valide"] = False
         if res.get("abstention"):
             abstentions.append({"code": code, "tableau_n": n, "motif": res.get("motif"),
-                                "mention": res.get("mention")})
+                                "mention": res.get("mention"),
+                                "intitule": res.get("tableau_intitule") or res.get("indicateur")})
             continue
         if not res["valide"]:
             non_valides.append(code)

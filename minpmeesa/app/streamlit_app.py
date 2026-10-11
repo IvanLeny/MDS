@@ -20,7 +20,7 @@ import streamlit as st  # noqa: E402
 
 from minpmeesa import config  # noqa: E402
 from minpmeesa.export import docx_export  # noqa: E402
-from minpmeesa.generation import analysis_note, commentary, strategic_note  # noqa: E402
+from minpmeesa.generation import analysis_note, commentary, redaction, strategic_note  # noqa: E402
 from minpmeesa.generation.llm import obtenir  # noqa: E402
 from minpmeesa.retrieval import consultation  # noqa: E402
 from minpmeesa.retrieval.hybrid import Moteur  # noqa: E402
@@ -84,6 +84,18 @@ def surligner(texte: str, question: str) -> str:
         motif = re.compile(r"\b(" + "|".join(re.escape(escape(m)) for m in mots) + r")\w*", re.I)
         t = motif.sub(lambda x: f'<mark class="ap-mark">{x.group(0)}</mark>', t)
     return f'<div class="ap-extrait">{t}</div>'
+
+
+def mentions(o: dict) -> list[str]:
+    """Avertissements du document, en une ligne chacun (rapport rédigé)."""
+    m = []
+    if o.get("mode_extractif"):
+        m.append("Texte rédigé par gabarits, à partir des seuls chiffres de l'Annuaire (sans modèle de langage).")
+    if o.get("provisoire"):
+        m.append("Provisoire : les liens entre graphiques et tableaux n'ont pas encore été validés par la Cellule.")
+    if o.get("commentaires_non_valides"):
+        m.append(f"{len(o['commentaires_non_valides'])} commentaire(s) non encore validé(s) : document à relire.")
+    return m
 
 
 def avertissements(o: dict):
@@ -249,7 +261,14 @@ if page == "Services" and m:
             avertissements(res)
             c_txt, c_gr = st.columns([3, 2], gap="large")
             with c_txt:
-                afficher_commentaire(res)
+                detail = st.toggle("Vérification : énoncé par énoncé, avec sources", key="det_com")
+                if detail or res.get("abstention"):
+                    afficher_commentaire(res)
+                else:
+                    if res.get("repli_gabarits"):
+                        st.info(f"Rédaction du modèle **{res.get('modele')}** non retenue ({res['repli_gabarits']}) : "
+                                "commentaire rédigé par les gabarits.")
+                    st.markdown(redaction.html_commentaire(res), unsafe_allow_html=True)
             with c_gr:
                 ligne_, pts = series.serie_principale(con, code, ex)
                 if len(pts) >= 2:
@@ -306,22 +325,28 @@ if page == "Services" and m:
                                                                    titre=f"{titre} — {len(choix)} chapitre(s)")
         na = st.session_state.get("na")
         if na:
-            st.markdown(f"#### {na['titre']}")
-            st.caption(f"{len(na['sections'])} tableau(x) commenté(s) ; {len(na['abstentions'])} à commenter manuellement.")
-            avertissements(na)
+            c_v, c_w = st.columns([3, 1])
+            vue = c_v.radio("Présentation", ["Rapport rédigé", "Vérification (énoncé par énoncé, avec sources)"],
+                            horizontal=True, key="vue_na")
+            with c_w:
+                bouton_word("Exporter en Word", docx_export.exporter_note_analyse, na,
+                            f"note_analyse_{na['exercice']}.docx")
             for inc in na.get("incoherences", []):
                 det = " ; ".join(f"{ref} (tableau{'x' if len(n) > 1 else ''} {', '.join(map(str, n))})"
                                  for ref, n in inc["references"].items())
                 st.warning(f"**Contrôle de cohérence de l'Annuaire** : pour un même total {inc['exercice']} "
                            f"({inc['total']}), la valeur {inc['exercice'] - 1} diffère selon le tableau : {det}. "
                            "Les évolutions calculées diffèrent donc ; à vérifier auprès de la Cellule.")
-            for s in na["sections"]:
-                st.markdown(f"#### Tableau {s['tableau_n']} : {s['intitule']}")
-                afficher_commentaire(s["commentaire"])
-            if na["abstentions"]:
-                st.warning("À commenter manuellement : " + ", ".join(
-                    dict.fromkeys(f"tableau {a['tableau_n']}" for a in na["abstentions"])))
-            bouton_word("Exporter en Word", docx_export.exporter_note_analyse, na, f"note_analyse_{na['exercice']}.docx")
+            if vue == "Rapport rédigé":
+                st.markdown(redaction.html_note_analyse(redaction.structurer_note_analyse(na), mentions(na)),
+                            unsafe_allow_html=True)
+            else:
+                st.caption(f"{len(na['sections'])} tableau(x) commenté(s) ; "
+                           f"{len({a['tableau_n'] for a in na['abstentions']})} à commenter manuellement.")
+                avertissements(na)
+                for s in na["sections"]:
+                    st.markdown(f"#### Tableau {s['tableau_n']} : {s['intitule']}")
+                    afficher_commentaire(s["commentaire"])
 
     with t4:
         st.markdown(identite.entete_service(

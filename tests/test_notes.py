@@ -60,7 +60,7 @@ def test_exports_word(base_complete, m, tmp_path):
     res = commentary.commenter(base_complete, "pme-creees-sur-periode", 2024, None, journaliser=False)
     p = docx_export.exporter_commentaire(res, tmp_path / "c.docx")
     texte = "\n".join(x.text for x in Document(p).paragraphs)
-    assert "MODE EXTRACTIF" in texte and "21 132" in texte
+    assert "sans modèle de langage" in texte and "21 132" in texte
     note = strategic_note.rediger(base_complete, 2024, None, m, journaliser=False)
     p = docx_export.exporter_note_strategique(note, tmp_path / "n.docx")
     t = "\n".join(x.text for x in Document(p).paragraphs)
@@ -152,3 +152,24 @@ def test_de_contraction():
     assert de("le stock de PME") == "du stock de PME"
     assert de("les UPA enregistrées") == "des UPA enregistrées"
     assert de("la valeur ajoutée des PME") == "de la valeur ajoutée des PME"
+
+
+def test_rapport_redige_n_ajoute_aucun_chiffre(base_complete):
+    """Mise en forme « rapport » : les paragraphes n'introduisent aucun nombre absent des énoncés contrôlés
+    (hors numéros de tableau des renvois) ; un même total n'est pas répété dans une section."""
+    from minpmeesa.generation import analysis_note as an, redaction as rd
+    from minpmeesa.guards import literal_check as lc
+    na = an.rediger(base_complete, 2024, documents=["annuaire_2024"], journaliser=False,
+                    titre="Note d'analyse — Annuaire statistique 2024 sur les PMEESA")
+    doc = rd.structurer_note_analyse(na)
+    assert doc["introduction"].startswith("La présente note analyse l'Annuaire statistique 2024")
+    assert len(doc["chapitres"]) >= 4 and doc["enseignements"]
+    par_n = {s["tableau_n"]: s["commentaire"] for s in na["sections"]}
+    for c in doc["chapitres"]:
+        for se in c["sections"]:
+            niveaux = [t["paragraphe"] for t in se["tableaux"] if "le total s'établit à" in t["paragraphe"]]
+            assert len(niveaux) == len(set(p.split(".")[0] for p in niveaux))
+            for t in se["tableaux"]:
+                permis = {n for e in par_n[t["tableau_n"]]["enonces"] for n in lc.nombres(e["texte"])}
+                permis |= {str(k) for k in par_n}
+                assert set(lc.nombres(t["paragraphe"])) <= permis, t["paragraphe"]

@@ -48,9 +48,14 @@ Trois messages peuvent accompagner les textes :
 ![Note d'analyse](../data/outputs/captures/3_note_analyse.png)
 
 1. Choisissez l'Annuaire statistique (par exemple « Annuaire statistique 2024 »), puis l'étendue : l'Annuaire entier, ou seulement certains de ses chapitres ; cliquez sur « Rédiger la note d'analyse ».
-2. La note reprend les commentaires, tableau par tableau, dans l'ordre de l'Annuaire. Elle n'ajoute aucun chiffre.
-3. Les tableaux sans commentaire possible sont listés « à commenter manuellement ».
-4. « Exporter en Word ».
+2. **Présentation « Rapport rédigé »** (par défaut) : introduction, principaux enseignements, puis les chapitres
+   et sections de l'Annuaire en titres et sous-titres ; chaque tableau fait l'objet d'un paragraphe rédigé suivi
+   de sa source (Annuaire, tableau, page). Un total déjà présenté dans la section n'est pas répété (renvoi au
+   tableau). La mise en forme n'ajoute ni ne modifie aucun chiffre.
+3. **Présentation « Vérification »** : les mêmes énoncés, un par un, avec la source de chaque valeur.
+4. Annexes : tableaux à commenter par la Cellule ; contrôle de cohérence de l'Annuaire (même total, valeurs de
+   l'exercice précédent différentes selon le tableau).
+5. « Exporter en Word » : même structure (titres de niveaux 1 à 3, paragraphes justifiés, sources en note).
 
 ## 4. Note stratégique
 

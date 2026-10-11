@@ -41,14 +41,14 @@ def _doc(titre: str) -> Document:
 def _avertissements(d: Document, obj: dict):
     msgs = []
     if obj.get("mode_extractif"):
-        msgs.append("Texte produit en MODE EXTRACTIF (sans modèle de langage) : gabarits déterministes.")
+        msgs.append("texte rédigé par gabarits, à partir des seuls chiffres de l'Annuaire (sans modèle de langage).")
     if obj.get("provisoire"):
-        msgs.append("PROVISOIRE : appariement indicateur / tableau non encore validé par double lecture.")
+        msgs.append("provisoire : les liens entre graphiques et tableaux n'ont pas encore été validés par la Cellule.")
     if obj.get("commentaires_non_valides") or obj.get("valide") is False:
-        msgs.append("Commentaires non encore validés par la Cellule : document à relire.")
+        msgs.append("commentaires non encore validés par la Cellule : document à relire.")
     for m in msgs:
         p = d.add_paragraph()
-        r = p.add_run("⚠ " + m)
+        r = p.add_run("Avertissement : " + m)
         r.bold, r.font.color.rgb, r.font.size = True, ROUGE, Pt(9)
 
 
@@ -82,43 +82,67 @@ def exporter_commentaire(res: dict, chemin: Path) -> Path:
     _note_source(d, f"Exercice {res['exercice']} ; {nom_document(res.get('doc_annuaire'))}, tableau "
                     f"{res.get('tableau_n')} ; rédaction : {res.get('modele')}")
     _avertissements(d, res)
+    if not res.get("abstention"):
+        from ..generation.redaction import structurer_commentaire
+        c = structurer_commentaire(res)
+        d.add_heading("Commentaire", level=1)
+        _para(d, c["paragraphe"])
+        if c["source"]:
+            _note_source(d, c["source"])
+        d.add_heading("Détail des sources, énoncé par énoncé", level=2)
     _commentaire(d, res)
     chemin.parent.mkdir(parents=True, exist_ok=True)
     d.save(chemin)
     return chemin
 
 
+def _para(d: Document, texte: str, style: str | None = None):
+    p = d.add_paragraph(texte, style=style)
+    p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p.paragraph_format.space_after = Pt(6)
+    p.paragraph_format.line_spacing = 1.15
+    return p
+
+
 def exporter_note_analyse(note: dict, chemin: Path) -> Path:
+    """Rapport : introduction, principaux enseignements, chapitres > sections > tableaux (un paragraphe
+    rédigé et sa source par tableau), annexes. Le détail énoncé par énoncé est dans l'interface."""
+    from ..generation.redaction import structurer_note_analyse
+    doc = structurer_note_analyse(note)
     d = _doc(note["titre"])
-    _note_source(d, f"Établie le {note['date']} ; modèle : {note['modele']}")
+    _note_source(d, f"Établie le {note['date']} — rédaction : {note['modele']}")
     _avertissements(d, note)
-    chap = sect = None
-    for s in note["sections"]:
-        if s["chapitre"] != chap:
-            chap = s["chapitre"]
-            d.add_heading(chap, level=1)
-            sect = None
-        if s["section"] != sect and not s["section"].startswith("("):
-            sect = s["section"]
-            d.add_heading(sect, level=2)
-        if s.get("transition"):
-            d.add_paragraph(s["transition"])
-        d.add_heading(f"Tableau {s['tableau_n']} : {s['intitule']}", level=3)
-        if not s["valide"]:
-            _note_source(d, "Commentaire non validé — à relire.")
-        _commentaire(d, s["commentaire"])
-    if note.get("incoherences"):
-        d.add_heading("Contrôle de cohérence de l'Annuaire", level=1)
-        for inc in note["incoherences"]:
+    d.add_heading("Introduction", level=1)
+    _para(d, doc["introduction"])
+    if doc["enseignements"]:
+        d.add_heading("Principaux enseignements", level=1)
+        for x in doc["enseignements"]:
+            _para(d, x, style="List Bullet")
+    for c in doc["chapitres"]:
+        d.add_heading(c["titre"], level=1)
+        for se in c["sections"]:
+            if se["titre"]:
+                d.add_heading(se["titre"], level=2)
+            for t in se["tableaux"]:
+                d.add_heading(t["titre"], level=3)
+                if t.get("transition"):
+                    _para(d, t["transition"])
+                _para(d, t["paragraphe"])
+                if t["source"]:
+                    _note_source(d, t["source"] + ("" if t.get("valide") else " Commentaire non encore validé."))
+    if doc["manuels"] or doc["incoherences"]:
+        d.add_heading("Annexes", level=1)
+    if doc["manuels"]:
+        d.add_heading("A. Tableaux à commenter par la Cellule", level=2)
+        for a in doc["manuels"]:
+            d.add_paragraph(f"Tableau {a['tableau_n']} — {a.get('intitule') or a['code']}", style="List Bullet")
+    if doc["incoherences"]:
+        d.add_heading("B. Contrôle de cohérence de l'Annuaire", level=2)
+        for inc in doc["incoherences"]:
             det = " ; ".join(f"{ref} (tableau(x) {', '.join(map(str, n))})" for ref, n in inc["references"].items())
-            d.add_paragraph(f"Pour un même total {inc['exercice']} ({inc['total']}), la valeur {inc['exercice'] - 1} "
-                            f"diffère selon le tableau : {det}. Les évolutions calculées diffèrent donc ; "
-                            "à vérifier auprès de la Cellule.", style="List Bullet")
-    if note["abstentions"]:
-        d.add_heading("Tableaux à commenter manuellement", level=1)
-        for a in note["abstentions"]:
-            d.add_paragraph(f"Tableau {a.get('tableau_n')} ({a['code']}) : sources insuffisantes — {a.get('motif')}",
-                            style="List Bullet")
+            _para(d, f"Pour un même total {inc['exercice']} ({inc['total']}), la valeur {inc['exercice'] - 1} "
+                     f"diffère selon le tableau : {det}. Les évolutions calculées diffèrent donc ; à vérifier.",
+                  style="List Bullet")
     chemin.parent.mkdir(parents=True, exist_ok=True)
     d.save(chemin)
     return chemin

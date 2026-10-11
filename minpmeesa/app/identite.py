@@ -143,6 +143,21 @@ def css(i: dict) -> str:
   .ap-carte-texte {{ color:var(--ap-gris); font-size:.9rem; line-height:1.45; }}
   .ap-extrait {{ color:var(--ap-texte); line-height:1.6; }}
   mark.ap-mark {{ background:#FFF1B8; color:inherit; padding:0 2px; border-radius:3px; }}
+  .ap-doc {{ background:#fff; border:1px solid var(--ap-bord); border-radius:6px; box-shadow:var(--ap-ombre);
+            padding:44px 56px; margin:10px 0 18px 0; max-width:960px; color:var(--ap-texte); }}
+  .ap-doc-court {{ padding:22px 28px; }}
+  .ap-doc p {{ text-align:justify; line-height:1.65; margin:0 0 10px 0; font-size:1rem; }}
+  .ap-doc-titre {{ font-size:1.7rem; font-weight:800; color:var(--ap-vert-fonce); line-height:1.2; }}
+  .ap-doc-meta {{ color:var(--ap-gris); font-size:.85rem; margin:4px 0 18px 0; padding-bottom:12px;
+                 border-bottom:3px solid var(--ap-vert); }}
+  .ap-doc-avert {{ background:#FFF8E1; border-left:4px solid var(--ap-jaune); padding:10px 14px; font-size:.85rem;
+                  margin-bottom:16px; border-radius:4px; }}
+  .ap-doc h2 {{ font-size:1.3rem; color:var(--ap-vert-fonce); margin:26px 0 10px 0; padding-bottom:4px;
+               border-bottom:1px solid var(--ap-bord); }}
+  .ap-doc h3 {{ font-size:1.08rem; color:var(--ap-texte); margin:18px 0 8px 0; }}
+  .ap-doc h4 {{ font-size:.98rem; color:var(--ap-vert-fonce); margin:14px 0 6px 0; font-weight:700; }}
+  .ap-doc ul {{ margin:0 0 10px 18px; }} .ap-doc li {{ margin-bottom:4px; line-height:1.55; }}
+  .ap-doc-source {{ font-size:.82rem !important; color:var(--ap-gris); font-style:italic; text-align:left !important; }}
   .ap-pied {{ margin-top:36px; padding:14px 0 6px 0; border-top:1px solid var(--ap-bord); font-size:.8rem; color:var(--ap-gris); }}
 </style>"""
 
