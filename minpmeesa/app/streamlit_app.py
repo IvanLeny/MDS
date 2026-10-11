@@ -86,6 +86,15 @@ def surligner(texte: str, question: str) -> str:
     return f'<div class="ap-extrait">{t}</div>'
 
 
+def barre(texte: str):
+    """Barre de progression : rend visible l'avancement des rédactions longues (modèle de langage)."""
+    b = st.progress(0.0, text=texte)
+
+    def maj(i: int, n: int, quoi: str):
+        b.progress(i / max(n, 1), text=f"{texte} — {quoi} ({i + 1}/{n})")
+    return b, maj
+
+
 def mentions(o: dict) -> list[str]:
     """Avertissements du document, en une ligne chacun (rapport rédigé)."""
     m = []
@@ -135,8 +144,7 @@ st.sidebar.markdown(f'<div class="ap-side-titre">{ID["nom"]}</div><div class="ap
                     unsafe_allow_html=True)
 MODES = {"none": "Gabarits (sans modèle de langage)", "ollama": "Modèle de langage local (Ollama)",
          "api": "Service distant (développement)"}
-_ollama_pret = client_llm("ollama")[0] is not None
-choix_llm = st.sidebar.selectbox("Mode de rédaction", ["none", "ollama", "api"], index=1 if _ollama_pret else 0,
+choix_llm = st.sidebar.selectbox("Mode de rédaction", ["none", "ollama", "api"], index=0,
                                  format_func=MODES.get,
                                  help="Gabarits : instantané, chaque phrase est construite à partir des chiffres. "
                                       "Modèle local : texte mieux rédigé, plus lent, toujours contrôlé.")
@@ -311,18 +319,21 @@ if page == "Services" and m:
                 "ORDER BY page", (ann["doc_id"],))))
             choix = st.multiselect("Chapitres de cet Annuaire", chapitres, key="ch3")
         if client is not None and etendue == "Tout l'Annuaire":
-            st.caption("Avec un modèle de langage, la rédaction d'un Annuaire entier peut prendre longtemps.")
+            st.warning("Mode « modèle de langage » : sur un ordinateur sans carte graphique, chaque tableau peut "
+                       "prendre plusieurs minutes (un Annuaire entier : plusieurs heures). Pour une note complète, "
+                       "choisissez « Gabarits » dans la barre latérale (environ 15 secondes), ou quelques chapitres.")
         if st.button("Rédiger la note d'analyse", type="primary", disabled=etendue == "Chapitres choisis" and not choix):
             titre = f"Note d'analyse — {ann['titre']}"
-            with st.spinner("Rédaction des commentaires de l'Annuaire…"):
-                if etendue == "Tout l'Annuaire":
-                    st.session_state["na"] = analysis_note.rediger(con, ann["exercice"], documents=[ann["doc_id"]],
-                                                                   client=client, moteur=m, titre=titre)
-                else:
-                    motif = "|".join(re.escape(c) for c in choix)
-                    st.session_state["na"] = analysis_note.rediger(con, ann["exercice"], chapitre=f"^({motif})$",
-                                                                   client=client, moteur=m,
-                                                                   titre=f"{titre} — {len(choix)} chapitre(s)")
+            b, maj = barre("Rédaction de la note")
+            if etendue == "Tout l'Annuaire":
+                st.session_state["na"] = analysis_note.rediger(con, ann["exercice"], documents=[ann["doc_id"]],
+                                                               client=client, moteur=m, titre=titre, progression=maj)
+            else:
+                motif = "|".join(re.escape(c) for c in choix)
+                st.session_state["na"] = analysis_note.rediger(con, ann["exercice"], chapitre=f"^({motif})$",
+                                                               client=client, moteur=m, progression=maj,
+                                                               titre=f"{titre} — {len(choix)} chapitre(s)")
+            b.empty()
         na = st.session_state.get("na")
         if na:
             c_v, c_w = st.columns([3, 1])
@@ -355,7 +366,9 @@ if page == "Services" and m:
             "jusqu'à la page de l'Annuaire."), unsafe_allow_html=True)
         ex4 = st.selectbox("Exercice", exercices, key="ex4")
         if st.button("Rédiger la note stratégique", type="primary"):
-            st.session_state["ns"] = strategic_note.rediger(con, ex4, client, m)
+            b, maj = barre("Rédaction de la note stratégique")
+            st.session_state["ns"] = strategic_note.rediger(con, ex4, client, m, progression=maj)
+            b.empty()
         ns = st.session_state.get("ns")
         if ns:
             avertissements(ns)

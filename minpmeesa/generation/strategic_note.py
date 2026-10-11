@@ -87,7 +87,7 @@ def objectif_documente(moteur, intitule: str, exercice: int, seuil: float) -> di
     return None
 
 
-def rediger(con, exercice: int, client=None, moteur=None, journaliser: bool = True) -> dict:
+def rediger(con, exercice: int, client=None, moteur=None, journaliser: bool = True, progression=None) -> dict:
     t0 = time.time()
     cfg = config.charger()
     ns = cfg["note_strategique"]
@@ -96,7 +96,9 @@ def rediger(con, exercice: int, client=None, moteur=None, journaliser: bool = Tr
         f"SELECT code_indicateur FROM appariement WHERE exercice=? AND tableau_n IS NOT NULL "
         f"AND statut IN ({','.join('?' * len(statuts))}) ORDER BY graphique_n", (exercice, *statuts))]
     candidats, non_valides, abstentions, commentaires = [], [], [], []
-    for code in codes:
+    for i, code in enumerate(codes):
+        if progression:
+            progression(i, len(codes), code)
         com = analysis_note.commentaire_valide(con, code, exercice)
         if com is None:
             com = cm.commenter(con, code, exercice, client, journaliser=journaliser, moteur=moteur)

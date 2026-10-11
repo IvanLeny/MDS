@@ -1,7 +1,7 @@
 # Guide de l'utilisateur
 
 Lancer l'outil : double-clic sur `demarrer.bat`. La barre de gauche contient :
-- **Mode de rédaction** : « Gabarits » (instantané, par défaut si Ollama n'est pas lancé) ou « Modèle de langage
+- **Mode de rédaction** : « Gabarits » (instantané, choisi par défaut) ou « Modèle de langage
   local » (mieux rédigé, plus lent, toujours contrôlé). L'état réel est affiché juste en dessous ;
 - **Navigation** : Accueil, Services, Validation, Base documentaire.
 

@@ -82,7 +82,8 @@ def coherence(sections: list[dict], exercice: int) -> list[dict]:
 
 def rediger(con, exercice: int, codes: list[str] | None = None, chapitre: str | None = None,
             documents: list[str] | None = None, client=None, titre: str | None = None,
-            journaliser: bool = True, moteur=None) -> dict:
+            journaliser: bool = True, moteur=None, progression=None) -> dict:
+    """`progression(i, n, libellé)` : appelée avant chaque tableau (barre de progression de l'interface)."""
     t0 = time.time()
     cfg = config.charger()
     accepter = cfg["note_analyse"]["accepter_non_valides"]
@@ -107,7 +108,10 @@ def rediger(con, exercice: int, codes: list[str] | None = None, chapitre: str | 
     # 2) commentaires : validés, sinon (démonstration) produits et signalés « à relire »
     sections, non_valides, abstentions = [], [], []
     vus = set()
-    for code, ch, se, n in dict.fromkeys(plan):
+    etapes = list(dict.fromkeys(plan))
+    for i, (code, ch, se, n) in enumerate(etapes):
+        if progression:
+            progression(i, len(etapes), f"tableau {n}" if n else code)
         if n is not None and n in vus:      # deux indicateurs appariés au même tableau : un seul commentaire
             continue
         vus.add(n)
