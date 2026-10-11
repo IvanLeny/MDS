@@ -1,8 +1,17 @@
 # Guide de l'utilisateur
 
-Lancer l'outil : double-clic sur `demarrer.bat`. Dans la barre de gauche, **Rédaction** permet de choisir
-entre « Modèle de langage local » et « Sans modèle de langage » (gabarits). Le moteur effectivement
-utilisé est affiché juste en dessous.
+Lancer l'outil : double-clic sur `demarrer.bat`. La barre de gauche contient :
+- **Mode de rédaction** : « Gabarits » (instantané, par défaut si Ollama n'est pas lancé) ou « Modèle de langage
+  local » (mieux rédigé, plus lent, toujours contrôlé). L'état réel est affiché juste en dessous ;
+- **Navigation** : Accueil, Services, Validation, Base documentaire.
+
+## Accueil
+
+![Accueil](../data/outputs/captures/0_accueil.png)
+
+Les chiffres clés de l'exercice choisi (stock de PME, créations, valeur ajoutée, OES, UPA), avec leur évolution et
+une petite courbe des années publiées dans l'Annuaire. Le point d'interrogation indique la source exacte
+(Annuaire, tableau, page).
 
 Trois messages peuvent accompagner les textes :
 - **Sans modèle de langage** : le texte vient de gabarits appliqués aux chiffres de l'Annuaire ;
@@ -16,7 +25,9 @@ Trois messages peuvent accompagner les textes :
 1. Tapez une question en français, puis Entrée.
 2. Les 5 passages les plus utiles s'affichent, avec le titre du document, la page et un extrait.
 3. « Ouvrir la page » affiche la page du PDF d'origine.
-4. Si rien de solide n'est trouvé : « Aucune source suffisante trouvée dans les publications ».
+4. Les mots de la question sont surlignés dans les extraits.
+5. Si rien de solide n'est trouvé : « Aucune source suffisante trouvée dans les publications », avec des
+   **formulations proposées** tirées des intitulés de l'Annuaire (cliquer pour relancer).
    Les documents à usage interne ne sont jamais montrés.
 
 ## 2. Commenter un indicateur
@@ -24,7 +35,9 @@ Trois messages peuvent accompagner les textes :
 ![Commenter](../data/outputs/captures/2_commenter.png)
 
 1. Choisissez l'exercice et l'indicateur, puis « Rédiger le commentaire ».
-2. Chaque phrase est suivie de ses **sources** (tableau, page ; ou variation calculée et ses deux valeurs).
+2. Chaque phrase est étiquetée CONSTAT ou PERSPECTIVE et suivie de ses **sources** (« Annuaire 2024, tableau 4,
+   p. 18 — ligne, colonne » ; ou « Variation calculée par le programme »). À droite, le graphique des valeurs
+   publiées de l'indicateur.
 3. « Valeurs écartées » liste les chiffres retirés, parce qu'ils ne figuraient pas dans les sources.
 4. Sans source suffisante : « sources insuffisantes, à commenter manuellement ».
 5. Relisez, puis **« Valider ce commentaire »** : seuls les commentaires validés sont repris dans les notes.
@@ -49,6 +62,18 @@ Trois messages peuvent accompagner les textes :
    politique publique n'est cité que s'il figure dans une publication, avec la page.
 4. « Traçabilité » montre la chaîne énoncé → commentaire → valeur → tableau → page.
 5. « Exporter en Word ».
+
+## Validation des appariements
+
+![Validation](../data/outputs/captures/6_validation.png)
+
+1. Saisissez votre nom, choisissez l'exercice.
+2. Pour chaque lien graphique ↔ tableau proposé : lisez les deux intitulés (et, si besoin, les pages), puis
+   « Le lien est juste », « Aucun tableau ne correspond » ou « Un autre tableau correspond » (avec son numéro).
+3. Un **second lecteur** fait de même, sous son propre nom, sans voir les décisions du premier.
+4. « Consolider la double lecture » : deux décisions concordantes → validé (ou rejeté) ; désaccord → à vérifier.
+   Le kappa de Cohen est enregistré dans `data/pairing/accord_AAAA.json`.
+5. Reconstruire la base (page Base documentaire) pour que les services utilisent les nouveaux statuts.
 
 ## Base documentaire
 

@@ -77,8 +77,9 @@ def _commentaire(d: Document, res: dict, niveau: int = 1):
 
 def exporter_commentaire(res: dict, chemin: Path) -> Path:
     d = _doc(f"Commentaire — {res.get('indicateur') or res.get('tableau_intitule')}")
-    _note_source(d, f"Exercice {res['exercice']} ; tableau {res.get('tableau_n')} de l'Annuaire "
-                    f"({res.get('doc_annuaire')}) ; modèle : {res.get('modele')}")
+    from ..guards.provenance import nom_document
+    _note_source(d, f"Exercice {res['exercice']} ; {nom_document(res.get('doc_annuaire'))}, tableau "
+                    f"{res.get('tableau_n')} ; rédaction : {res.get('modele')}")
     _avertissements(d, res)
     _commentaire(d, res)
     chemin.parent.mkdir(parents=True, exist_ok=True)

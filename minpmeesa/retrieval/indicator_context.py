@@ -54,7 +54,7 @@ class Contexte:
                 out.append({"texte": n, "source": {**src, "nature": "libellé"}})
         for d in self.variations:
             src = {"nature": "variation", "valeur_id": d["valeur_id"], "valeur_ref_id": d["valeur_ref_id"],
-                   "exercice_ref": d["exercice_ref"], "ligne": d["ligne"]}
+                   "exercice": d["exercice"], "exercice_ref": d["exercice_ref"], "ligne": d["ligne"]}
             out.append({"texte": d["var_abs_texte"], "source": {**src, "grandeur": "var_abs"}})
             if d["var_rel_texte"]:
                 out.append({"texte": d["var_rel_texte"], "source": {**src, "grandeur": "var_rel_pct"}})

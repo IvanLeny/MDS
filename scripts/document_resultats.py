@@ -175,7 +175,7 @@ r.font.size = Pt(18)
 p = doc.add_paragraph()
 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 r = p.add_run("\nConception et évaluation d'un système RAG hybride à restitution contrôlée, appliqué aux "
-              "publications statistiques du MINPMEESA\n\nIvan Leny — Master 2, ISSEA\nVersion du 06/10/2026")
+              "publications statistiques du MINPMEESA\n\nIvan Leny — Master 2, ISSEA\nVersion du 11/10/2026")
 r.italic = True
 r.font.size = Pt(11)
 saut()
@@ -301,8 +301,8 @@ saut()
 
 # ---------------------------------------------------------------- 3. interface
 titre("4. Le prototype ANALYS'PME : interface (section 3.4.2, Annexe III)")
-para("Quatre parcours (Consulter, Commenter un indicateur, Note d'analyse, Note stratégique) et une page « Base "
-     "documentaire ». Identité visuelle : logo du MINPMEESA placé avant le nom ANALYS'PME, couleurs nationales (vert, "
+para("Une page d'accueil (tableau de bord), quatre services (Consulter, Commenter un indicateur, Note d'analyse, "
+     "Note stratégique), une page « Validation » (double lecture des appariements) et une page « Base documentaire ». Identité visuelle : logo du MINPMEESA placé avant le nom ANALYS'PME, couleurs nationales (vert, "
      "rouge, jaune) en version vive, sans émoticônes ; chaque énoncé est présenté comme une carte étiquetée CONSTAT ou "
      "PERSPECTIVE, suivie de ses sources. Aucune ressource externe n'est chargée : l'interface fonctionne hors ligne.")
 para("Deux garde-fous d'usage complètent l'interface : (1) en cas de refus d'une question, l'outil propose des "
@@ -323,11 +323,13 @@ para("Poste de développement : Linux, 4 cœurs, 15,7 Go, sans GPU. Ces temps n'
      "de l'attente imposée par le quota du compte gratuit : ce n'est pas un temps du système, à ne pas reporter "
      "comme tel.", italique=True, taille=10)
 captures = [
+    ("0_accueil.png", "Page d'accueil : chiffres clés de l'exercice, sourcés, avec leur trajectoire publiée"),
     ("1_consulter.png", "Parcours « Consulter » : extraits sourcés (document, page) ; refus motivé et suggestions sinon"),
     ("2_commenter.png", "Parcours « Commenter un indicateur » : énoncés étiquetés CONSTAT / PERSPECTIVE et source de chaque valeur"),
     ("3_note_analyse.png", "Parcours « Note d'analyse » : choix de l'Annuaire, puis de l'étendue"),
     ("4_note_strategique.png", "Parcours « Note stratégique » : encadré des chiffres clés de l'exercice 2024"),
     ("5_base_documentaire.png", "Page « Base documentaire » : ajout d'un document et exploration de la base"),
+    ("6_validation.png", "Page « Validation » : double lecture des appariements graphique ↔ tableau (kappa de Cohen)"),
 ]
 for f, nom in captures:
     figure(CAPT / f, nom, f"data/outputs/captures/{f}", 15)
@@ -336,7 +338,7 @@ saut()
 # ---------------------------------------------------------------- 4. note stratégique
 titre("5. Note stratégique 2024 (section 3.5.4, Tableau 3.8, Annexe V)")
 para("Mode gabarits (sans modèle de langage), version du 01/10/2026 après les améliorations A et B. "
-     "**5 évolutions** retenues (une par grandeur), **549 mots** ; critères BN4 (toute valeur tracée) et BN5 "
+     "**5 évolutions** retenues (une par grandeur), **603 mots** ; critères BN4 (toute valeur tracée) et BN5 "
      "(rubriques, 3 messages clés, longueur) satisfaits automatiquement ; aucune valeur écartée.")
 tableau("Chiffres clés de l'exercice 2024",
         ["Grandeur", "Valeur 2024", "Évolution / 2023", "Source"],
@@ -348,12 +350,12 @@ tableau("Chiffres clés de l'exercice 2024",
         "data/outputs/note_strategique_2024.md")
 titre("Messages clés produits", 2)
 puces(["En 2024, le stock de PME atteint 443 524, en hausse de 12,8 % par rapport à 2023.",
-       "La dynamique la plus forte concerne « Adamaoua » (répartition par Région) pour le stock de PME : +12,8 % du "
-       "stock en un an.",
+       "La dynamique la plus forte concerne « TPE » (répartition par typologie) pour la valeur ajoutée des PME : "
+       "+12,1 % de la valeur ajoutée en un an.",
        "Point de vigilance : les UPA enregistrées reculent pour « Masculin » (répartition par sexe), avec une baisse "
        "de 3,9 % de l'effectif par rapport à 2023."])
 titre("Pistes pour la décision (typées, sans chiffre)", 2)
-puces(["Cibler : examiner la situation de « Adamaoua » pour le stock de PME.",
+puces(["Suivre : fixer un objectif de référence pour le stock de PME.",
        "Cibler : examiner la situation de « Bamenda / Tertiaire » pour les créations de PME dans les CFCE.",
        "Approfondir : documenter les facteurs de la hausse durable observée pour la valeur ajoutée des PME.",
        "Cibler : examiner la situation de « Nord-Ouest » pour les OES enregistrées.",
@@ -361,6 +363,10 @@ puces(["Cibler : examiner la situation de « Adamaoua » pour le stock de PME.",
 para("Exercice 2023 : 4 évolutions calculables (stock, créations, OES, UPA), sous le minimum de 5 ; la note le "
      "signale et l'explique plutôt que d'y faire figurer des évolutions non comparables. Version rédigée par le "
      "modèle de langage (2024, avant les améliorations) : 7 évolutions, 776 mots, BN4 et BN5 satisfaits.")
+para("Correction du 11/10/2026 : dans l'Annuaire 2024, le stock régional est estimé au prorata, si bien que toutes "
+     "les régions progressent de 12,8 %. La version précédente désignait arbitrairement « Adamaoua » comme la "
+     "dynamique la plus forte ; la note le constate désormais (« toutes les catégories évoluent au même rythme ») et "
+     "retient la dynamique de la valeur ajoutée des TPE. Le nombre de mots passe de 549 à 603.", italique=True, taille=10)
 texte_propose("La note retient une évolution par grandeur suivie (stock, créations, valeur ajoutée, organisations de "
               "l'économie sociale, unités de production artisanale), celle de son total, et la détaille par la "
               "sous-catégorie la plus dynamique, à condition que celle-ci repose sur un effectif d'au moins 50 "

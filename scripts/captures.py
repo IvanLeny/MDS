@@ -29,6 +29,12 @@ def main(url: str):
         page.goto(url)
         page.wait_for_selector(".ap-nom", timeout=180000)
         attendre(page, 3000)
+        # 0. Accueil (tableau de bord), puis les services
+        page.wait_for_selector("text=Courbes", timeout=300000)
+        attendre(page)
+        page.screenshot(path=str(DEST / "0_accueil.png"), full_page=True)
+        page.get_by_text("Services", exact=True).first.click()
+        attendre(page)
         # 1. Consulter
         page.get_by_placeholder("Ex. : Combien").fill("Combien de PME ont été créées dans les CFCE en 2024 ?")
         page.keyboard.press("Enter")
@@ -61,6 +67,14 @@ def main(url: str):
         page.wait_for_selector("text=Explorer la base", timeout=180000)
         attendre(page)
         page.screenshot(path=str(DEST / "5_base_documentaire.png"), full_page=True)
+        # 6. Validation des appariements (double lecture)
+        page.get_by_text("Validation", exact=True).first.click()
+        attendre(page)
+        page.get_by_placeholder("Ex. : A. Mbarga").fill("Lecteur 1")
+        page.keyboard.press("Enter")
+        page.wait_for_selector("text=Votre décision", timeout=180000)
+        attendre(page)
+        page.screenshot(path=str(DEST / "6_validation.png"), full_page=True)
         nav.close()
     print(sorted(str(x) for x in DEST.glob("*.png")))
 

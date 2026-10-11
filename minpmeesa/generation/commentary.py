@@ -223,7 +223,14 @@ def extractif(ctx: ic.Contexte) -> list[dict]:
             and abs(d["valeur_ref"] or 0) >= plancher]
     simples = [d for d in mouv if "/" not in d["ligne"]]      # lignes simples avant les croisements
     mouv = simples or mouv
-    if mouv:
+    taux = [d["var_rel_pct"] for d in mouv]
+    if len(mouv) >= 3 and max(taux) - min(taux) < 0.2:
+        # toutes les catégories évoluent au même rythme (ex. : stock régional estimé au prorata) :
+        # désigner « la plus marquée » serait trompeur
+        enonces.append({"type": "constat", "texte":
+                        f"Par rapport à {ex - 1}, {dans}toutes les catégories évoluent au même rythme : "
+                        "aucune ne se distingue."})
+    elif mouv:
         d = max(mouv, key=lambda d: abs(d["var_rel_pct"]))
         enonces.append({"type": "constat", "texte":
                         f"Par rapport à {ex - 1}, {dans}l'évolution la plus marquée concerne « {d['ligne']} » "

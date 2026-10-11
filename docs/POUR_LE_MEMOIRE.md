@@ -147,7 +147,7 @@ Groq** (appels mis en file), et non le calcul : elles ne sont pas à reporter co
 Fichier : `data/outputs/note_strategique_2024.docx` (et `.md`), mode gabarits. Structure : encadré **Chiffres
 clés** (5 grandeurs : stock de PME 443 524, +12,8 % ; créations dans les CFCE 21 132, +7,5 % ; OES 3 909,
 +1,1 % ; UPA 3 602, +1,3 % ; valeur ajoutée 7 291 millions de FCFA, +11,8 %), puis les cinq rubriques BN5.
-**5 évolutions** retenues (une par grandeur), **550 mots** ; BN4 et BN5 satisfaits ; aucune valeur écartée.
+**5 évolutions** retenues (une par grandeur), **603 mots** (550 avant la correction du 11/10/2026 : la dynamique « Adamaoua », artefact du stock régional estimé au prorata, est remplacée par celle de la valeur ajoutée des TPE) ; BN4 et BN5 satisfaits ; aucune valeur écartée.
 Messages clés de trois natures (fait principal, dynamique la plus forte, point de vigilance) ; pistes typées
 (Approfondir, Cibler, Suivre…), sans chiffre.
 **2023** : 4 évolutions (stock, créations, OES, UPA), sous le minimum de 5 ; la note le signale et explique

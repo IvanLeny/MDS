@@ -25,6 +25,7 @@ from datetime import datetime
 
 from .. import config
 from ..guards import literal_check as lc
+from ..guards.provenance import nom_document
 from ..guards.normalize import canon
 from ..retrieval import indicator_context as ic
 from ..store import db
@@ -443,11 +444,12 @@ def _assembler(con, exercice, retenus, candidats, non_valides, abstentions, clie
                                   "ligne": vs["ligne"], "colonne": vs["colonne"], "document": vs["doc_id"],
                                   "tableau": vs["tableau_n"], "page": vs["page"]})
     docs = sorted({(t["document"], t["tableau"], t["page"]) for t in trace}, key=lambda x: (x[0], x[1] or 0))
-    blocs["Sources"] = [{"texte": f"{d}, tableau {t}, p. {p}", "code": None} for d, t, p in docs]
+    blocs["Sources"] = [{"texte": f"{nom_document(d)}, tableau {t}, p. {p}", "code": None} for d, t, p in docs]
     objs = sorted({(c["objectif"]["titre"], c["objectif"]["page"]) for c in retenus if c["objectif"]})
     blocs["Sources"] += [{"texte": f"{t}, p. {p} (objectif documenté)", "code": None} for t, p in objs]
-    blocs["Sources"] += [{"texte": f"Commentaire n° {c['commentaire'].get('prod_id')} ({c['code']})"
-                                  + ("" if c["commentaire"].get("valide") else " — non validé"), "code": None}
+    blocs["Sources"] += [{"texte": f"Commentaire de l'indicateur « {c['commentaire'].get('indicateur') or c['code']} »"
+                                  + (" — validé par la Cellule" if c["commentaire"].get("valide") else " — non encore validé"),
+                          "code": None}
                          for c in retenus]
 
     # Même contrôle littéral que le service 2 (valeurs des indicateurs retenus + objectifs cités)

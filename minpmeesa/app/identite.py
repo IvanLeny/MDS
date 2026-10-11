@@ -134,6 +134,15 @@ def css(i: dict) -> str:
   .ap-tag.perspective {{ background:#FFF4D1; color:#7A5600; }}
   .ap-enonce-texte {{ color:var(--ap-texte); line-height:1.5; }}
   .ap-sources {{ font-size:.8rem; color:var(--ap-gris); margin:0 0 6px 14px; }}
+  .ap-cartes {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin:8px 0 14px 0; }}
+  .ap-carte {{ background:#fff; border:1px solid var(--ap-bord); border-radius:14px; padding:16px 18px;
+              box-shadow:var(--ap-ombre); border-top:4px solid var(--ap-vert); }}
+  .ap-carte-num {{ width:28px; height:28px; border-radius:50%; background:#E3F5EC; color:var(--ap-vert-fonce);
+                  font-weight:800; display:flex; align-items:center; justify-content:center; font-size:.85rem; }}
+  .ap-carte-titre {{ font-weight:750; color:var(--ap-texte); margin:10px 0 4px 0; font-size:1.05rem; }}
+  .ap-carte-texte {{ color:var(--ap-gris); font-size:.9rem; line-height:1.45; }}
+  .ap-extrait {{ color:var(--ap-texte); line-height:1.6; }}
+  mark.ap-mark {{ background:#FFF1B8; color:inherit; padding:0 2px; border-radius:3px; }}
   .ap-pied {{ margin-top:36px; padding:14px 0 6px 0; border-top:1px solid var(--ap-bord); font-size:.8rem; color:var(--ap-gris); }}
 </style>"""
 
@@ -152,9 +161,18 @@ def bandeau(i: dict) -> str:
             f'<div class="ap-badges">{badges}</div><div class="ap-drapeau"></div></div>')
 
 
-def entete_service(numero: int, titre: str, intro: str) -> str:
-    return (f'<div class="ap-eyebrow">Service {numero}</div><div class="ap-titre-service">{escape(titre)}</div>'
+def entete_service(numero: int, titre: str, intro: str, eyebrow: str | None = None) -> str:
+    sur = escape(eyebrow) if eyebrow else f"Service {numero}"
+    return (f'<div class="ap-eyebrow">{sur}</div><div class="ap-titre-service">{escape(titre)}</div>'
             f'<div class="ap-intro">{escape(intro)}</div>')
+
+
+def cartes_services(services: list[tuple[str, str]]) -> str:
+    cartes = "".join(f'<div class="ap-carte"><div class="ap-carte-num">{i}</div><div class="ap-carte-titre">'
+                     f'{escape(t)}</div><div class="ap-carte-texte">{escape(d)}</div></div>'
+                     for i, (t, d) in enumerate(services, 1))
+    return f'<div class="ap-cartes">{cartes}</div>'
+
 
 
 def enonce(type_: str, texte: str, sources: list[str]) -> str:

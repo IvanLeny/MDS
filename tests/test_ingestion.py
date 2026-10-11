@@ -92,3 +92,26 @@ def test_import_double_lecture_et_kappa(tmp_path):
     assert bilan["kappa_cohen"] is not None
     statuts = [r["statut"] for r in pairing.lire_csv(tmp_path / "appariement_2099.csv")]
     assert statuts == ["valide", "a_verifier", "rejete", "valide"]
+
+
+def test_double_lecture_depuis_l_interface(tmp_path):
+    import shutil, json
+    from minpmeesa import config
+    from minpmeesa.ingestion import pairing as pa
+    shutil.copy(config.chemin("appariement") / "appariement_2024.csv", tmp_path)
+    g = [int(r["graphique_n"]) for r in pa.lire_csv(tmp_path / "appariement_2024.csv")][:4]
+    pa.enregistrer_lecture(tmp_path, 2024, g[0], "Awa", "valide", None)
+    pa.enregistrer_lecture(tmp_path, 2024, g[0], "Paul", "valide", None)
+    pa.enregistrer_lecture(tmp_path, 2024, g[1], "Awa", "rejete", None)
+    pa.enregistrer_lecture(tmp_path, 2024, g[1], "Paul", "valide", None)
+    pa.enregistrer_lecture(tmp_path, 2024, g[2], "Awa", "corrige", 17)
+    pa.enregistrer_lecture(tmp_path, 2024, g[2], "Paul", "corrige", 17)
+    pa.enregistrer_lecture(tmp_path, 2024, g[3], "Awa", "valide", None)
+    pa.enregistrer_lecture(tmp_path, 2024, g[3], "awa", "rejete", None)      # même lecteur : remplace
+    b = pa.consolider(tmp_path, 2024)
+    rows = {int(r["graphique_n"]): r for r in pa.lire_csv(tmp_path / "appariement_2024.csv")}
+    assert rows[g[0]]["statut"] == "valide" and "Awa" in rows[g[0]]["valide_par"]
+    assert rows[g[1]]["statut"] == "a_verifier"
+    assert rows[g[2]]["statut"] == "valide" and rows[g[2]]["tableau_n"] == "17"
+    assert rows[g[3]]["statut"] != "valide" and b["un_seul_lecteur"] == 1
+    assert b["n_double_lecture"] == 3 and json.loads((tmp_path / "accord_2024.json").read_text())["kappa_cohen"] is not None

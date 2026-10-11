@@ -120,11 +120,11 @@ Règle constante : aucun chiffre inventé. Toute amélioration de forme conserve
 | B1 | **fait** (01/10/2026), tests ajoutés | voir journal git |
 | B2 | **fait** (01/10/2026), tests ajoutés | voir journal git |
 | B3 | **fait** (01/10/2026), tests ajoutés | voir journal git |
-| C1 | à faire | |
+| C1 | **fait** (11/10/2026) | voir journal git |
 | C2 | à faire | |
-| C3 | à faire | |
-| C4 | **en partie** (05/10/2026) : suggestions de reformulation en cas de refus | voir journal git |
-| C5 | à faire | |
-| D1 | à faire | |
+| C3 | **fait** (11/10/2026) | voir journal git |
+| C4 | **fait** (suggestions 05/10, surlignage 11/10 ; filtres non retenus) | voir journal git |
+| C5 | **fait** (11/10/2026) | voir journal git |
+| D1 | **fait** (11/10/2026) | voir journal git |
 | D2 | à faire | |
 | D3 | à faire | |

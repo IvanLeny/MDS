@@ -307,6 +307,82 @@ def importer_validation(chemin_xlsx: Path, dossier_csv: Path) -> dict:
     return bilan
 
 
+# ------------------------------------------------------------ double lecture depuis l'interface
+CHAMPS_LECTURE = ["exercice", "graphique_n", "lecteur", "decision", "tableau_n", "date"]
+
+
+def lectures(dossier: Path, exercice: int) -> list[dict]:
+    return lire_csv(dossier / f"lectures_{exercice}.csv")
+
+
+def enregistrer_lecture(dossier: Path, exercice: int, graphique_n: int, lecteur: str, decision: str,
+                        tableau_n: int | None) -> None:
+    """Décision d'UN lecteur sur UN appariement (valide | rejete | corrige) ; une nouvelle décision du même
+    lecteur remplace la précédente. Les décisions ne deviennent un statut qu'à la consolidation."""
+    from datetime import date
+    if decision not in ("valide", "rejete", "corrige") or not lecteur.strip():
+        raise ValueError("décision ou lecteur invalide")
+    rows = [r for r in lectures(dossier, exercice)
+            if not (int(r["graphique_n"]) == graphique_n and r["lecteur"].strip().lower() == lecteur.strip().lower())]
+    rows.append({"exercice": exercice, "graphique_n": graphique_n, "lecteur": lecteur.strip(), "decision": decision,
+                 "tableau_n": "" if tableau_n is None else tableau_n, "date": date.today().isoformat()})
+    dossier.mkdir(parents=True, exist_ok=True)
+    with open(dossier / f"lectures_{exercice}.csv", "w", encoding="utf-8-sig", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=CHAMPS_LECTURE, delimiter=";")
+        w.writeheader()
+        for r in rows:
+            w.writerow({k: r.get(k, "") for k in CHAMPS_LECTURE})
+
+
+def consolider(dossier: Path, exercice: int) -> dict:
+    """Même règle que la double lecture sur tableur : deux lecteurs distincts d'accord -> valide / rejete
+    (tableau corrigé le cas échéant) ; désaccord -> a_verifier ; un seul lecteur -> inchangé.
+    Met à jour appariement_AAAA.csv et accord_AAAA.json (kappa de Cohen)."""
+    import json
+    from collections import defaultdict
+    from datetime import date
+    chemin_csv = dossier / f"appariement_{exercice}.csv"
+    csv_rows = {int(r["graphique_n"]): r for r in lire_csv(chemin_csv)}
+    par_g: dict[int, list[dict]] = defaultdict(list)
+    for r in sorted(lectures(dossier, exercice), key=lambda r: r["date"]):
+        par_g[int(r["graphique_n"])].append(r)
+    d1, d2 = [], []
+    bilan = {"valide": 0, "rejete": 0, "a_verifier": 0, "un_seul_lecteur": 0, "non_lu": 0}
+    for g, cible in csv_rows.items():
+        ls = par_g.get(g, [])
+        lecteurs = list(dict.fromkeys(l["lecteur"].strip().lower() for l in ls))
+        if len(lecteurs) < 2:
+            bilan["un_seul_lecteur" if ls else "non_lu"] += 1
+            continue
+        a = next(l for l in ls if l["lecteur"].strip().lower() == lecteurs[0])
+        b = next(l for l in ls if l["lecteur"].strip().lower() == lecteurs[1])
+        ta = a["tableau_n"] if a["decision"] == "corrige" else cible["tableau_n"]
+        tb = b["tableau_n"] if b["decision"] == "corrige" else cible["tableau_n"]
+        d1.append(f"{a['decision']}:{ta}")
+        d2.append(f"{b['decision']}:{tb}")
+        if a["decision"] == b["decision"] and str(ta) == str(tb):
+            statut = "rejete" if a["decision"] == "rejete" else "valide"
+            cible["statut"] = statut
+            if a["decision"] == "corrige":
+                cible["tableau_n"] = str(ta)
+            cible["valide_par"] = f"double lecture ({a['lecteur']}, {b['lecteur']})"
+            cible["date_validation"] = date.today().isoformat()
+            bilan[statut] += 1
+        else:
+            cible["statut"] = "a_verifier"
+            bilan["a_verifier"] += 1
+    with open(chemin_csv, "w", encoding="utf-8-sig", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=CHAMPS, delimiter=";")
+        w.writeheader()
+        for r in csv_rows.values():
+            w.writerow({k: r.get(k, "") for k in CHAMPS})
+    bilan["kappa_cohen"] = kappa_cohen(d1, d2)
+    bilan["n_double_lecture"] = len(d1)
+    bilan["exercice"] = exercice
+    (dossier / f"accord_{exercice}.json").write_text(json.dumps(bilan, indent=2, ensure_ascii=False), encoding="utf-8")
+    return bilan
+
+
 if __name__ == "__main__":
     import sys
     from .. import config

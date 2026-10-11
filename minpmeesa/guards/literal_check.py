@@ -117,10 +117,13 @@ def _score(src: dict, texte: str, debut: int | None) -> int:
             sc += 8
         elif ligne in noms:
             sc += 4
+    general = bool(_TOTAL.search(ligne)) and re.fullmatch(
+        r"\s*(total|ensemble)[^/]*(/\s*(total|ensemble)[^/]*)?", re.sub(r"\(\*+\)|\*", "", ligne)) is not None
     if re.search(r"\btotal\b", avant[-80:], re.I) and _TOTAL.search(ligne):
         # total général (« Total », « Total / Total ») avant un sous-total (« Yaoundé / Total »)
-        general = re.fullmatch(r"\s*(total|ensemble)[^/]*(/\s*(total|ensemble)[^/]*)?", re.sub(r"\(\*+\)|\*", "", ligne))
         sc += 6 if general else 2
+    elif not noms and general:
+        sc += 1          # phrase sans libellé cité (« Depuis 2016, la hausse cumulée… ») : l'ensemble, pas une région
     ref = src.get("exercice_ref")
     if ref is not None:
         if re.search(rf"(rapport à|depuis|par rapport à l'année)\s+{ref}\b", texte, re.I):

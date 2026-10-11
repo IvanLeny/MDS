@@ -1,17 +1,17 @@
 {
-  "modele": "repli en mode extractif : Ollama indisponible ou modèle gpt-oss:20b absent ; fichier GGUF absent (models/llm/modele.gguf)",
+  "modele": "mode sans modèle de langage (--llm none)",
   "commentaire_enonces": 6,
   "note_analyse_tableaux_commentes": 17,
   "note_analyse_tableaux_a_commenter_manuellement": 3,
   "note_strategique_evolutions": 5,
-  "note_strategique_mots": 549,
+  "note_strategique_mots": 603,
   "verification_bn4_bn5": {
     "BN4_toute_valeur_tracee": true,
     "BN4_valeurs_non_tracees": [],
     "BN5_rubriques": true,
     "BN5_messages_cles_3": true,
     "BN5_longueur_ok": true,
-    "nb_mots": 549
+    "nb_mots": 603
   },
   "provisoire": true,
   "mode_extractif": true

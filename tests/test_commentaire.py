@@ -186,7 +186,7 @@ def test_a1_variation_tracee_vers_la_bonne_ligne(base_complete):
     from minpmeesa.generation import commentary
     r = commentary.commenter(base_complete, "pme-creees-sur-periode", 2024, journaliser=False)
     e = next(e for e in r["enonces"] if "ce total" in e["texte"])
-    assert e["references"][0]["libelle"].startswith("variation calculée (var_rel_pct) : Total,")
+    assert e["references"][0]["libelle"].startswith("Variation calculée par le programme : Total, 2024 / 2023 — Annuaire 2024")
 
 
 def test_a1_trouver_prefere_le_libelle_cite():
@@ -218,7 +218,7 @@ def test_a1_total_general_avant_sous_total(base_complete):
     from minpmeesa.generation import commentary
     r = commentary.commenter(base_complete, "pme-creees-secteur-activite", 2024, journaliser=False)
     e = next(e for e in r["enonces"] if "ce total" in e["texte"])
-    assert ": Total / Total," in e["references"][0]["libelle"]
+    assert ": Total / Total, 2024 / 2023" in e["references"][0]["libelle"]
 
 
 # ------------------------------------------------------------ repli sur les gabarits (interface)
@@ -243,3 +243,24 @@ def test_pas_de_repli_si_redaction_du_modele_suffisante(base_complete):
                  ("constat", "Par rapport à 2023, ce total progresse de 7,5 % selon l'Annuaire."))
     r = cm.commenter(base_complete, CODE, 2024, Faux([deux]), journaliser=False)
     assert not r.get("repli_gabarits") and len(r["enonces"]) == 2
+
+
+def test_sources_lisibles(base_complete):
+    from minpmeesa.guards.provenance import nom_document
+    assert nom_document("annuaire_2024") == "Annuaire 2024"
+    assert nom_document("rapport_analyse_2023") == "Rapport d'analyse 2023"
+    assert nom_document("note_conjoncture_T1_2025") == "Note de conjoncture T1 2025"
+    r = cm.commenter(base_complete, CODE, 2024, None, journaliser=False)
+    libs = [x["libelle"] for e in r["enonces"] for x in e["references"]]
+    assert libs and not any("annuaire_" in l or "var_rel" in l or "n°" in l for l in libs)
+    # les identifiants restent disponibles pour la traçabilité
+    assert all(x["valeurs_sources"] for e in r["enonces"] for x in e["references"])
+
+
+def test_pas_d_evolution_la_plus_marquee_si_toutes_egales(base_complete):
+    """Stock régional 2024 estimé au prorata : toutes les régions à +12,8 % -> aucune n'est « la plus marquée »."""
+    r = cm.commenter(base_complete, "stock-pme-region", 2024, None, journaliser=False)
+    t = cm.texte(r)
+    assert "la plus marquée" not in t and "aucune ne se distingue" in t
+    e = next(e for e in r["enonces"] if e["texte"].startswith("Depuis 2016"))
+    assert e["references"][0]["libelle"].startswith("Variation calculée par le programme : Total,")
