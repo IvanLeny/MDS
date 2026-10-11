@@ -17,14 +17,17 @@ def chemin_base(dossier: Path | None = None) -> Path:
     return (dossier or config.chemin("base")) / NOM_BASE
 
 
-def connecter(dossier: Path | None = None, creer: bool = False) -> sqlite3.Connection:
-    """Ouvre la base. `creer=True` applique le schéma (base vide)."""
+def connecter(dossier: Path | None = None, creer: bool = False, autocommit: bool = False) -> sqlite3.Connection:
+    """Ouvre la base. `creer=True` applique le schéma (base vide). `autocommit=True` (interface) : chaque
+    écriture est validée aussitôt, sans verrou gardé entre deux exécutions de la page."""
     p = chemin_base(dossier)
     if not creer and not p.exists():
         raise FileNotFoundError(
             f"Base absente ({p}). Lancez : python -m minpmeesa.ingestion.build")
     p.parent.mkdir(parents=True, exist_ok=True)
-    con = sqlite3.connect(str(p), check_same_thread=False)
+    con = sqlite3.connect(str(p), check_same_thread=False, timeout=30)
+    if autocommit:
+        con.isolation_level = None
     con.row_factory = sqlite3.Row
     con.execute("PRAGMA foreign_keys = ON")
     if creer:

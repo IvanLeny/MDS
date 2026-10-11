@@ -100,3 +100,26 @@ def test_suggestions_de_reformulation_en_cas_de_refus(moteur):
         for s in r["suggestions"]:                   # chaque suggestion passe le seuil
             assert not consultation.consulter(s, moteur, journaliser=False)["abstention"]
     assert consultation.suggestions("quelle est la capitale du Japon ?", moteur) == []
+
+
+def test_usage_simultane_depuis_plusieurs_fils(moteur):
+    """L'interface exécute la page dans plusieurs fils à la fois : chaque fil a sa connexion SQLite
+    (une connexion partagée donnait « sqlite3.InterfaceError: bad parameter or other API misuse »)."""
+    import threading
+    from minpmeesa.generation import commentary
+    err = []
+
+    def tache():
+        try:
+            for _ in range(3):
+                consultation.consulter("Combien de PME ont été créées dans les CFCE en 2024 ?", moteur)
+                commentary.commenter(moteur.con, "pme-creees-sur-periode", 2024, None, moteur=moteur)
+        except Exception as e:                       # noqa: BLE001
+            err.append(repr(e))
+
+    fils = [threading.Thread(target=tache) for _ in range(5)]
+    for f in fils:
+        f.start()
+    for f in fils:
+        f.join()
+    assert err == []

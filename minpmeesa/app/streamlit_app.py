@@ -203,7 +203,13 @@ if page == "Services" and m:
                           placeholder="Ex. : Combien de PME ont été créées dans les CFCE en 2024 ?")
         rep = st.checkbox("Ajouter une réponse rédigée courte (facultatif)")
         if q:
-            r = consultation.consulter(q, m, rediger=rep, client=client)
+            # Les onglets s'exécutent tous à chaque interaction : la recherche (et son journal) n'est refaite
+            # que si la question ou les options changent.
+            cle_q = (q, rep, choix_llm)
+            if st.session_state.get("consult_cle") != cle_q:
+                st.session_state["consult"] = consultation.consulter(q, m, rediger=rep, client=client)
+                st.session_state["consult_cle"] = cle_q
+            r = st.session_state["consult"]
             if r.get("reponse") and r["reponse"].get("texte"):
                 st.success(r["reponse"]["texte"])
                 st.caption(f"Réponse rédigée ({r['reponse'].get('redaction')}), chiffres contrôlés contre les extraits.")

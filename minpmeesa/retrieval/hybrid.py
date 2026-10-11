@@ -7,6 +7,7 @@ classement : chaque voie ne calcule de score que sur les passages autorisés.
 from __future__ import annotations
 
 import json
+import threading
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
@@ -64,13 +65,24 @@ class Moteur:
     def __init__(self, dossier: Path | None = None):
         self.cfg = config.charger()
         self.dossier = dossier or config.chemin("base")
-        self.con = db.connecter(self.dossier)
+        self._fils = threading.local()
+        self.con                                   # ouvre la base tout de suite (erreur claire si absente)
         self.bm25 = bm25_index.IndexBM25.charger(self.dossier)
         self.dense = faiss_index.charger(self.dossier)
         rapport = json.loads((self.dossier / "build_rapport.json").read_text(encoding="utf-8"))
         self.nom_encodeur = rapport["encodeur"]
         self.encodeur = encmod.charger(self.dossier, self.nom_encodeur)
         self.lexique = Lexique.charger(config.chemin("lexique"))
+
+    @property
+    def con(self):
+        """Une connexion SQLite par fil d'exécution : l'interface exécute la page dans plusieurs fils, parfois
+        en même temps (changement d'indicateur pendant un calcul) ; une connexion partagée y provoque
+        « sqlite3.InterfaceError: bad parameter or other API misuse » sous Windows."""
+        c = getattr(self._fils, "con", None)
+        if c is None:
+            c = self._fils.con = db.connecter(self.dossier, autocommit=True)
+        return c
 
     def autorises(self, statut: str = "publie", exercice_max: int | None = None,
                   types: tuple[str, ...] | None = None, exclure_tests: bool = False) -> list[int]:
