@@ -5,6 +5,7 @@ Lancement : double-clic sur demarrer.bat (Windows) ou ./demarrer.sh
 """
 from __future__ import annotations
 
+import os
 import re
 import sys
 import tempfile
@@ -140,11 +141,14 @@ def afficher_commentaire(res: dict):
 
 # ------------------------------------------------------------------ barre latérale
 cfg = config.charger()
+# Version de démonstration en ligne (MINPMEESA_DEMO=1) : consultation seule, rédaction par gabarits ;
+# ajout de documents, reconstruction, validation et modèle de langage réservés à l'installation de la Cellule.
+DEMO = os.environ.get("MINPMEESA_DEMO") == "1"
 st.sidebar.markdown(f'<div class="ap-side-titre">{ID["nom"]}</div><div class="ap-side-sous">{ID["structure"]}</div>',
                     unsafe_allow_html=True)
 MODES = {"none": "Gabarits (sans modèle de langage)", "ollama": "Modèle de langage local (Ollama)",
          "api": "Service distant (développement)"}
-choix_llm = st.sidebar.selectbox("Mode de rédaction", ["none", "ollama", "api"], index=0,
+choix_llm = st.sidebar.selectbox("Mode de rédaction", ["none"] if DEMO else ["none", "ollama", "api"], index=0,
                                  format_func=MODES.get,
                                  help="Gabarits : instantané, chaque phrase est construite à partir des chiffres. "
                                       "Modèle local : texte mieux rédigé, plus lent, toujours contrôlé.")
@@ -160,6 +164,10 @@ elif choix_llm == "ollama":
 else:
     etat = "Service distant indisponible (clé absente) : rédaction par <b>gabarits</b>"
 st.sidebar.markdown(f'<div class="ap-etat">{etat}</div>', unsafe_allow_html=True)
+if DEMO:
+    st.sidebar.markdown('<div class="ap-etat" style="margin-top:8px"><b>Version de démonstration</b><br>'
+                        "Consultation seule. Le modèle de langage local, l'ajout de documents et la validation "
+                        "sont disponibles dans l'installation de la Cellule.</div>", unsafe_allow_html=True)
 page = st.sidebar.radio("Navigation", ["Accueil", "Services", "Validation", "Base documentaire"])
 
 try:
@@ -297,7 +305,7 @@ if page == "Services" and m:
                 if not res.get("abstention"):
                     bouton_word("Exporter en Word", docx_export.exporter_commentaire, res, f"commentaire_{code}.docx")
             with c2:
-                if res.get("prod_id") and st.button("Valider ce commentaire"):
+                if res.get("prod_id") and not DEMO and st.button("Valider ce commentaire"):
                     analysis_note.valider_production(con, res["prod_id"], "cellule")
                     st.success("Commentaire validé : il sera repris dans les notes.")
 
@@ -443,18 +451,21 @@ if page == "Validation" and m:
                                  (r["doc_annuaire"], r["tableau_n"] or -1)).fetchone()
                 if pt and pt[0] and st.toggle(f"Voir la page {pt[0]}", key=f"vt{exv}{g}"):
                     st.image(page_pdf(f"{r['doc_annuaire']}.pdf", pt[0]))
-            with st.form(f"lecture{exv}{g}"):
-                dec = st.radio("Votre décision", ["valide", "rejete", "corrige"], horizontal=True,
-                               format_func={"valide": "Le lien est juste", "rejete": "Aucun tableau ne correspond",
-                                            "corrige": "Un autre tableau correspond"}.get)
-                tn = st.number_input("Numéro du bon tableau (si « un autre tableau »)", 1, 200, 1)
-                if st.form_submit_button("Enregistrer ma décision", type="primary"):
-                    pairing.enregistrer_lecture(dossier, exv, g, lecteur, dec, int(tn) if dec == "corrige" else None)
-                    st.rerun()
+            if DEMO:
+                st.info("Version de démonstration : l'enregistrement des décisions est désactivé.")
+            else:
+                with st.form(f"lecture{exv}{g}"):
+                    dec = st.radio("Votre décision", ["valide", "rejete", "corrige"], horizontal=True,
+                                   format_func={"valide": "Le lien est juste", "rejete": "Aucun tableau ne correspond",
+                                                "corrige": "Un autre tableau correspond"}.get)
+                    tn = st.number_input("Numéro du bon tableau (si « un autre tableau »)", 1, 200, 1)
+                    if st.form_submit_button("Enregistrer ma décision", type="primary"):
+                        pairing.enregistrer_lecture(dossier, exv, g, lecteur, dec, int(tn) if dec == "corrige" else None)
+                        st.rerun()
     st.markdown("#### Consolider")
     st.caption("Applique la règle de double lecture : deux lecteurs d'accord → statut validé (ou rejeté) ; désaccord "
                "→ à vérifier. Les nouveaux statuts s'appliquent aux services après reconstruction de la base.")
-    if st.button("Consolider la double lecture"):
+    if not DEMO and st.button("Consolider la double lecture"):
         bl = pairing.consolider(dossier, exv)
         st.success(f"{bl['valide']} validé(s), {bl['rejete']} rejeté(s), {bl['a_verifier']} à vérifier ; "
                    f"kappa de Cohen : {bl['kappa_cohen'] if bl['kappa_cohen'] is not None else 'non calculable'} "
@@ -480,34 +491,38 @@ if page == "Base documentaire":
         for a_ in r["avertissements"]:
             st.caption(a_)
 
-    with st.form("ajout"):
-        st.markdown("**Ajouter un PDF à la base**")
-        f = st.file_uploader("Fichier PDF", type="pdf")
-        c1, c2, c3 = st.columns(3)
-        titre = c1.text_input("Titre")
-        type_ = c2.selectbox("Type", ["annuaire", "rapport_analyse", "note_conjoncture", "contexte"])
-        exercice = c3.number_input("Exercice", 2010, 2035, 2025)
-        trimestre = c1.selectbox("Trimestre", ["", "T1", "T2", "T3", "T4"])
-        statut = c2.selectbox("Statut de diffusion", ["publie", "interne"])
-        integrer = c3.checkbox("Intégrer tout de suite dans la base", value=True)
-        if st.form_submit_button("Ajouter") and f and titre:
-            import yaml
-            dest = config.chemin("corpus") / Path(f.name).name
-            reg = yaml.safe_load(config.chemin("registre").read_text(encoding="utf-8"))
-            reg["documents"] = [d for d in reg["documents"] if d["doc_id"] != dest.stem]   # remplacement éventuel
-            dest.write_bytes(f.getvalue())
-            reg["documents"].append({"doc_id": dest.stem, "fichier": dest.name, "titre": titre, "type": type_,
-                                     "exercice": int(exercice), "trimestre": trimestre or None,
-                                     "statut_diffusion": statut})
-            config.chemin("registre").write_text(yaml.safe_dump(reg, allow_unicode=True, sort_keys=False),
-                                                 encoding="utf-8")
-            st.success(f"{dest.name} copié dans le corpus et inscrit au registre.")
-            if integrer:
-                reconstruire()
-                m = moteur()
-            else:
-                st.info("Le document sera intégré à la prochaine reconstruction de la base.")
-    if st.button("Reconstruire la base"):
+    if DEMO:
+        st.info("Version de démonstration : l'ajout de documents et la reconstruction de la base sont réservés à "
+                "l'installation de la Cellule. L'exploration de la base reste disponible ci-dessous.")
+    else:
+        with st.form("ajout"):
+            st.markdown("**Ajouter un PDF à la base**")
+            f = st.file_uploader("Fichier PDF", type="pdf")
+            c1, c2, c3 = st.columns(3)
+            titre = c1.text_input("Titre")
+            type_ = c2.selectbox("Type", ["annuaire", "rapport_analyse", "note_conjoncture", "contexte"])
+            exercice = c3.number_input("Exercice", 2010, 2035, 2025)
+            trimestre = c1.selectbox("Trimestre", ["", "T1", "T2", "T3", "T4"])
+            statut = c2.selectbox("Statut de diffusion", ["publie", "interne"])
+            integrer = c3.checkbox("Intégrer tout de suite dans la base", value=True)
+            if st.form_submit_button("Ajouter") and f and titre:
+                import yaml
+                dest = config.chemin("corpus") / Path(f.name).name
+                reg = yaml.safe_load(config.chemin("registre").read_text(encoding="utf-8"))
+                reg["documents"] = [d for d in reg["documents"] if d["doc_id"] != dest.stem]   # remplacement éventuel
+                dest.write_bytes(f.getvalue())
+                reg["documents"].append({"doc_id": dest.stem, "fichier": dest.name, "titre": titre, "type": type_,
+                                         "exercice": int(exercice), "trimestre": trimestre or None,
+                                         "statut_diffusion": statut})
+                config.chemin("registre").write_text(yaml.safe_dump(reg, allow_unicode=True, sort_keys=False),
+                                                     encoding="utf-8")
+                st.success(f"{dest.name} copié dans le corpus et inscrit au registre.")
+                if integrer:
+                    reconstruire()
+                    m = moteur()
+                else:
+                    st.info("Le document sera intégré à la prochaine reconstruction de la base.")
+    if not DEMO and st.button("Reconstruire la base"):
         reconstruire()
         m = moteur()
 

@@ -37,6 +37,8 @@ python -m pytest                             # tests
 | Besoin | Emplacement |
 |---|---|
 | Installation sur le poste de la Cellule | `docs/INSTALLATION_WINDOWS.md` |
+| Déploiement : version en ligne (jury) et réseau interne (Cellule) | `docs/DEPLOIEMENT.md` |
+| Visite du code pour la soutenance | `docs/VISITE_DU_CODE.md` |
 | Utilisation (4 parcours, captures) | `docs/GUIDE_UTILISATEUR.md` |
 | Nouvelle édition, validation de l'appariement | `docs/MAINTENANCE.md` |
 | Difficultés et solutions (Tableau 3.6) | `docs/JOURNAL.md` |
