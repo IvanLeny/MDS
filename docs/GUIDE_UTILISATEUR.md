@@ -1,6 +1,6 @@
 # Guide de l'utilisateur
 
-Lancer l'outil : double-clic sur `demarrer.bat`. La barre de gauche contient :
+Lancer l'outil : double-clic sur `demarrer.bat`, ou sur l'icône **ANALYS'PME** du bureau (créée une fois pour toutes par un double-clic sur `creer_raccourcis.bat`, qui ajoute aussi l'icône **ANALYS'PME (en ligne)** vers la version de démonstration). La barre de gauche contient :
 - **Mode de rédaction** : « Gabarits » (instantané, choisi par défaut) ou « Modèle de langage
   local » (mieux rédigé, plus lent, toujours contrôlé). L'état réel est affiché juste en dessous ;
 - **Navigation** : Accueil, Services, Validation, Base documentaire.
