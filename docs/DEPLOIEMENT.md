@@ -5,7 +5,7 @@ Deux déploiements complémentaires :
 | | A. Version de démonstration en ligne | B. Installation en réseau interne (Cellule) |
 |---|---|---|
 | Pour qui | Le jury, tout visiteur muni de l'adresse | Les cadres de la Cellule, sur le réseau du ministère |
-| Accès | Adresse web publique (`https://….streamlit.app`) | `http://<adresse du poste serveur>:8501` |
+| Accès | **https://analyspme-minpmeesa.streamlit.app/** | `http://<adresse du poste serveur>:8501` |
 | Rédaction | Gabarits seulement | Gabarits + modèle de langage local (Ollama) |
 | Ajout de documents, validation | Désactivés (lecture seule) | Oui |
 | Données | Corpus public du dépôt GitHub | Restent sur le poste du ministère (aucun envoi extérieur) |
@@ -13,6 +13,8 @@ Deux déploiements complémentaires :
 ---
 
 ## A. Version de démonstration en ligne (Streamlit Community Cloud, gratuit)
+
+**En ligne depuis le 13/10/2026 : https://analyspme-minpmeesa.streamlit.app/** (branche `claude/vigilant-lamport-hi28is`, fichier `deploiement/streamlit_app.py`).
 
 Préparé dans le dépôt : `deploiement/streamlit_app.py` (point d'entrée : mode démonstration, construction
 automatique de la base au premier démarrage) et `deploiement/requirements.txt` (dépendances allégées, sans

@@ -22,6 +22,8 @@ de langage local (gpt-oss:20b via Ollama) rédige.
 9. **Note stratégique** : il sélectionne les 5 à 7 évolutions les plus marquantes, en 1 à 2 pages, avec des pistes pour la décision.
 10. Tout s'exporte en Word ; le lancement se fait par un double-clic sur `demarrer.bat`.
 
+**Version de démonstration en ligne** (lecture seule, rédaction par gabarits) : https://analyspme-minpmeesa.streamlit.app/
+
 ## Démarrage rapide
 
 ```bash
